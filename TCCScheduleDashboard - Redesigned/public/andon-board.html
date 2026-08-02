@@ -1,0 +1,1065 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>TCC Scheduling Major Board</title>
+
+    <link rel="icon" type="image/png" sizes="32x32" href="./Logo.png" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Orbitron:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Existing bundles -->
+    <script src="./javascript/reload.js"></script>
+    <script src="./1986481368401444864/resource_5784810000.js"></script>
+    <link href="./1986481368401444864/all.min.css" rel="stylesheet" />
+    <link href="./1986481368401444864/tailwind.min.css" rel="stylesheet" />
+
+    <!-- Global styles -->
+    <link rel="stylesheet" href="assets/css/base.css" />
+
+    <!-- Page-local UI: copy from Schedule Visualization page -->
+    <style>
+      /* ===== 整页背景：和 Schedule Visualization 一样 ===== */
+      .tcc-main {
+        position: relative;
+        /* 最底层是图片，上面叠三层深色渐变做统一色调 */
+        background:
+          radial-gradient(circle at top left, rgba(56, 189, 248, 0.33), transparent 58%),
+          radial-gradient(circle at bottom right, rgba(37, 99, 235, 0.32), transparent 60%),
+          linear-gradient(to bottom, rgba(2, 6, 23, 0.56), rgba(2, 6, 23, 0.58)),
+          url('https://getwallpapers.com/wallpaper/full/6/2/a/388141.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed; /* 轻微视差，不喜欢可以删掉这一行 */
+      }
+
+      /* ===== HERO：抬一点层次感 ===== */
+      .tcc-page-hero {
+        padding-block: 3.25rem 2.4rem;
+        border-bottom: 1px solid rgba(15, 23, 42, 0.85);
+        position: relative;
+      }
+
+      .tcc-page-hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(circle at top right, rgba(125, 211, 252, 0.18), transparent 55%),
+          radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.18), transparent 55%);
+        opacity: 0.8;
+        pointer-events: none;
+      }
+
+      .tcc-page-hero-inner {
+        position: relative;
+        z-index: 1;
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+        gap: 2.4rem;
+        align-items: stretch;
+      }
+
+      .tcc-page-breadcrumb {
+        font-size: 0.8rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: #9ca3af;
+        margin-bottom: 0.8rem;
+      }
+
+      .tcc-page-title {
+        font-size: clamp(2rem, 2.6vw, 2.4rem);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        margin-bottom: 0.75rem;
+      }
+
+      .tcc-page-subtitle {
+        max-width: 40rem;
+        color: #d1d5db;
+      }
+
+      .tcc-page-hero-badges {
+        margin-top: 1.1rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .tcc-page-hero-visual {
+        display: flex;
+        align-items: stretch;
+        justify-content: flex-end;
+      }
+
+      .tcc-page-hero-card {
+        position: relative;
+        width: 100%;
+        border-radius: 1rem;
+        padding: 1.4rem 1.5rem 1.2rem;
+        background:
+          radial-gradient(circle at top left, rgba(59, 130, 246, 0.35), transparent 60%),
+          radial-gradient(circle at bottom right, rgba(8, 47, 73, 0.55), transparent 60%),
+          rgba(15, 23, 42, 0.54);
+        border: 1px solid rgba(148, 163, 184, 0.45);
+        box-shadow:
+          0 22px 45px rgba(15, 23, 42, 0.95),
+          0 0 0 1px rgba(15, 23, 42, 0.9) inset;
+        backdrop-filter: blur(14px);
+      }
+
+      .tcc-page-hero-card h3 {
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: #e5e7eb;
+        margin-bottom: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+
+      .tcc-page-hero-card h3::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(
+          to right,
+          rgba(59, 130, 246, 0.2),
+          rgba(56, 189, 248, 0.7)
+        );
+      }
+
+      .tcc-page-hero-card ul {
+        margin-left: 0;
+        padding-left: 1rem;
+        font-size: 0.9rem;
+        color: #cbd5f5;
+      }
+
+      .tcc-page-hero-card li + li {
+        margin-top: 0.4rem;
+      }
+
+      .tcc-page-hero-card .tcc-tag-row {
+        margin-top: 1rem;
+      }
+
+      /* ===== 主体双列区域：两张“玻璃卡片”并排 ===== */
+      .tcc-page-main {
+        padding: 2.4rem 1.75rem 3.25rem;
+        border-top: 1px solid rgba(15, 23, 42, 0.9);
+      }
+
+      .tcc-page-main-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+        gap: 2rem;
+        align-items: stretch;
+      }
+
+      .tcc-page-main-inner .tcc-panel {
+        position: relative;
+        min-height: 0;
+        max-height: 65vh; /* 高度限制到一屏内，内部滚动 */
+        padding: 1.6rem 1.7rem 1.5rem;
+        border-radius: 1rem;
+        border: 1px solid rgba(148, 163, 184, 0.42);
+        background:
+          radial-gradient(circle at top left, rgba(56, 189, 248, 0.25), transparent 62%),
+          radial-gradient(circle at bottom right, rgba(37, 99, 235, 0.28), transparent 60%),
+          rgba(15, 23, 42, 0.36);
+        box-shadow:
+          0 22px 48px rgba(15, 23, 42, 0.98),
+          0 0 0 1px rgba(15, 23, 42, 0.9) inset;
+        backdrop-filter: blur(18px);
+        overflow-y: auto;
+      }
+
+      .tcc-page-main-inner .tcc-panel::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: linear-gradient(
+          135deg,
+          rgba(96, 165, 250, 0.22),
+          transparent 55%
+        );
+        mix-blend-mode: soft-light;
+        opacity: 0.9;
+        pointer-events: none;
+      }
+
+      .tcc-page-main-inner .tcc-panel > * {
+        position: relative;
+        z-index: 1;
+      }
+
+      /* Panel 标题样式 */
+      .tcc-page-main-inner .tcc-panel h3 {
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: #e5e7eb;
+        margin-bottom: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+
+      .tcc-page-main-inner .tcc-panel h3::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: radial-gradient(circle, #38bdf8, #2563eb);
+        box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.25);
+      }
+
+      .tcc-page-main-inner .tcc-panel h3::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(
+          to right,
+          rgba(15, 23, 42, 0),
+          rgba(148, 163, 184, 0.8)
+        );
+      }
+
+      .tcc-page-main-inner .tcc-panel h4 {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: #e5e7eb;
+        margin: 1.1rem 0 0.35rem;
+      }
+
+      .tcc-page-main-inner .tcc-panel p {
+        font-size: 0.9rem;
+        color: #d1d5db;
+      }
+
+      .tcc-page-main-inner .tcc-panel ul {
+        margin-top: 0.5rem;
+        padding-left: 1.1rem;
+        font-size: 0.9rem;
+        color: #cbd5f5;
+      }
+
+      .tcc-page-main-inner .tcc-panel ul li + li {
+        margin-top: 0.25rem;
+      }
+
+      .tcc-page-main-inner .tcc-panel dl {
+        font-size: 0.88rem;
+        color: #d1d5db;
+      }
+
+      .tcc-page-main-inner .tcc-panel dl dt {
+        color: #e5e7eb;
+      }
+
+      .tcc-page-main-inner .tcc-panel dl dd {
+        color: #cbd5f5;
+      }
+
+      .tcc-page-main-inner .tcc-panel .tcc-tag-row {
+        margin-top: 0.6rem;
+      }
+
+      .tcc-page-main-inner .tcc-panel .tcc-tag {
+        border-radius: 9999px;
+        border: 1px solid rgba(148, 163, 184, 0.5);
+        background: rgba(15, 23, 42, 0.9);
+      }
+
+      /* 小提示文字浅一点 */
+      .tcc-page-main-inner .tcc-panel p[style*="font-size: 0.8rem"] {
+        color: #9ca3af !important;
+      }
+
+      /* 低存在感滚动条，仅限两个 panel */
+      .tcc-page-main-inner .tcc-panel {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(148, 163, 184, 0.45) transparent;
+      }
+
+      .tcc-page-main-inner .tcc-panel::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .tcc-page-main-inner .tcc-panel::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      .tcc-page-main-inner .tcc-panel::-webkit-scrollbar-thumb {
+        background: rgba(148, 163, 184, 0.45);
+        border-radius: 9999px;
+      }
+
+      .tcc-page-main-inner .tcc-panel::-webkit-scrollbar-thumb:hover {
+        background: rgba(148, 163, 184, 0.7);
+      }
+
+      /* Guide manual 里的有序列表美化（沿用 Schedule Visualization） */
+      .tcc-page-main-inner .tcc-panel ol.list-decimal {
+        margin-top: 0.75rem;
+        padding-left: 1.1rem;
+      }
+
+      .tcc-page-main-inner .tcc-panel ol.list-decimal > li {
+        padding-top: 0.55rem;
+        margin-top: 0.2rem;
+        border-top: 1px dashed rgba(148, 163, 184, 0.25);
+      }
+
+      .tcc-page-main-inner .tcc-panel ol.list-decimal > li:first-child {
+        border-top: 0;
+      }
+
+      .tcc-page-main-inner .tcc-panel ol.list-decimal > li > div:first-child {
+        display: inline-block;
+        margin-left: 0.3rem;
+        font-weight: 600;
+        color: #e5e7eb;
+      }
+
+      .tcc-page-main-inner .tcc-panel ul.list-disc {
+        margin-top: 0.3rem;
+        padding-left: 1.1rem;
+        font-size: 0.9rem;
+        color: #cbd5f5;
+      }
+
+      .tcc-page-main-inner .tcc-panel ul.list-disc li + li {
+        margin-top: 0.25rem;
+      }
+
+      /* ===== 自适应：小屏改为纵向排布，去掉高度限制 ===== */
+      @media (max-width: 900px) {
+        .tcc-page-hero {
+          padding-block: 2.4rem 1.9rem;
+        }
+
+        .tcc-page-hero-inner {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 1.9rem;
+        }
+
+        .tcc-page-main {
+          padding: 1.8rem 1.25rem 2.3rem;
+        }
+
+        .tcc-page-main-inner {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 1.6rem;
+        }
+
+        .tcc-page-main-inner .tcc-panel {
+          max-height: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="tcc-site">
+            <!-- ========== HEADER ========== -->
+      <header class="tcc-header">
+        <div class="tcc-nav-inner">
+          <a href="index.html" class="tcc-brand">
+            <img src="./Logo2.png" alt="TCC logo" style="height: 100px; width: 120px; object-fit: contain;" />
+            <div>
+              <div class="tcc-brand-text-main">Trench Canada Coils</div>
+              <div class="tcc-brand-text-sub">
+                A LEGACY OF INNOVATION
+              </div>
+            </div>
+          </a>
+
+          <nav class="tcc-nav-links">
+            <!-- HOME -->
+            <a href="index.html" class="tcc-nav-link">Home</a>
+
+            <!-- SYSTEMS 下拉菜单 -->
+            <div
+              class="tcc-nav-dropdown"
+              style="position: relative;"
+              onmouseleave="document.getElementById('tcc-systems-menu').style.display='none';"
+            >
+              <div
+                type="button"
+                class="tcc-nav-link"
+                aria-haspopup="true"
+                aria-expanded="false"
+                onmouseover="document.getElementById('tcc-systems-menu').style.display='flex';"
+                onfocus="document.getElementById('tcc-systems-menu').style.display='flex';"
+                onclick="const m=document.getElementById('tcc-systems-menu'); m.style.display = (m.style.display==='flex'?'none':'flex');"
+              >
+                Systems
+                <i
+                  class="fas fa-chevron-down"
+                  style="margin-left: 0.25rem; font-size: 0.7em;"
+                ></i>
+              </div>
+
+              <!-- 下拉列表：五个 systems -->
+              <div
+                id="tcc-systems-menu"
+                style="
+                  display: none;
+                  position: absolute;
+                  top: 100%;
+                  right: 0;
+                  padding: 0.4rem 0;
+                  background: rgba(15, 23, 42, 0.98);
+                  border-radius: 0.5rem;
+                  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.8);
+                  min-width: 220px;
+                  z-index: 50;
+                  flex-direction: column;
+                "
+              >
+                <a
+                  href="systems-portal.html"
+                  target="_blank"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Systems Portal
+                </a>
+                <a
+                  href="prodorder-status.html"
+                  target="_blank"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Production Order Status
+                </a>
+                <a
+                  href="schedule-visualization.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Schedule Visualization
+                </a>
+                <a
+                  href="backend-status.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Backend Status System
+                </a>
+                <a
+                  href="frontend-status.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Frontend Status System
+                </a>
+                <a
+                  href="machine-load-recalculation-studio.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Machine Load Recalculation Studio
+                </a>
+                <a
+                  href="load-vs-capacity.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Load vs Capacity
+                </a>
+                <a
+                  href="andon-board.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Production Andon Board
+                </a>
+                <a
+                  href="enhanced-oms.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Enhanced OMS
+                </a>
+              </div>
+            </div>
+
+            <!-- NOTES & UPDATES -->
+            <a href="notes-updates.html" class="tcc-nav-link">
+              Notes &amp; Updates
+            </a>
+
+            <!-- AI ASSISTANT -->
+            <a
+              href="../../demo-apps/ai-assistant-demo.html"
+              class="tcc-nav-link"
+              data-ai-assistant-link="1"
+            >
+              AI ASSISTANT
+            </a>
+          </nav>
+
+          <button class="tcc-nav-toggle" aria-label="Toggle navigation">
+            <span></span>
+          </button>
+        </div>
+      </header>
+
+      <main class="tcc-main">
+        <!-- HERO -->
+        <section class="tcc-page-hero tcc-fade-in-on-load">
+          <div class="tcc-page-hero-inner">
+            <div class="reveal-on-scroll">
+              <div class="tcc-page-breadcrumb">
+                Scheduling Systems · Andon Board
+              </div>
+              <h1 class="tcc-page-title">Production Work Center Andon Board</h1>
+              <p class="tcc-page-subtitle">
+                Large-screen, workcenter-based view of today&apos;s production orders,
+                combining live confirmations from ForeSoght with planned hours and planned
+                time windows from SQL ProdOrderSchedule database to support on-the-floor conversations
+                and shift handovers.
+              </p>
+              <div class="tcc-page-hero-badges">
+                <span class="tcc-badge">
+                  <i class="fas fa-database"></i>
+                  Live confirmations + plan hours
+                </span>
+                <span class="tcc-badge">
+                  <i class="fas fa-user-cog"></i>
+                  Today Real Time Andon view
+                </span>
+              </div>
+            </div>
+
+            <div class="tcc-page-hero-visual reveal-on-scroll">
+              <div class="tcc-page-hero-card">
+                <h3>How to use this Andon Board</h3>
+                <ul>
+                  <li>
+                    Open the board from the internal TCC network
+                  </li>
+                  <li>
+                    Use the Workcenter search box to select
+                    the line or center.
+                  </li>
+                  <li>
+                    The board shows confirmations whose start time is today.
+                  </li>
+                  <li>
+                    Data refreshes automatically every 2 minutes.
+                  </li>
+                  <li>
+                    This view is optimized for big factory-floor screens.
+                </ul>
+                <div class="tcc-tag-row">
+                  <span class="tcc-tag">Source: ForeSight Confirmations</span>
+                  <span class="tcc-tag">SQL Production Order Schedule (plan hrs)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- MAIN CONTENT -->
+        <section class="tcc-page-main">
+          <div class="tcc-page-main-inner">
+            <!-- Left: Guide Manual -->
+            <article class="tcc-panel reveal-on-scroll">
+              <h3>Guide Manual</h3>
+              <p>
+                This guide explains how to use the
+                <strong>Production Order Andon Board</strong> for daily line-up,
+                stand-up meetings and shift handovers. It reads live confirmations
+                from the LUSCA database and planned hours / time windows from the
+                <strong>ProdOrderSchedule</strong> ODC file, and presents a single
+                &quot;today&quot; view per workcenter.
+              </p>
+
+              <ol class="list-decimal list-inside space-y-3">
+                <!-- 1. OVERVIEW -->
+                <li>
+                  <div><strong>Andon board overview</strong></div>
+                  <p>
+                    The Andon board is the landing view. It always focuses on one
+                    workcenter at a time and shows orders whose start time is
+                    today. The top summary band aggregates total plan hours, total
+                    actual hours and the Dev Accum. for all
+                    orders currently on the board.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      Change the <strong>Workcenter</strong> in the header to switch
+                      to a different line or center.
+                    </li>
+                    <li>
+                      Use this board when you need a quick answer to
+                      &quot;What is running now, what is next, and how are we tracking
+                      against plan today?&quot;.
+                    </li>
+                    <li>
+                      Keep the board open on a large screen close to the work area
+                      throughout the shift so everyone can see the current sequence
+                      and status.
+                    </li>
+                  </ul>
+                </li>
+
+                <!-- 2. WORKCENTER SELECTION -->
+                <li>
+                  <div>
+                    <strong>
+                      Workcenter selection &amp; search
+                    </strong>
+                  </div>
+                  <p>
+                    The header area of the Andon board contains a Workcenter search box
+                    and a dropdown. These are populated from the distinct list of
+                    workcenters in the underlying <strong>confirmations</strong> table.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      Use the search box to type part of a workcenter name; the board
+                      will highlight the first match and update the dropdown.
+                    </li>
+                    <li>
+                      Use the dropdown when you want to directly jump to another
+                      workcenter.
+                    </li>
+                    <li>
+                      While the board is loading data, the controls are temporarily
+                      disabled to avoid switching workcenters mid-refresh.
+                    </li>
+                  </ul>
+                </li>
+
+                <!-- 3. SUMMARY BAND -->
+                <li>
+                  <div>
+                    <strong>Summary band (Plan / Actual / Dev Accum.)</strong>
+                  </div>
+                  <p>
+                    The summary band at the top of the table shows three core metrics
+                    for today&apos;s orders in the selected workcenter:
+                    <strong>Plan Hours</strong>, <strong>Actual Hours</strong> and
+                    <strong>Dev Accum.</strong>.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      <strong>Plan Hours</strong> comes from the planned hours in
+                      ProdOrderSchedule (Stdhrs) aggregated by production order and
+                      matched to the confirmations.
+                    </li>
+                    <li>
+                      <strong>Actual Hours</strong> is calculated from the confirmed
+                      start and end times (or from the database actual time field)
+                      for completed orders.
+                    </li>
+                    <li>
+                      <strong>Dev Accum.</strong> is the difference (Actual minus Plan)
+                      across all completed orders for that workcenter today; the text
+                      is green when the center is on or ahead of plan and red when it
+                      is behind plan.
+                    </li>
+                  </ul>
+                </li>
+
+                <!-- 4. MAIN TABLE -->
+                <li>
+                  <div><strong>Main table (STEP, SEQ, ITEM, STD HRs, PLAN TIME, ACTUAL TIME, STATUS)</strong></div>
+                  <p>
+                    The main table lists today&apos;s orders for the selected
+                    workcenter in the sequence they are or will be processed. Each
+                    row corresponds to one confirmation row grouped into a daily
+                    sequence.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      <strong>STEP</strong> shows the position in the flow:
+                      <em>Now</em>, <em>Next</em>, subsequent <em>SEQ&nbsp;n</em>, or
+                      <em>completed</em> when everything is finished.
+                    </li>
+                    <li>
+                      <strong>SEQ</strong> is a simple sequence number for today
+                      (1, 2, 3, …) based on serial number and start time.
+                    </li>
+                    <li>
+                      <strong>ITEM</strong> displays the production order number
+                      (P.O.), normalized so that leading zeros do not matter when
+                      matching to ProdOrderSchedule.
+                    </li>
+                    <li>
+                      <strong>STD HRs</strong> shows the planned hours for that order
+                      in the selected workcenter, based on the joined schedule data.
+                    </li>
+                    <li>
+                      <strong>PLAN TIME</strong> shows the planned start and end
+                      window for that order in the workcenter, as derived from
+                      ProdOrderSchedule.
+                    </li>
+                    <li>
+                      <strong>ACTUAL TIME</strong> shows the confirmed start and end
+                      timestamp for the order today. If the end time is not yet
+                      recorded, the board shows <em>XX:XX</em> as the placeholder.
+                    </li>
+                    <li>
+                      <strong>STATUS</strong> shows any comments or short text
+                      recorded in the confirmations table for that row.
+                    </li>
+                  </ul>
+                </li>
+
+                <!-- 5. COLOUR LOGIC -->
+                <li>
+                  <div><strong>Colour logic &amp; legend</strong></div>
+                  <p>
+                    The Andon board uses a simple colour scheme so the status of each
+                    order can be read at a glance from across the shop floor.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      The row marked as <strong>Now</strong> (in progress) is shown in
+                      blue and also gets an inset blue bar on the left of the row.
+                    </li>
+                    <li>
+                      Future sequences without an end time are shown in grey; they
+                      still display their planned window and standard hours.
+                    </li>
+                    <li>
+                      Completed orders are coloured green when the aggregated actual
+                      time for that production order is on or ahead of plan, and red
+                      when actual time has exceeded the planned hours.
+                    </li>
+                    <li>
+                      Alternate dark backgrounds are used for readability when no
+                      special colour applies.
+                    </li>
+                  </ul>
+                </li>
+
+                <!-- 6. DATA SCOPE -->
+                <li>
+                  <div><strong>Data scope and limits (today-only view)</strong></div>
+                  <p>
+                    The Andon board focuses strictly on <strong>today&apos;s</strong>
+                    work in the selected workcenter. It is not intended to be a
+                    historical or multi-day analysis tool.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      Only rows where the confirmation <strong>start time</strong> is
+                      on the same calendar day as the current time (America/Toronto
+                      time zone) are displayed.
+                    </li>
+                    <li>
+                      When there are no matching rows, the board explicitly shows
+                      &quot;No orders with today&apos;s start time.&quot;.
+                    </li>
+                    <li>
+                      For older history or multi-day backlog analysis, use the
+                      Schedule Visualization, Load vs Capacity, or other reporting
+                      tools instead of the Andon board.
+                    </li>
+                  </ul>
+                </li>
+
+                <!-- 7. REFRESH BEHAVIOUR -->
+                <li>
+                  <div>
+                    <strong>Refresh behaviour &amp; stability</strong>
+                  </div>
+                  <p>
+                    The board refreshes itself so it stays up to date without manual
+                    intervention, while avoiding unnecessary load on the data sources.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      The frontend automatically calls the workcenter board endpoint
+                      every 2 minutes to update today&apos;s sequence and status.
+                    </li>
+                    <li>
+                      The ProdOrderSchedule data is cached on the server so it is only
+                      refreshed at most once per day, even if the frontend is refreshed
+                      more often.
+                    </li>
+                    <li>
+                      If an API error occurs, the board surfaces a red error chip but
+                      retains the last known-good data to avoid a blank screen during
+                      the shift.
+                    </li>
+                  </ul>
+                </li>
+
+                <!-- 8. DAILY USE PATTERN -->
+                <li>
+                  <div><strong>Daily use pattern &amp; responsibilities</strong></div>
+                  <p>
+                    The Andon board is designed as a shared visual tool. It does not
+                    implement per-user roles; instead, the use pattern is managed by
+                    supervisors and the scheduling team.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      Supervisors or team leads decide which workcenter to show on the
+                      board at different times of day.
+                    </li>
+                    <li>
+                      Use the board during stand-up meetings, start-of-shift checks and
+                      handovers to align on what is running now, what is next and how
+                      the center is tracking against plan.
+                    </li>
+                    <li>
+                      When repeated issues or large negative deviations are observed,
+                      combine insights from the Andon board with detailed backlog and
+                      schedule reports to identify root causes.
+                    </li>
+                  </ul>
+                </li>
+              </ol>
+
+              <p style="margin-top: 0.75rem; font-size: 0.8rem; color: #9ca3af">
+                General suggestion: use the
+                <strong>Production Order Andon Board</strong> during the shift for
+                live conversations about current work and plan vs actual, and use the
+                <strong>Schedule Visualization</strong>, <strong>Load vs Capacity</strong>
+                and backlog-style tools when you need a longer-term or cross-center
+                view.
+              </p>
+            </article>
+
+            <!-- Right: System link + API guide -->
+            <article class="tcc-panel reveal-on-scroll">
+              <h3>API guide for Andon Board</h3>
+
+              <p>
+                Open the Andon board from inside the internal network.
+                For best results, run it in full-screen mode on a large monitor or TV
+                in the work area. The initial load will take about 1–2 minutes while
+                centers and today&apos;s data are loaded.
+              </p>
+
+              <p style="margin-top: 0.75rem">
+                <a
+                  href="../../demo-apps/andon-board-demo.html"
+                  target="_blank"
+                  class="tcc-link-inline"
+                  style="font-size: 0.95rem"
+                >
+                  <i class="fas fa-external-link-alt"></i>
+                  Open Production Order Andon Board
+                </a>
+              </p>
+
+              <div class="tcc-tag-row">
+                <span class="tcc-tag">URL: Demo preview</span>
+                <span class="tcc-tag">Status: Normal</span>
+              </div>
+
+              <hr style="margin: 1.2rem 0; border-color: rgba(148,163,184,0.45)" />
+
+              <!-- 1. Workcenter list & board data -->
+              <h4>1. Workcenter list &amp; live board data</h4>
+              <dl style="margin: 0 0 0.6rem 0;">
+                <dt>GET /api/workcenter/list</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Return the distinct list of workcenters from the
+                  <code>confirmations</code> table in the <strong>lusca</strong>
+                  Postgres database. Used to populate the Workcenter dropdown and
+                  search box in the Andon board header.
+                </dd>
+
+                <dt>GET /api/workcenter/board?name=WELD2</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Return all confirmation rows for the specified workcenter. The
+                  server sorts by <code>serial</code> and <code>starttime</code>;
+                  the frontend then filters to today&apos;s rows, calculates STEP / SEQ
+                  labels, applies colour logic and builds the table view.
+                </dd>
+
+                <dt>Source: lusca.confirmations</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Both endpoints read from the same underlying
+                  <code>confirmations</code> table. Only read-only SELECT queries are
+                  allowed; there are no write endpoints in this Andon board backend.
+                </dd>
+              </dl>
+
+              <!-- 2. Planned schedule / ProdOrderSchedule -->
+              <h4>2. Planned schedule (ProdOrderSchedule ODC)</h4>
+              <dl style="margin: 0 0 0.6rem 0;">
+                <dt>ODC path: ODBC_ODC_PATH_PRODORDERSCHEDULE</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Environment variable pointing to the ProdOrderSchedule ODC file.
+                  The backend uses a helper to import this file and expose the data as
+                  JSON rows.
+                </dd>
+
+                <dt>GET /api/prodorderschedule</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Load rows from ProdOrderSchedule via the ODC helper. The server
+                  keeps up to the first 15,000 rows to protect memory. The frontend
+                  builds a plan-hours map from these rows to join against the
+                  confirmations (by normalized production order and workcenter).
+                </dd>
+
+                <dt>GET /api/prodorderschedule?workcenter=WELD2</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  When a workcenter query parameter is provided, the server filters
+                  the schedule rows to that center before returning them. This allows
+                  callers to inspect just one center&apos;s planned hours if needed.
+                </dd>
+              </dl>
+
+              <!-- 3. Join & normalization logic -->
+              <h4>3. Join &amp; normalization logic</h4>
+              <dl style="margin: 0 0 0.6rem 0;">
+                <dt>Order &amp; center normalization</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Both backend and frontend normalize production order IDs
+                  (removing non-digits and leading zeros) and workcenter names
+                  (uppercasing and trimming) so that values from
+                  <code>confirmations</code> and ProdOrderSchedule can be reliably
+                  matched.
+                </dd>
+
+                <dt>Plan hours &amp; planned window fields</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  After the join, each confirmation row may receive additional fields:
+                  <code>planHoursFromSchedule</code> and planned start / end date / time
+                  fields. These are used to compute <strong>STD HRs</strong> and the
+                  <strong>PLAN TIME</strong> text for each row in the Andon board.
+                </dd>
+              </dl>
+
+              <!-- 4. Refresh & caching -->
+              <h4>4. Refresh &amp; caching behaviour</h4>
+              <dl style="margin: 0 0 0.6rem 0;">
+                <dt>ProdOrderSchedule cache (24h)</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  The server caches the ProdOrderSchedule data in memory and reloads
+                  it at most once every 24 hours. Subsequent calls to
+                  <code>/api/prodorderschedule</code> during that window return the
+                  cached rows.
+                </dd>
+
+                <dt>Frontend auto-refresh (2 min)</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  The React frontend calls <code>/api/workcenter/board</code> on a
+                  fixed interval (every 2 minutes) for the currently selected
+                  workcenter, rebuilding today&apos;s sequence while keeping the
+                  board open on screen.
+                </dd>
+              </dl>
+
+              <!-- 5. Deployment & URL -->
+              <h4>5. Deployment &amp; URL</h4>
+              <dl style="margin: 0 0 0.6rem 0;">
+                <dt>Default port: 5004</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  By default the Andon board backend listens on port
+                  <code>5004</code>. The same process serves the built React app and
+                  the JSON APIs, so the browser only needs to talk to one host:port.
+                </dd>
+
+                <dt>Static React build</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  The <code>client/build</code> folder is served as static assets.
+                  Unknown routes fall back to <code>index.html</code> so the frontend
+                  router can handle navigation.
+                </dd>
+              </dl>
+
+              <!-- 6. Responses & errors -->
+              <h4>6. Responses &amp; errors</h4>
+              <p style="margin: 0 0 0.25rem 0.9rem; font-size: 0.9rem;">
+                <strong>All endpoints return JSON.</strong> On failure the server
+                uses HTTP <strong>4xx/5xx</strong> codes and includes
+                <strong>ok:false</strong> and an <strong>error</strong> message where
+                applicable so you can quickly see what went wrong in the browser
+                Network tab or in logs.
+              </p>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <footer class="tcc-footer">
+        <div class="tcc-footer-inner">
+          <span>© 2025 Trench Canada · Scheduling Team</span>
+          <span>
+            Production Order Andon Board · Version 1.0 · Designed &amp; Maintained by
+            Yanbo Wang (FY2025)
+          </span>
+        </div>
+      </footer>
+    </div>
+
+    <!-- full-screen marquee border overlay -->
+    <div id="tcc-marquee-border" aria-hidden="true"></div>
+
+    <!-- main UI script -->
+    <script src="assets/js/main.js"></script>
+
+    <!-- AI ASSISTANT hover -> glow + click -> jump -->
+    <script>
+      (function () {
+        const AI_URL = "../../demo-apps/ai-assistant-demo.html";
+
+        function glowOn() {
+          document.body.classList.add("tcc-marquee-on");
+        }
+
+        function glowOff() {
+          document.body.classList.remove("tcc-marquee-on");
+        }
+
+        function goAiAssistant(e) {
+          if (e) e.preventDefault();
+          glowOn(); // 点击时也顺便亮一下（不影响：马上跳转页面）
+          setTimeout(() => {
+            window.location.href = AI_URL;
+          }, 380);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+          const nodes = document.querySelectorAll("[data-ai-assistant-link='1']");
+          nodes.forEach((el) => {
+            // ✅ 鼠标移上去就生效
+            el.addEventListener("mouseenter", glowOn);
+            el.addEventListener("mouseleave", glowOff);
+
+            // ✅ 键盘 tab 聚焦也生效（更完整）
+            el.addEventListener("focus", glowOn);
+            el.addEventListener("blur", glowOff);
+
+            // ✅ 点击仍然跳转
+            el.addEventListener("click", goAiAssistant);
+          });
+        });
+      })();
+    </script>
+
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>

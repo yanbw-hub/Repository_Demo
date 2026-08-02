@@ -1,0 +1,3251 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+
+    <title>TCC Load vs Capacity – Scheduling Systems Portal</title>
+
+    <!-- Favicon / logo -->
+    <link rel="icon" type="image/png" sizes="32x32" href="./Logo.png" />
+
+    <!-- Google Font: IBM Plex Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Audiowide&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
+
+    <!-- Existing JS/CSS bundles -->
+    <script src="./javascript/reload.js"></script>
+    <script src="./1986481368401444864/resource_5784810000.js"></script>
+    <link href="./1986481368401444864/all.min.css" rel="stylesheet" />
+    <link href="./1986481368401444864/tailwind.min.css" rel="stylesheet" />
+
+    <style>
+      /* ========================
+         GLOBAL FONT + BASE
+      ========================= */
+      html,
+      body,
+      * {
+        font-family: "IBM Plex Sans", system-ui, Segoe UI, Arial, sans-serif;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        background-color: #f8fafc; /* slate-50 style */
+        color: #0f172a; /* slate-900 */
+      }
+
+      /* ========================
+         CONFIG VARIABLES
+      ========================= */
+      :root {
+        /* Header height */
+        --nav-height: 72px;
+
+        /* Cover overlay transparency */
+        --cover-overlay-opacity: 0.42;
+
+        /* Page background transparency (white pages) */
+        --page-bg-opacity: 0.96;
+
+        /* Page background transparency (alternate light pages) */
+        --page-bg-alt-opacity: 0.96;
+
+        /* Hero title gradient colors */
+        --hero-grad-start: #fafafa;
+        --hero-grad-mid:   #3f91c3;
+        --hero-grad-end:   #2e619a;
+      }
+
+      /* ========================
+         GLOBAL LAYOUT
+      ========================= */
+      .site {
+        width: 100vw;
+        min-height: 100vh;
+        overflow-x: hidden;
+        background-color: #000;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .wrap {
+        /* FULL WIDTH – no centered max-width, no side empty gutters */
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      main {
+        flex: 1;
+        margin-top: var(0);
+        width: 100%;
+      }
+
+      /* Each "page" (section) fills the viewport (header already accounted for) */
+      .page-section-cover {
+        height: calc(100vh);
+        width: 100%;
+      }
+
+      .page-section {
+        height: calc(100vh - var(--nav-height));
+        width: 100%;
+      }
+
+      .page-inner {
+        height: 100%;
+        min-height: 0;
+        width: 100%;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .page-bg-white {
+        background-color: rgba(0, 0, 0, var(--page-bg-opacity));
+      }
+
+      .page-bg-slate {
+        background-color: rgba(0, 0, 0, var(--page-bg-alt-opacity));
+      }
+
+      /* ========================
+         HEADER (App.js style)
+      ========================= */
+      .site-nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        height: var(--nav-height);
+        background: rgba(0, 0, 0, 0.4); /* dark navy */
+        backdrop-filter: blur(14px);
+        border-bottom: 1px solid rgba(148, 163, 184, 0.5);
+      }
+
+      .nav-inner {
+        height: 100%;
+        width: 100%;
+        padding: 0 2.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .brand-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        text-decoration: none;
+      }
+
+      .brand-mark {
+        height: 45px;
+        width: auto;
+        object-fit: contain;
+        flex-shrink: 0;
+      }
+
+      .brand-text {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .brand-title {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 0.35rem;
+        font-size: 0.875rem;
+        color: #e5e7eb;
+      }
+
+      .brand-sep {
+        color: #fff;
+      }
+
+      .brand-strong {
+        font-weight: 600;
+        font-size: 1.2rem;
+        text-transform: uppercase;
+      }
+
+      .brand-light {
+        font-weight: 500;
+        letter-spacing: 0.04em;
+        font-size: 0.8rem;
+        color: #f9f3ea;
+        text-transform: uppercase;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        font-size: 1rem;
+      }
+
+      .nav-link {
+        position: relative;
+        color: #fcf5e2;
+        text-decoration: none;
+        padding-bottom: 2px;
+        text-transform: uppercase
+      }
+
+      .nav-link:hover {
+        color: #e5e7eb;
+      }
+
+      .nav-link::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -4px;
+        width: 0;
+        height: 2px;
+        background: linear-gradient(to right, #38bdf8, #a855f7);
+        border-radius: 999px;
+        transition: width 0.18s ease-out;
+      }
+
+      .nav-link.active::after,
+      .nav-link:hover::after {
+        width: 100%;
+      }
+
+      .time-badge {
+        padding: 0.3rem 0.9rem;
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid rgba(148, 163, 184, 0.7);
+        color: #e2e8f0;
+        font-size: 0.75rem;
+      }
+
+      @media (max-width: 768px) {
+        .nav-inner {
+          padding: 0 1rem;
+        }
+
+        .nav-links {
+          display: none;
+        }
+      }
+
+      /* ========================
+         COVER PAGE (hero)
+      ========================= */
+      .hero {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        background-color: #020617;
+      }
+
+      .hero-cover {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: saturate(110%);
+      }
+
+      .hero-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          to right,
+          rgba(0,0,0, var(--cover-overlay-opacity)),
+          rgba(0,0,0, calc(var(--cover-overlay-opacity) * 0.9)),
+          rgba(0,0,0, calc(var(--cover-overlay-opacity) * 0.65))
+        );
+      }
+
+      .hero-inner {
+        position: relative;
+        z-index: 1;
+        height: 100%;
+        width: 100%;
+        padding: 1.5rem 2.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 3rem;
+        color: #e5e7eb;
+      }
+
+      .hero-left {
+        max-width: 90%;
+        margin-left: 8vw;
+
+        position: relative;
+
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        align-self: stretch;
+
+        padding-bottom: 3rem;
+      }
+
+      .hero-title-block {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%); /* <-- THIS puts it exactly at 50% vertically */
+        width: 100%;
+      }
+
+      .hero-title-primary {
+        font-size: clamp(1.5rem, 5vw, 2.5rem);
+        font-weight: 1000;
+        text-transform: uppercase;
+
+        /* 渐变文字 */
+        background-image: linear-gradient(
+          120deg,
+          var(--hero-grad-start),
+          var(--hero-grad-mid),
+          var(--hero-grad-end)
+        );
+        background-size: 160% 160%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+
+        text-shadow: 0 14px 40px rgba(229, 231, 235, 0.55);
+        margin: 0;
+      }
+
+      .hero-title-secondary {
+        font-family: "Russo One", system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+
+        font-size: clamp(7rem, 12vw, 7rem);
+        font-weight: 500;
+
+        position: relative;
+
+        letter-spacing: 0.05em;
+
+        /* 更醒目的同款渐变 */
+        background-image: linear-gradient(
+          115deg,
+          var(--hero-grad-start),
+          var(--hero-grad-mid),
+          var(--hero-grad-end)
+        );
+        background-size: 180% 180%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+
+        text-shadow:
+            0 0 12px rgba(255, 255, 255, 0.6),
+            3px 0 0 #fff,
+            -3px 0 0 #00e5ff,
+            0 3px 0 #ffd54a;
+
+        display: inline-block;
+        transform: skewX(-5deg) scaleY(1.3);
+        transform-origin: left center;
+
+        margin: 0.2rem 0 0;
+      }
+
+      /* RGB 错位的两层“幽灵”字形 */
+      .hero-title-secondary::before,
+      .hero-title-secondary::after {
+        content: attr(data-text);
+        position: absolute;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        opacity: 0.6;
+      }
+
+      /* 蓝色偏移层 */
+      .hero-title-secondary::before {
+        color: #00e5ff;
+        text-shadow: -2px 0 6px rgba(0, 229, 255, 0.9);
+        mix-blend-mode: screen;
+        transform: translate(3px, 0);
+        animation: glitch-blue 2.2s infinite linear alternate-reverse;
+      }
+
+      /* 红色偏移层 */
+      .hero-title-secondary::after {
+        color: #ff2d55;
+        text-shadow: 2px 0 6px rgba(255, 45, 85, 0.9);
+        mix-blend-mode: screen;
+        transform: translate(-3px, 0);
+        animation: glitch-red 2.8s infinite linear alternate-reverse;
+      }
+
+      /* 轻微抖动的 glitch 动画 */
+      @keyframes glitch-blue {
+        0%   { transform: translate(3px, 0); }
+        20%  { transform: translate(2px, -1px); }
+        40%  { transform: translate(4px, 1px); }
+        60%  { transform: translate(3px, -2px); }
+        80%  { transform: translate(2px, 2px); }
+        100% { transform: translate(3px, 0); }
+      }
+
+      @keyframes glitch-red {
+        0%   { transform: translate(-3px, 0); }
+        20%  { transform: translate(-4px, 1px); }
+        40%  { transform: translate(-2px, -1px); }
+        60%  { transform: translate(-3px, 2px); }
+        80%  { transform: translate(-4px, -2px); }
+        100% { transform: translate(-3px, 0); }
+      }
+
+      .hero-sub {
+        margin-top: 1rem;
+        font-size: 1.2rem;
+        color: #cbd5f5;
+      }
+
+      .hero-meta {
+        margin-top: 1rem;
+        font-size: 0.8rem;
+        color: #94a3b8;
+      }
+
+      .section-kicker {
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: #fff;
+      }
+
+      .hero-quick {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+
+        position: absolute;
+        left: 0;
+        bottom: 3rem;
+      }
+
+      .btn-ghost {
+        border-radius: 999px;
+        padding: 1rem 2.5rem;
+        border: 1px solid rgba(148, 163, 184, 0.85);
+        background: rgba(15, 23, 42, 0.25);
+        color: #e5e7eb;
+        font-size: 1.5rem;
+        font-weight: 400;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        transition: all 0.16s ease-out;
+      }
+
+      .btn-ghost:hover {
+        border-color: #38bdf8;
+        background: radial-gradient(circle at top left, #0ea5e9 0, #020617 55%);
+        box-shadow: 0 18px 45px rgba(15, 23, 42, 0.75);
+        transform: translateY(-1px);
+      }
+
+      .hero-right-card {
+        background: rgba(15, 23, 42, 0.85);
+        border-radius: 1.25rem;
+        border: 1px solid rgba(148, 163, 184, 0.4);
+        box-shadow: 0 14px 50px rgba(15, 23, 42, 0.9);
+        padding: 1.75rem 1.5rem;
+        width: 100%;
+        max-width: 420px;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        font-size: 0.8rem;
+      }
+
+      .hero-right-title {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #e5e7eb;
+      }
+
+      .hero-right-list {
+        margin-top: 0.5rem;
+        color: #cbd5f5;
+        padding-left: 1.1rem;
+      }
+
+      .hero-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.25rem 0.7rem;
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px solid rgba(148, 163, 184, 0.7);
+        color: #e5e7eb;
+        font-size: 0.75rem;
+      }
+
+      .hero-tag-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 999px;
+        background: #22c55e;
+        box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.25);
+      }
+
+      @media (max-width: 1024px) {
+        .hero-inner {
+          flex-direction: column;
+          align-items: flex-start;
+          justify-content: center;
+          padding: 1.5rem 1.25rem;
+        }
+        .hero-left {
+          max-width: 100%;
+        }
+        .hero-right-card {
+          max-width: 100%;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .hero-title-primary {
+          font-size: 2.1rem;
+        }
+        .hero-title-secondary {
+          font-size: 2.8rem;
+        }
+        .btn-ghost {
+          font-size: 0.9rem;
+          padding: 0.7rem 1.3rem;
+        }
+      }
+
+      /* ========================
+         PAGE STRUCTURE HELPERS
+      ========================= */
+      .section-header {
+        margin-bottom: 0.25rem;
+      }
+
+      .section-title-main {
+        font-size: 1.7rem;
+        font-weight: 700;
+        color: #fff;
+      }
+
+      .section-sub {
+        margin-top: 0.4rem;
+        font-size: 0.9rem;
+        color: #fff;
+      }
+
+      .section-main-flex {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        padding: 1.5rem 2.5rem;
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+      }
+
+      .section-two-cols {
+        flex: 1;
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        grid-template-rows: minmax(0, 1fr);
+        gap: 1.5rem;
+        width: 100%;
+        min-height: 0;
+      }
+
+      .section-grid-3 {
+        flex: 1;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1.25rem;
+        width: 100%;
+      }
+
+      @media (max-width: 1024px) {
+        .section-two-cols {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .section-grid-3 {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 768px) {
+        .section-grid-3 {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .section-main-flex {
+          padding: 1.25rem 1rem;
+        }
+      }
+
+      .card-fill {
+        display: flex;
+        flex-direction: column;
+        max-height: 100%;
+        padding: 1.25rem;
+        border-radius: 0.9rem;
+        border: 1px solid #e5e7eb;
+        background: rgba(255, 255, 255, 0);
+      }
+
+      .card-soft {
+        background: rgba(248, 250, 252, 0);
+      }
+
+      .card-title-sm {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #020617;
+        margin-bottom: 0.35rem;
+      }
+
+      .op-guide-body {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        padding-right: 0.4rem; /* small space so scrollbar doesn’t sit on text */
+      }
+
+      .card-text-sm {
+        font-size: 1rem;
+        color: #8daec3;
+        flex: 1;
+      }
+
+      .card-text-sm ol.list-decimal > li > div:first-child {
+        display: inline-block;
+        margin-left: 0.25rem;     /* small space after the number */
+      }
+
+      .card-footer-sm {
+        margin-top: 0.75rem;
+        font-size: 0.75rem;
+        color: #6b7280;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .chip-status {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.7rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+
+      .chip-blue {
+        background-color: #eff6ff;
+        color: #1d4ed8;
+      }
+
+      .chip-green {
+        background-color: #ecfdf5;
+        color: #15803d;
+      }
+
+      .chip-amber {
+        background-color: #fffbeb;
+        color: #92400e;
+      }
+
+      .chip-neutral {
+        background-color: #f3f4f6;
+        color: #374151;
+      }
+
+      .page-footnote {
+        margin-top: 0.5rem;
+        font-size: 0.75rem;
+        color: #6b7280;
+      }
+
+      footer {
+        border-top: 1px solid #e5e7eb;
+        background: #000;
+        font-size: 0.7rem;
+        color: #fff;
+        width: 100%;
+      }
+
+      .footer-inner {
+        width: 100%;
+        padding: 0.75rem 2.5rem;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      @media (max-width: 768px) {
+        .footer-inner {
+          padding: 0.75rem 1rem;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="site">
+      <!-- ===================== HEADER ===================== -->
+      <header class="site-nav">
+        <div class="wrap nav-inner">
+          <a class="brand-link" href="#page1-cover">
+            <img
+              class="brand-mark"
+              src="./Logo2.png"
+              alt="Logo"
+            />
+            <div class="brand-text">
+              <div class="brand-title">
+                <span class="brand-sep">|</span>
+                <span class="brand-strong">Trench Canada Coils</span>
+                <span class="brand-sep">|</span>
+                <span class="brand-light">A legacy of innovation</span>
+              </div>
+            </div>
+          </a>
+
+          <nav class="nav-links">
+            <a href="#page1-cover" class="nav-link">home</a>
+            <a href="#page2-systems" class="nav-link">Systems Portal</a>
+            <a href="#page2-system1" class="nav-link">Schedule Visualization</a>
+            <a href="#page3-system2" class="nav-link">Backend</a>
+            <a href="#page4-system3" class="nav-link">Load vs Capacity</a>
+            <a href="#page5-notes" class="nav-link">Notes & Updates</a>
+          </nav>
+        </div>
+      </header>
+
+      <main>
+        <!-- ===================== PAGE 1 – COVER PAGE ===================== -->
+        <section
+          id="page1-cover"
+          class="page-section-cover hero"
+        >
+          <img
+            class="hero-cover"
+            src="./data/image11.jpg"
+            alt="Cover"
+          />
+          <div class="hero-overlay"></div>
+
+          <div class="hero-left">
+          <!-- NEW wrapper to vertically center the title block -->
+          <div class="hero-title-block">
+            <h1 class="hero-title-primary">
+              TCC Planning and Scheduling
+            </h1>
+            <h1 class="hero-title-secondary" data-text="Software">
+              Software & Database
+            </h1>
+            <h1 class="hero-title-secondary" data-text="Major Dashboard">
+              Major Dashboard
+            </h1>
+
+            <p class="hero-sub">
+              Created by: <strong>Yanbo Wang</strong> · Supervisor:
+              <strong>Sakthi Sharadha</strong> · FY2025
+            </p>
+          </div>
+
+          <!-- Keep the buttons exactly as before, still anchored near the bottom -->
+          <div class="hero-quick">
+            <button
+              class="btn-ghost"
+              onclick="document.getElementById('page2-system1').scrollIntoView({behavior:'smooth'})"
+            >
+              Schedule Visualization →
+            </button>
+            <button
+              class="btn-ghost"
+              onclick="document.getElementById('page3-system2').scrollIntoView({behavior:'smooth'})"
+            >
+              Backend System →
+            </button>
+            <button
+              class="btn-ghost"
+              onclick="document.getElementById('page4-system3').scrollIntoView({behavior:'smooth'})"
+            >
+              Load vs Capacity →
+            </button>
+          </div>
+        </div>
+        </section>
+
+        <!-- ===================== PAGE 2 – SYSTEMS PORTAL (NEW) ===================== -->
+        <section
+          id="page2-systems"
+          class="page-section border-t border-slate-200"
+        >
+          <!-- Page-2-systems specific styling (local to this section) -->
+          <style>
+            /* 整个 section：深色背景，填满一屏（大约减去导航高度） */
+            #page2-systems {
+              position: relative;
+              min-height: calc(100vh - 72px);
+              display: flex;
+              flex-direction: column;
+              color: #e5e7eb;
+              background: radial-gradient(circle at top left,
+                  rgba(56, 189, 248, 0.16),
+                  #020617 55%);
+            }
+
+            /* 背景图层 */
+            #page2-systems::before {
+              content: "";
+              position: absolute;
+              inset: 0;
+              background-image:
+                radial-gradient(circle at top, rgba(15, 23, 42, 0.2), rgba(15, 23, 42, 0.26)),
+                url("https://images.pexels.com/photos/1181467/pexels-photo-1181467.jpeg?auto=compress&cs=tinysrgb&w=1600");
+              background-size: cover;
+              background-position: center;
+              opacity: 0.45;
+              pointer-events: none;
+            }
+
+            #page2-systems .page-inner,
+            #page2-systems .wrap.section-main-flex {
+              position: relative;
+              z-index: 1;
+              flex: 1 1 auto;
+              display: flex;
+              flex-direction: column;
+              min-height: 0;
+            }
+
+            #page2-systems .section-header {
+              flex: 0 0 auto;
+              margin-bottom: 0.4rem;
+            }
+
+            #page2-systems .page-footnote {
+              color: #9ca3af;
+              flex: 0 0 auto;
+              margin-top: 0.4rem;
+              font-size: 0.75rem;
+            }
+
+            /* 玻璃主卡片：填满 header 与脚注之间 */
+            #page2-systems .systems-card {
+              margin-top: 0.4rem;
+              flex: 1 1 0;
+              min-height: 0;
+              padding: 1.1rem 1.6rem;
+              border-radius: 10px;
+              border: 1px solid rgba(148, 163, 184, 0.2);
+              background:
+                radial-gradient(circle at top left,
+                  rgba(129, 140, 248, 0.05),
+                  rgba(15, 23, 42, 0.05));
+              box-shadow: 0 18px 50px rgba(15, 23, 42, 0.5);
+              backdrop-filter: blur(14px);
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              overflow: auto; /* 内容太多时在卡片内部滚动，不越界 */
+            }
+
+            /* 标题 */
+            #page2-systems .systems-right-title {
+              font-size: clamp(1.1rem, 1.5vw + 0.7rem, 1.8rem);
+              font-weight: 780;
+              letter-spacing: 0.16em;
+              text-transform: uppercase;
+              margin-bottom: clamp(0.6rem, 1.4vh, 1rem);
+              text-align: center;
+            }
+
+            /* 两列整体容器：居中放置 */
+            #page2-systems .systems-columns {
+              display: flex;
+              justify-content: center;
+              align-items: flex-start;
+              gap: clamp(1.4rem, 3vw, 3rem);
+              width: 100%;
+              max-width: 1200px;
+            }
+
+            #page2-systems .systems-col {
+              flex: 1 1 0;
+              min-width: 0;
+              max-width: 600px;
+            }
+
+            /* 左列稍微向上偏一点，右列稍微向下偏一点，产生“错位感” */
+            #page2-systems .systems-col-left {
+              transform: translateY(-8px);
+            }
+
+            #page2-systems .systems-col-right {
+              transform: translateY(8px);
+            }
+
+            /* 每一行（名字 + URL） */
+            #page2-systems .system-line {
+              margin: clamp(0.28rem, 0.6vh, 0.55rem) 0;
+            }
+
+            /* 系统名称：渐变“艺术字”，会随窗口缩放 */
+            #page2-systems .system-link-name {
+              font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont,
+                "SF Pro Display", sans-serif;
+              font-size: clamp(0.9rem, 1.1vw + 0.55rem, 1.25rem);
+              font-weight: 800;
+              text-transform: uppercase;
+              letter-spacing: 0.11em;
+              background: linear-gradient(90deg, #f9fafb, #38bdf8, #22c55e);
+              -webkit-background-clip: text;
+              background-clip: text;
+              color: transparent;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+
+            /* URL：等宽字体 + 自动换行，同样使用 clamp 控制大小 */
+            #page2-systems .system-link-url {
+              font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+                "Liberation Mono", "Courier New", monospace;
+              font-size: clamp(0.75rem, 0.85vw + 0.48rem, 0.98rem);
+              color: #bae6fd;
+              text-decoration: none;
+              word-break: break-all;
+              opacity: 0.9;
+            }
+
+            #page2-systems .system-link-url:hover {
+              text-decoration: underline;
+              opacity: 1;
+            }
+
+            /* 小屏幕：两列变一列，取消错位，保证不会横向溢出 */
+            @media (max-width: 900px) {
+              #page2-systems .systems-card {
+                padding: 0.9rem 1rem;
+                align-items: flex-start;
+              }
+
+              #page2-systems .systems-right-title {
+                text-align: left;
+              }
+
+              #page2-systems .systems-columns {
+                flex-direction: column;
+                align-items: flex-start;
+                max-width: 100%;
+              }
+
+              #page2-systems .systems-col-left,
+              #page2-systems .systems-col-right {
+                transform: none;
+              }
+            }
+          </style>
+
+          <div class="page-inner">
+            <div class="wrap section-main-flex">
+              <header class="section-header">
+                <div class="section-kicker">TCC PLANNING AND SCHEDULING</div>
+                <h2 class="section-title-main">
+                  Scheduling Systems Portal
+                </h2>
+                <p class="section-sub">
+                  One place to launch all core scheduling systems and data portals.
+                </p>
+              </header>
+
+              <!-- 两列链接，居中 + 略微错位 -->
+              <article class="card-fill card-soft systems-card">
+                <div class="systems-right-title">
+                  Core Systems &amp; Data Portals
+                </div>
+
+                <div class="systems-columns">
+                  <!-- 左列 -->
+                  <div class="systems-col systems-col-left">
+                    <p class="system-line">
+                      <span class="system-link-name">Production Order Schedules System</span><br />
+                      <a
+                        href="../../demo-apps/prodorder-status-demo.html"
+                        target="_blank"
+                        class="system-link-url"
+                      >
+                        ../../demo-apps/prodorder-status-demo.html
+                      </a>
+                    </p>
+
+                    <p class="system-line">
+                      <span class="system-link-name">Andon Board System</span><br />
+                      <a
+                        href="../../demo-apps/andon-board-demo.html"
+                        target="_blank"
+                        class="system-link-url"
+                      >
+                        ../../demo-apps/schedule-visualization-demo.html
+                      </a>
+                    </p>
+
+                    <p class="system-line">
+                      <span class="system-link-name">Schedule Visualization System</span><br />
+                      <a
+                        href="../../demo-apps/schedule-visualization-demo.html"
+                        target="_blank"
+                        class="system-link-url"
+                      >
+                        ../../demo-apps/schedule-visualization-demo.html
+                      </a>
+                    </p>
+
+                    <p class="system-line">
+                      <span class="system-link-name">Backend Status System</span><br />
+                      <a
+                        href="../../demo-apps/backend-status-demo.html"
+                        target="_blank"
+                        class="system-link-url"
+                      >
+                        ../../demo-apps/backend-status-demo.html
+                      </a>
+                    </p>
+
+                    <p class="system-line">
+                      <span class="system-link-name">Load vs Capacity Platform (for Sales)</span><br />
+                      <a
+                        href="../../demo-apps/load-vs-capacity-demo.html"
+                        target="_blank"
+                        class="system-link-url"
+                      >
+                        ../../demo-apps/load-vs-capacity-demo.html
+                      </a>
+                    </p>
+                  </div>
+
+                  <!-- 右列 -->
+                  <div class="systems-col systems-col-right">
+                    <p class="system-line">
+                      <span class="system-link-name">OMS Portal (Database)</span><br />
+                      <a
+                        href="https://casbq0006a.trench-group.net:44342/home"
+                        target="_blank"
+                        class="system-link-url"
+                      >
+                        https://casbq0006a.trench-group.net:44342/home
+                      </a>
+                    </p>
+
+                    <p class="system-line">
+                      <span class="system-link-name">Tableau Rework Dashboard</span><br />
+                      <a
+                        href="https://eu-west-1a.online.tableau.com/#/site/trenchgrouphsp/views/TCCReworkDashboard/TCCReworkDashboard1?:iid=1"
+                        target="_blank"
+                        class="system-link-url"
+                      >
+                        https://eu-west-1a.online.tableau.com/.../TCCReworkDashboard1
+                      </a>
+                    </p>
+
+                    <p class="system-line">
+                      <span class="system-link-name">Tableau Load vs Capacity Dashboard</span><br />
+                      <a
+                        href="https://eu-west-1a.online.tableau.com/#/site/trenchgrouphsp/views/LoadvsCapacityDashboard/LoadvsCapacitySchedulingStatus?:iid=1"
+                        target="_blank"
+                        class="system-link-url"
+                      >
+                        https://eu-west-1a.online.tableau.com/.../LoadvsCapacitySchedulingStatus
+                      </a>
+                    </p>
+
+                    <p class="system-line">
+                      <span class="system-link-name">Tableau Workcenter Info Dashboard</span><br />
+                      <a
+                        href="https://eu-west-1a.online.tableau.com/#/site/trenchgrouphsp/views/WorkCenterInfoDashboard/LINE1Dashboard?:iid=1"
+                        target="_blank"
+                        class="system-link-url"
+                      >
+                        https://eu-west-1a.online.tableau.com/.../LINE1Dashboard
+                      </a>
+                    </p>
+                  </div>
+                </div>
+              </article>
+
+              <div class="page-footnote">
+                <strong>Systems Portal · Version 1.0 | </strong>
+                <strong>Designed and Maintained by Yanbo Wang, FY2025</strong>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================== PAGE 2 – FIRST SYSTEM ===================== -->
+        <section
+          id="page2-system1"
+          class="page-section page-bg-white border-t border-slate-200"
+        >
+          <!-- Page-2 specific styling only -->
+          <style>
+            /* Light glass cards that fit the white background */
+            #page2-system1 .card-fill {
+              background:
+                radial-gradient(circle at top left, rgba(161, 196, 253, 0.15), rgba(194, 233, 251, 0.2));
+              border-radius: 6px;
+              border: 1px solid rgba(148, 163, 184, 0.40);
+              box-shadow: 0 18px 40px rgba(15, 23, 42, 0.15);
+              backdrop-filter: blur(8px);
+            }
+
+            #page2-system1 .card-soft {
+              background:
+                radial-gradient(circle at top left, rgba(161, 196, 253, 0.15), rgba(194, 233, 251, 0.2));
+            }
+
+            #page2-system1 .card-title-sm {
+              color: #e5e7eb;
+              font-weight: 700;
+            }
+
+            #page2-system1 .card-text-sm,
+            #page2-system1 ol,
+            #page2-system1 ul {
+              color: #8daec3;
+            }
+
+            #page2-system1 .page-footnote {
+              color: #9ca3af;
+            }
+
+            /* --------- subtle scrollbars only inside page-2 cards --------- */
+
+            /* Firefox */
+            #page2-system1 article.card-fill,
+            #page2-system1 .card-text-sm {
+              scrollbar-width: thin;
+              scrollbar-color: rgba(148, 163, 184, 0.45) transparent;
+            }
+
+            /* Chrome / Edge / WebKit */
+            #page2-system1 article.card-fill::-webkit-scrollbar,
+            #page2-system1 .card-text-sm::-webkit-scrollbar {
+              width: 6px;
+            }
+
+            #page2-system1 article.card-fill::-webkit-scrollbar-track,
+            #page2-system1 .card-text-sm::-webkit-scrollbar-track {
+              background: transparent;
+            }
+
+            #page2-system1 article.card-fill::-webkit-scrollbar-thumb,
+            #page2-system1 .card-text-sm::-webkit-scrollbar-thumb {
+              background: rgba(148, 163, 184, 0.45);
+              border-radius: 9999px;
+            }
+
+            #page2-system1 article.card-fill::-webkit-scrollbar-thumb:hover,
+            #page2-system1 .card-text-sm::-webkit-scrollbar-thumb:hover {
+              background: rgba(148, 163, 184, 0.65);
+            }
+          </style>
+
+          <div class="page-inner">
+            <div class="wrap section-main-flex">
+              <header class="section-header">
+                <div class="section-kicker">TCC Planning and Scheduling</div>
+                <h2 class="section-title-main">
+                  Schedule Visualization System
+                </h2>
+                <p class="section-sub">
+                  Interactive Gantt-style views for Winding &amp; Roving,
+                  used for day-to-day sequencing, visualizing machine
+                  loading, and quick simulations.
+                </p>
+              </header>
+
+              <div class="section-two-cols">
+                <!-- Left -->
+                <article class="card-fill card-soft">
+                  <div
+                    class="card-text-sm"
+                    style="max-height: calc(100vh - 230px); overflow-y: auto; padding-right: 0.5rem"
+                  >
+                    <div
+                      style="
+                        font-size: 1.5rem;
+                        font-weight: 900;
+                        text-align: center;
+                        color: #e5e7eb;
+                        margin-bottom: 0.25rem;
+                      "
+                    >
+                      Guide Manual
+                    </div>
+
+                    <ol class="list-decimal list-inside space-y-3" style="font-size: 1rem; color: #9dafe6">
+                      <!-- 1. DASHBOARD -->
+                      <li>
+                        <div style="font-weight: 600; color: #9dafe6; margin-bottom: 0.25rem">
+                          Dashboard
+                        </div>
+                        <p style="margin-bottom: 0.25rem">
+                          The Dashboard is the home page of the <strong>TCC Scheduling &amp; Visualization: Integrated Platform</strong>. It summarizes
+                          backlog, load vs capacity, reworks and vacation status in one place so planners and managers can quickly see where to focus.
+                        </p>
+                        <ul class="list-disc list-inside" style="margin-left: 0.25rem; margin-bottom: 0.25rem">
+                          <li>
+                            Use this page at the start of the day to scan key metrics: open backlog, overdue share, upcoming capacity risk and reworks trends.
+                          </li>
+                          <li>
+                            When a metric looks off (for example, high overdue or high load ratio), click through to the related page (Backlog Summary, Load vs Capacity,
+                            Reworks, etc.) from the sidebar to investigate.
+                          </li>
+                          <li>
+                            Treat this page as a “control tower” – it does not change data itself, but points you to the right detailed view for action.
+                          </li>
+                        </ul>
+                      </li>
+
+                      <!-- 2. BACKLOG SUMMARY (SAP ORDERS) -->
+                      <li>
+                        <div style="font-weight: 600; color: #9dafe6; margin-bottom: 0.25rem">
+                          Backlog Summary (SAP Orders)
+                        </div>
+                        <p style="margin-bottom: 0.25rem">
+                          This page reads all preloaded SAP and joined tables and presents them as backlog summary views. It combines SAP orders, TCC backlog,
+                          vacation capacity and derived metrics (e.g., EURx) so that you can see backlog by period, line and PMAD month.
+                        </p>
+                        <ul class="list-disc list-inside" style="margin-left: 0.25rem; margin-bottom: 0.25rem">
+                          <li>
+                            In the <strong>table selector</strong>, pick which dataset you want to see (e.g. Winding &amp; Roving, TCC Backlog, Vacation tables).
+                            The grid below will refresh to show that table.
+                          </li>
+                          <li>
+                            Use the <strong>PMAD / forecast charts</strong> and stacked bars to see backlog volume by month and by line. Click on chart segments
+                            that are interactive to open “contributing orders” drilldowns.
+                          </li>
+                          <li>
+                            When the PMAD drop-box is expanded, review which orders are driving a specific bucket, and use the
+                            <strong>Download Contributing Orders</strong> button to export those rows to CSV for sharing or deeper analysis.
+                          </li>
+                          <li>
+                            Use this page when you want a clean, structured view of all SAP / backlog data and need to export or filter at order level.
+                          </li>
+                        </ul>
+                      </li>
+
+                      <!-- 3. PROD ORDERS SCHEDULE (SchedulesPage) -->
+                      <li>
+                        <div style="font-weight: 600; color: #9dafe6; margin-bottom: 0.25rem">
+                          Prod Orders Schedule
+                        </div>
+                        <p style="margin-bottom: 0.25rem">
+                          This is the main <strong>Gantt-style schedule</strong> for Winding &amp; Roving. It visualizes SAP schedules as bars on a time axis, grouped by
+                          work center / line, and overlays backlog and PMAD information where available.
+                        </p>
+                        <ul class="list-disc list-inside" style="margin-left: 0.25rem; margin-bottom: 0.25rem">
+                          <li>
+                            Use the <strong>schedule type</strong> selector to choose between L1, L2, and VPI schedules in SAP.
+                          </li>
+                          <li>
+                            Use the <strong>line filter</strong> (WIND1–WIND5 or ALL) to focus the view on one line or see all lines together.
+                          </li>
+                          <li>
+                            Adjust the <strong>date range</strong> (start and end) to define the planning horizon (for example, the next 4–6 weeks).
+                          </li>
+                          <li>
+                            Each bar represents an order on a machine. Hover to see order details (material, coils, dates, clean flag, etc.).
+                          </li>
+                          <li>
+                            Use this page when you want to visually check if the SAP schedule is realistic for each line, or to find slots where new orders
+                            might be inserted.
+                          </li>
+                        </ul>
+                      </li>
+
+                      <!-- 4. PROD ORDERS SIMULATION (Simulation) -->
+                      <li>
+                        <div style="font-weight: 600; color: #9dafe6; margin-bottom: 0.25rem">
+                          Prod Orders Simulation
+                        </div>
+                        <p style="margin-bottom: 0.25rem">
+                          This page runs a <strong>capacity-driven simulation</strong> of the backlog. It uses the same joined data and capacity tables, then simulates
+                          when orders would realistically finish under different assumptions (working days, capacity per day, and queue logic).
+                        </p>
+                        <ul class="list-disc list-inside" style="margin-left: 0.25rem; margin-bottom: 0.25rem">
+                          <li>
+                            Set the <strong>simulation start date</strong> to tell the engine from which date to begin consuming capacity.
+                          </li>
+                          <li>
+                            Adjust options such as which orders are included (for example, open backlog only, by line or by PMAD window) and how to treat weekends
+                            or non-working days.
+                          </li>
+                          <li>
+                            Run the simulation to generate a table of <strong>simulated finish dates</strong> for each order. Compare simulated finish dates to PMAD
+                            to identify risk and needed actions.
+                          </li>
+                          <li>
+                            Use this when someone asks, “If we start from today with current capacity, when will these orders realistically be completed?”
+                          </li>
+                        </ul>
+                      </li>
+
+                      <!-- 5. MACHINE LOAD SIMULATION (MachineGanttPage) -->
+                      <li>
+                        <div style="font-weight: 600; color: #9dafe6; margin-bottom: 0.25rem">
+                          Machine Load Simulation
+                        </div>
+                        <p style="margin-bottom: 0.25rem">
+                          This page shows a <strong>machine-by-machine Gantt</strong> and allows interactive what-if planning. You can move orders between dates or adjust
+                          durations and store a simulated plan locally (and optionally on the server).
+                        </p>
+                        <ul class="list-disc list-inside" style="margin-left: 0.25rem; margin-bottom: 0.25rem">
+                          <li>
+                            Set the <strong>date window</strong> (start and end) for the simulation horizon. The Gantt will show orders only inside this range.
+                          </li>
+                          <li>
+                            Use the <strong>line filter</strong> (ALL or specific lines) to reduce the number of machines on screen.
+                          </li>
+                          <li>
+                            Click a bar to open the <strong>edit drawer</strong>. Adjust fields such as PMAD, start date and duration to simulate moving or resizing that order.
+                          </li>
+                          <li>
+                            Save overrides to local storage (and, if configured, to the server) to create a “what-if” plan without changing SAP.
+                          </li>
+                          <li>
+                            Use this to visually confirm whether proposed changes (moving jobs, adding overtime days, etc.) can fit on the machines.
+                          </li>
+                        </ul>
+                      </li>
+
+                      <!-- 6. FINISH DATE SIMULATION (WindingVariance) -->
+                      <li>
+                        <div style="font-weight: 600; color: #9dafe6; margin-bottom: 0.25rem">
+                          Finish Date Simulation (Winding Variance)
+                        </div>
+                        <p style="margin-bottom: 0.25rem">
+                          This page compares <strong>SAP schedules, Excel capacity/backlog sheets, and TCC backlog</strong> to show where finish dates or capacities do not
+                          line up. It is designed to highlight differences between planning sources.
+                        </p>
+                        <ul class="list-disc list-inside" style="margin-left: 0.25rem; margin-bottom: 0.25rem">
+                          <li>
+                            Choose which line to focus on (where applicable) and whether to show <strong>tabs</strong> (SAP vs Excel) or a <strong>split view</strong>.
+                          </li>
+                          <li>
+                            Use the <strong>quick filters</strong> at the top of each grid (for SAP and Excel) to search by order, material, or other fields.
+                          </li>
+                          <li>
+                            Compare columns such as PMAD, planned dates and capacities across sources to understand why some orders look different
+                            in Excel vs SAP.
+                          </li>
+                          <li>
+                            Use this when a question comes up like “Why is our Excel plan saying something different from SAP?” or “Where exactly
+                            are the date / volume mismatches?”
+                          </li>
+                        </ul>
+                      </li>
+
+                      <!-- 7. REWORKS -->
+                      <li>
+                        <div style="font-weight: 600; color: #9dafe6; margin-bottom: 0.25rem">
+                          Reworks
+                        </div>
+                        <p style="margin-bottom: 0.25rem">
+                          The Reworks page tracks <strong>rework volume and patterns</strong> over time. It uses line charts and bar charts to show reworks by month,
+                          by failure mode and by department, plus underlying tables where needed.
+                        </p>
+                        <ul class="list-disc list-inside" style="margin-left: 0.25rem; margin-bottom: 0.25rem">
+                          <li>
+                            Use the <strong>Top N slider</strong> to control how many leading failure modes or departments are displayed in charts.
+                          </li>
+                          <li>
+                            Read the monthly trend line to see if reworks are getting better or worse, and which failure types are dominating.
+                          </li>
+                          <li>
+                            Use this page during weekly or monthly reviews to identify where quality issues are costing capacity and to prioritize improvements.
+                          </li>
+                        </ul>
+                      </li>
+
+                      <!-- 8. VACATION MANAGEMENT (VacationCapacities) -->
+                      <li>
+                        <div style="font-weight: 600; color: #9dafe6; margin-bottom: 0.25rem">
+                          Vacation Management
+                        </div>
+                        <p style="margin-bottom: 0.25rem">
+                          This page shows a <strong>vacation Gantt chart</strong> for key staff and work centers. It helps planners understand when capacity will be
+                          reduced due to people being away.
+                        </p>
+                        <ul class="list-disc list-inside" style="margin-left: 0.25rem; margin-bottom: 0.25rem">
+                          <li>
+                            Use the <strong>date range</strong> pickers to set the window (default is roughly the next 3 months).
+                          </li>
+                          <li>
+                            Filter by <strong>department</strong> (or “All”) and search by <strong>name</strong> to find specific employees or groups.
+                          </li>
+                          <li>
+                            Each bar represents an employee’s vacation. Scan horizontally to see when multiple people are away at the same time.
+                          </li>
+                          <li>
+                            When needed, use the <strong>refresh</strong> button to reload or rebuild the vacation Gantt from the latest source.
+                          </li>
+                          <li>
+                            Use this when planning overtime or redistributing work around large vacation blocks (e.g. summer or holidays).
+                          </li>
+                        </ul>
+                      </li>
+
+                      <!-- 9. WORKCENTER INFORMATION (CenterInfo) -->
+                      <li>
+                        <div style="font-weight: 600; color: #9dafe6; margin-bottom: 0.25rem">
+                          Workcenter Information
+                        </div>
+                        <p style="margin-bottom: 0.25rem">
+                          This page shows <strong>snapshot images</strong> of center-level information (e.g., center boards or local dashboards) for each line
+                          or area (LINE 1, LINE 2, VPI).
+                        </p>
+                        <ul class="list-disc list-inside" style="margin-left: 0.25rem; margin-bottom: 0.25rem">
+                          <li>
+                            Select the desired view (LINE 1, LINE 2, or VPI). The snapshot for that area will load.
+                          </li>
+                          <li>
+                            Use the <strong>refresh</strong> action when you want to pull a new snapshot from the backend, for example after center staff update
+                            their local boards.
+                          </li>
+                          <li>
+                            This is read-only and intended to give planners visibility into local information without walking over to the physical boards.
+                          </li>
+                        </ul>
+                      </li>
+
+                      <!-- 10. SCHEDULED LOAD STATUS -->
+                      <li>
+                        <div style="font-weight: 600; color: #9dafe6; margin-bottom: 0.25rem">
+                          Scheduled Load Status
+                        </div>
+                        <p style="margin-bottom: 0.25rem">
+                          This page summarizes <strong>scheduled vs remaining load</strong> by work center and period. It is designed as a table-driven status view
+                          where you can sort, filter and scan which centers are overloaded or under-loaded.
+                        </p>
+                        <ul class="list-disc list-inside" style="margin-left: 0.25rem; margin-bottom: 0.25rem">
+                          <li>
+                            Use column filters or quick filters to focus on a specific line, machine or period.
+                          </li>
+                          <li>
+                            Sort by key metrics (for example, load ratio or remaining hours) to bring the most critical centers to the top.
+                          </li>
+                          <li>
+                            Use this when you need a compact, tabular answer to “Which centers are in trouble this week or next week?”
+                          </li>
+                        </ul>
+                      </li>
+
+                      <!-- 11. LOAD VS CAPACITY (3D CHART) -->
+                      <li>
+                        <div style="font-weight: 600; color: #9dafe6; margin-bottom: 0.25rem">
+                          Load vs Capacity
+                        </div>
+                        <p style="margin-bottom: 0.25rem">
+                          This page shows a <strong>bar chart</strong> of monthly load vs capacity, plus a load ratio line. It is meant for high-level capacity
+                          discussions with Production and Management.
+                        </p>
+                        <ul class="list-disc list-inside" style="margin-left: 0.25rem; margin-bottom: 0.25rem">
+                          <li>
+                            Use the filters (month range, line / work center selections, clean vs not clean treatment if applicable) to define what is included.
+                          </li>
+                          <li>
+                            Read each bar as <strong>blue &equals; confirmed load</strong> and overlay segments as simulated or added load. The line above the bars shows
+                            the load ratio (Load ÷ Capacity).
+                          </li>
+                          <li>
+                            Hover over bars to see exact numbers for load, capacity and ratio for that month.
+                          </li>
+                          <li>
+                            Use this when someone asks “Are we above or below capacity in the next few months?” or when validating scenarios created in the simulation pages.
+                          </li>
+                        </ul>
+                      </li>
+                    </ol>
+
+                    <p style="margin-top: 0.75rem; font-size: 0.78rem; color: #6b7280">
+                      General Suggestion: the sidebar pages are designed to work together. Start on <strong>Dashboard</strong> to find issues, use
+                      <strong>Backlog Summary</strong>, <strong>Prod Orders Schedule</strong>, <strong>Simulation</strong> and <strong>Machine Load Simulation</strong>
+                      to test solutions, and rely on <strong>Load vs Capacity</strong> and <strong>Reworks</strong> to communicate the impact to Management.
+                    </p>
+                  </div>
+                </article>
+
+                <!-- Right -->
+                <article
+                  class="card-fill"
+                  style="max-height: calc(100vh - 230px); overflow-y: auto; padding-right: 0.5rem"
+                >
+                  <div>
+                    <div class="card-title-sm" style="font-size: 1.5rem; font-weight: 900; text-align: center">
+                      System Link
+                    </div>
+                    <p class="card-text-sm">
+                      Open the link from internal network.
+                      Use your assigned credential to log in the system.
+                      Please be advised that the system initial load will take about 1-2 mins
+                    </p>
+                  </div>
+                  <div class="card-footer-sm" style="font-size: 1.3rem; font-weight: 900; text-align: center; margin-top: 1.2rem">
+                    <a
+                      href="../../demo-apps/schedule-visualization-demo.html"
+                      target="_blank"
+                      style="color: #38bdf8; font-weight: 500; text-decoration: none"
+                    >
+                      <i class="fas fa-external-link-alt" style="margin-right: 0.35rem"></i>
+                      Open Schedule Visualization System
+                    </a>
+                    <span class="chip-status chip-green" style="font-size: 1rem; font-weight: 900; text-align: center">
+                      Status: Normal
+                    </span>
+                  </div>
+
+                  <hr style="margin: 1rem 0; border-color: #e5e7eb" />
+
+                  <div>
+                    <div class="card-title-sm" style="font-size: 1.5rem; font-weight: 900; text-align: center; margin-top: 1.2rem">
+                      API guide for Data Source
+                    </div>
+
+                    <div class="card-text-sm" style="font-size: 1rem; color: ##e5e7eb">
+                      <!-- 1. Core schedule & backlog -->
+                      <div style="font-weight: 600; margin-bottom: 0.2rem">
+                        1. Core schedule &amp; backlog
+                      </div>
+                      <dl style="margin: 0 0 0.6rem 0;">
+                        <dt style="font-weight: 600;">GET /api/preload</dt>
+                        <dd style="margin: 0 0 0.25rem 0.9rem;">
+                          Joined SAP data (Winding &amp; Roving schedules, backlog, capacity, wait time).
+                          Base dataset for dashboard, simulations and load/capacity views.
+                        </dd>
+
+                        <dt style="font-weight: 600;">GET /api/schedules/:type/:line</dt>
+                        <dd style="margin: 0 0 0.25rem 0.9rem;">
+                          Online W&amp;R schedules by bucket (<code>L1..L8</code> / <code>VPI</code>) and
+                          line (<code>WIND1..WIND5</code>). Feeds the Schedule Visualization Gantt.
+                        </dd>
+
+                        <dt style="font-weight: 600;">GET /api/wr_schedule_local</dt>
+                        <dd style="margin: 0 0 0.25rem 0.9rem;">
+                          Reads <code>WR_Schedule.xlsx</code> as a local fallback / ad-hoc schedule view.
+                        </dd>
+                      </dl>
+
+                      <!-- 2. Simulation & overrides -->
+                      <div style="font-weight: 600; margin: 0.4rem 0 0.2rem">
+                        2. Simulation &amp; Gantt overrides
+                      </div>
+                      <dl style="margin: 0 0 0.6rem 0;">
+                        <dt style="font-weight: 600;">GET /api/gantt_overrides</dt>
+                        <dd style="margin: 0 0 0.25rem 0.9rem;">
+                          Load saved machine-by-machine override plan for the Machine Load Simulation page.
+                        </dd>
+
+                        <dt style="font-weight: 600;">PUT /api/gantt_overrides</dt>
+                        <dd style="margin: 0 0 0.25rem 0.9rem;">
+                          Save the current simulated plan to the server
+                          (<code>{ plan, version }</code> payload).
+                        </dd>
+
+                        <dt style="font-weight: 600;">DELETE /api/gantt_overrides</dt>
+                        <dd style="margin: 0 0 0.25rem 0.9rem;">
+                          Clear stored overrides and revert back to SAP-only schedule data.
+                        </dd>
+                      </dl>
+
+                      <!-- 3. Vacations & center snapshots -->
+                      <div style="font-weight: 600; margin: 0.4rem 0 0.2rem">
+                        3. Vacations &amp; center snapshots
+                      </div>
+                      <dl style="margin: 0 0 0.6rem 0;">
+                        <dt style="font-weight: 600;">GET /api/vacations/gantt</dt>
+                        <dd style="margin: 0 0 0.25rem 0.9rem;">
+                          Current vacation rows used by the Vacation Gantt.
+                        </dd>
+
+                        <dt style="font-weight: 600;">POST /api/vacations/refresh</dt>
+                        <dd style="margin: 0 0 0.25rem 0.9rem;">
+                          Refresh vacation data from Tableau and return the updated rows.
+                        </dd>
+
+                        <dt style="font-weight: 600;">GET /api/centerinfo/snapshot/info[…]</dt>
+                        <dd style="margin: 0 0 0.25rem 0.9rem;">
+                          Snapshot URL and last-updated time for each view
+                          (<code>line1</code>, <code>line2</code>, <code>vpi</code>).
+                        </dd>
+
+                        <dt style="font-weight: 600;">POST /api/centerinfo/snapshot/refresh[…]</dt>
+                        <dd style="margin: 0 0 0.25rem 0.9rem;">
+                          Trigger a new PNG export from Tableau and return updated snapshot metadata.
+                        </dd>
+                      </dl>
+
+                      <!-- 4. Responses -->
+                      <div style="font-weight: 600; margin: 0.4rem 0 0.2rem">
+                        4. Responses &amp; errors
+                      </div>
+                      <p style="margin: 0 0 0.25rem 0.9rem;">
+                        <strong>All endpoints return JSON.</strong> On failure the server uses HTTP
+                        <strong>4xx/5xx</strong> with the following code:
+                        <strong> ok:false, error:&quot;…&quot; </strong> or
+                        <strong> error:&quot;…&quot; </strong> for easier debugging in the browser
+                        Network tab.
+                      </p>
+                    </div>
+                  </div>
+                </article>
+              </div>
+              <div class="page-footnote">
+                <strong>Version 2.2 | </strong>
+                <strong>Designed and Maintained by Yanbo Wang, FY2025</strong>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================== PAGE 3 – SECOND SYSTEM ===================== -->
+        <section
+          id="page3-system2"
+          class="page-section page-bg-slate border-t border-slate-200"
+        >
+          <!-- PAGE-3 specific styling so other pages are untouched -->
+          <style>
+            /* Glassy dark cards that fit the slate background */
+            #page3-system2 .card-fill {
+              background:
+                radial-gradient(circle at top left, rgba(161, 196, 253, 0.15), rgba(194, 233, 251, 0.2));
+              border-radius: 6px;
+              border: 1px solid rgba(148, 163, 184, 0.45);
+              box-shadow: 0 24px 60px rgba(15, 23, 42, 0.9);
+              backdrop-filter: blur(10px);
+            }
+
+            /* Slightly softer background for the left guide card */
+            #page3-system2 .card-soft {
+              background:
+                radial-gradient(circle at top left, rgba(161, 196, 253, 0.15), rgba(194, 233, 251, 0.2));
+            }
+
+            #page3-system2 .card-title-sm {
+              color: #e5e7eb;
+            }
+
+            #page3-system2 .card-text-sm,
+            #page3-system2 ol,
+            #page3-system2 ul {
+              color: #8daec3;
+            }
+
+            #page3-system2 .page-footnote {
+              color: #9ca3af;
+            }
+
+            /* ---------- SUBTLE SCROLLBARS JUST FOR PAGE 3 CARDS ---------- */
+
+            /* Firefox */
+            #page3-system2 article.card-fill,
+            #page3-system2 .card-text-sm {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(148, 163, 184, 0.35) transparent;
+            }
+
+            /* Chrome / Edge / WebKit */
+            #page3-system2 article.card-fill::-webkit-scrollbar,
+            #page3-system2 .card-text-sm::-webkit-scrollbar {
+            width: 6px;              /* thinner bar */
+            }
+
+            #page3-system2 article.card-fill::-webkit-scrollbar-track,
+            #page3-system2 .card-text-sm::-webkit-scrollbar-track {
+            background: transparent; /* no visible track */
+            }
+
+            #page3-system2 article.card-fill::-webkit-scrollbar-thumb,
+            #page3-system2 .card-text-sm::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.35); /* soft, semi-transparent thumb */
+            border-radius: 9999px;
+            }
+
+            #page3-system2 article.card-fill::-webkit-scrollbar-thumb:hover,
+            #page3-system2 .card-text-sm::-webkit-scrollbar-thumb:hover {
+            background: rgba(148, 163, 184, 0.55); /* only a bit stronger on hover */
+            }
+          </style>
+
+          <div class="page-inner">
+            <div class="wrap section-main-flex">
+              <header class="section-header">
+                <div class="section-kicker">TCC PLANNING AND SCHEDULING</div>
+                <h2 class="section-title-main">
+                  Backend Status System
+                </h2>
+                <p class="section-sub">
+                  A backlog-focused view summarizing which orders are
+                  on-time, at-risk, or overdue based on OM Period, PMAD
+                  dates, and remaining hours.
+                </p>
+              </header>
+
+              <div class="section-two-cols">
+                <!-- Left: Guide Manual for Backend Status System -->
+                <article class="card-fill card-soft">
+                  <div
+                    class="card-text-sm"
+                    style="max-height: calc(100vh - 230px); overflow-y: auto; padding-right: 0.5rem"
+                  >
+                    <div
+                      style="
+                        font-size: 1.5rem;
+                        font-weight: 900;
+                        text-align: center;
+                        color: #e5e7eb;
+                        margin-bottom: 0.25rem;
+                      "
+                    >
+                      Guide Manual
+                    </div>
+
+                    <ol class="list-decimal list-inside space-y-3" style="font-size: 1rem; color: #9dafe6">
+                      <!-- 1. DASHBOARD -->
+                      <li>
+                        <div style="font-weight: 600; margin-bottom: 0.25rem">
+                          Dashboard
+                        </div>
+                        <p style="margin-bottom: 0.25rem; color: #9dafe6">
+                          The Dashboard is the landing page of the <strong>Backend Status System</strong>. It aggregates backlog rows from the fixed backlog file and
+                          shows PMAD vs OM Period, status counts, and center-level distributions.
+                        </p>
+                        <ul class="list-disc list-inside" style="margin-left: 0.25rem; margin-bottom: 0.25rem">
+                          <li>
+                            Use the OM Period and simple search filters to focus on a particular month, customer, or sales order range.
+                          </li>
+                          <li>
+                            Read the top canvas charts to understand backlog volume by OM Period and CRATED quantity before drilling into tables.
+                          </li>
+                          <li>
+                            Use this page when you need a quick answer to “How many orders are currently at risk or overdue, and in which centers?”.
+                          </li>
+                        </ul>
+                      </li>
+
+                      <!-- 2. CENTER VIEWS (STRIP…CRATE) -->
+                      <li>
+                        <div style="font-weight: 600; margin-bottom: 0.25rem">
+                          Center views (STRIP, CRIMP, WELD2, BLAST, CLEAN, PAINT, TESTLAB, DETAIL, CRATE)
+                        </div>
+                        <p style="margin-bottom: 0.25rem">
+                          Each center tab shows a filtered view of the backlog for that workcenter, split into <strong>Pending</strong> and <strong>history / live work</strong>.
+                        </p>
+                        <ul class="list-disc list-inside" style="margin-left: 0.25rem; margin-bottom: 0.25rem">
+                          <li>
+                            Use the <strong>Pending</strong> table to see all open orders the center is responsible for. You can sort, filter and export these rows.
+                          </li>
+                          <li>
+                            Fields such as <strong>Priority</strong>, <strong>NotFinished</strong> and <strong>Why</strong> are editable; changes are written back to the shared backlog file and to the <em>order edits</em> store.
+                          </li>
+                          <li>
+                            Double-click the <strong>Why</strong> column to open the notes editor, or press Enter on a selected row to open the sales-status modal.
+                          </li>
+                        </ul>
+                      </li>
+
+                      <!-- 3. LIVE WORK & MATERIAL CHECK (per center) -->
+                      <li>
+                        <div style="font-weight: 600; margin-bottom: 0.25rem">
+                          Live work &amp; Material Check (per center)
+                        </div>
+                        <p style="margin-bottom: 0.25rem">
+                          Under each center tab, the <strong>Orders Currently Being Worked On</strong> card combines live shop-floor confirmations with a structured
+                          material-check list.
+                        </p>
+                        <ul class="list-disc list-inside" style="margin-left: 0.25rem; margin-bottom: 0.25rem">
+                          <li>
+                            The left side shows <strong>Live Workcenter Confirmations</strong>, refreshed automatically every 30 seconds from SAP confirmations.
+                          </li>
+                          <li>
+                            The right side shows a <strong>Material Check</strong> table for that center, tied to the same pending orders. Use this before starting work
+                            to confirm that key materials and dependencies are available.
+                          </li>
+                          <li>
+                            Export both Pending and History / Currently Working tables to CSV when preparing for daily stand-ups or shift handovers.
+                          </li>
+                        </ul>
+                      </li>
+
+                      <!-- 4. CRATED ORDERS -->
+                      <li>
+                        <div style="font-weight: 600; margin-bottom: 0.25rem">
+                          CRATED Orders
+                        </div>
+                        <p style="margin-bottom: 0.25rem">
+                          The <strong>CRATED</strong> tab isolates orders that are fully crated or ready to ship, based on the CRATED flag in the backlog file.
+                        </p>
+                        <ul class="list-disc list-inside" style="margin-left: 0.25rem; margin-bottom: 0.25rem">
+                          <li>
+                            Use this tab to review what is already boxed or staged for shipping, and to confirm alignment with shipping schedules.
+                          </li>
+                          <li>
+                            Export the CRATED table when coordinating with logistics or updating external stakeholders.
+                          </li>
+                        </ul>
+                      </li>
+
+                      <!-- 5. HISTORY -->
+                      <li>
+                        <div style="font-weight: 600; margin-bottom: 0.25rem">
+                          History
+                        </div>
+                        <p style="margin-bottom: 0.25rem">
+                          The <strong>History</strong> tab collects finished-history rows and the material-check history across centers. It is primarily for traceability
+                          and audit trail when reviewing past decisions.
+                        </p>
+                        <ul class="list-disc list-inside" style="margin-left: 0.25rem; margin-bottom: 0.25rem">
+                          <li>
+                            Use this page when you need to answer “When did we last work on this order and what was the material status at that time?”.
+                          </li>
+                          <li>
+                            Filter and export history when preparing reports for supervisors or when investigating recurring issues.
+                          </li>
+                        </ul>
+                      </li>
+
+                      <!-- 6. OVERDUE ORDERS (ADMIN) -->
+                      <li>
+                        <div style="font-weight: 600; margin-bottom: 0.25rem">
+                          Overdue Orders (Only for Admin)
+                        </div>
+                        <p style="margin-bottom: 0.25rem">
+                          This tab is visible only when logged in as <strong>Admin</strong>. It reads from the raw backlog dataset and applies the overdue logic using
+                          OM Period and PMAD dates.
+                        </p>
+                        <ul class="list-disc list-inside" style="margin-left: 0.25rem; margin-bottom: 0.25rem">
+                          <li>
+                            Use filters to focus on a specific plant, customer, or OM Period, then export the view for escalation.
+                          </li>
+                          <li>
+                            Use this page to cross-check that the visual backlog status matches the raw ODC / OMS data and to validate overdue definitions.
+                          </li>
+                        </ul>
+                      </li>
+
+                      <!-- 7. NOTES (“WHY”) AND COMMENTS -->
+                      <li>
+                        <div style="font-weight: 600; margin-bottom: 0.25rem">
+                          Notes (“Why”) and comments (Only for Admin)
+                        </div>
+                        <p style="margin-bottom: 0.25rem">
+                          The <strong>Why</strong> field and associated comments store lightweight explanations for why an order is or is not finished.
+                        </p>
+                        <ul class="list-disc list-inside" style="margin-left: 0.25rem; margin-bottom: 0.25rem">
+                          <li>
+                            Double-click the Why column or press Enter to open a modal where you can record reasons, risks or next steps.
+                          </li>
+                          <li>
+                            These notes are stored separately in the <em>order edits</em> and <em>comments</em> structures so they survive refreshes.
+                          </li>
+                          <li>
+                            Use this consistently so supervisors and planners can understand context without re-reading emails.
+                          </li>
+                        </ul>
+                      </li>
+
+                      <!-- 8. ROLES & LOGIN -->
+                      <li>
+                        <div style="font-weight: 600; margin-bottom: 0.25rem">
+                          Roles, login and “View As”
+                        </div>
+                        <p style="margin-bottom: 0.25rem">
+                          Access to pages and editing capabilities depends on the user role (Admin, Supervisor, Other User).
+                        </p>
+                        <ul class="list-disc list-inside" style="margin-left: 0.25rem; margin-bottom: 0.25rem">
+                          <li>
+                            Log in with your assigned username and password. Use the change-password modal to update your credentials when required.
+                          </li>
+                          <li>
+                            Admins can use the <strong>View As</strong> control to see exactly what Supervisors or Users see, without changing data ownership.
+                          </li>
+                          <li>
+                            Use this when testing changes to permissions or confirming whether a given user will be able to see a specific overdue group.
+                          </li>
+                        </ul>
+                      </li>
+                    </ol>
+
+                    <p style="margin-top: 0.75rem; font-size: 0.78rem; color: #9ca3af">
+                      General Suggestion: use the <strong>Dashboard</strong> to spot problems, center tabs to see who owns them, the
+                      <strong>Overdue Orders</strong> page to validate logic against raw data, and the <strong>History</strong> and
+                      <strong>Material Check</strong> views when you need to understand past decisions.
+                    </p>
+                  </div>
+                </article>
+
+                <!-- Right: System link + API guide for backend status -->
+                <article
+                  class="card-fill"
+                  style="max-height: calc(100vh - 230px); overflow-y: auto; padding-right: 0.5rem"
+                >
+                  <div>
+                    <div class="card-title-sm" style="font-size: 1.5rem; font-weight: 900; text-align: center">
+                      System Link
+                    </div>
+                    <p class="card-text-sm" style="color: #8daec3">
+                      Open the link from internal network.
+                      Use your assigned credential to log in the system.
+                      Please be advised that the system initial load will take about 1-2 mins.
+                    </p>
+                  </div>
+
+                  <div class="card-footer-sm" style="font-size: 1.3rem; font-weight: 900; text-align: center; margin-top: 1.2rem">
+                    <a
+                      href="../../demo-apps/backend-status-demo.html"
+                      target="_blank"
+                      style="color: #38bdf8; font-weight: 500; text-decoration: none"
+                    >
+                      <i class="fas fa-external-link-alt" style="margin-right: 0.35rem"></i>
+                      Open Backend Status System
+                    </a>
+                    <span class="chip-status chip-green" style="font-size: 1rem; font-weight: 900; text-align: center">
+                      Status: Normal
+                    </span>
+                  </div>
+
+                  <hr style="margin: 1rem 0; border-color: #334155" />
+
+                  <div>
+                    <div class="card-title-sm" style="font-size: 1.5rem; font-weight: 900; text-align: center; margin-top: 1.2rem">
+                      API guide for Data Source
+                    </div>
+
+                    <div class="card-text-sm" style="font-size: 1rem; color: #8daec3">
+                      <!-- 1. Core backlog & OMS data -->
+                      <div style="font-weight: 600; margin-bottom: 0.2rem">
+                        1. Core backlog &amp; OMS data
+                      </div>
+                      <dl style="margin: 0 0 0.6rem 0;">
+                        <dt style="font-weight: 600;">GET /api/files</dt>
+                        <dd style="margin: 0 0 0.25rem 0.9rem;">
+                          List available data files in the backend <code>data</code> folder (for example the fixed backlog file and raw backlog JSON).
+                        </dd>
+
+                        <dt style="font-weight: 600;">GET /api/data?file=BacklogDatabase.json</dt>
+                        <dd style="margin: 0 0 0.25rem 0.9rem;">
+                          Load the main backlog dataset (status, OM Period, PMAD, CRATED, remaining hours). Feeds Dashboard, center Pending tables and CRATED view.
+                        </dd>
+
+                        <dt style="font-weight: 600;">GET /api/data?file=BacklogRaw.json</dt>
+                        <dd style="margin: 0 0 0.25rem 0.9rem;">
+                          Load the raw backlog rows used by the <strong>Overdue Orders</strong> admin page and supporting maps.
+                        </dd>
+
+                        <dt style="font-weight: 600;">POST /api/update</dt>
+                        <dd style="margin: 0 0 0.25rem 0.9rem;">
+                          Persist a single cell change back to the underlying backlog store. Payload includes <code>{ file, order, center, field, value }</code>.
+                        </dd>
+                      </dl>
+
+                      <!-- 2. Order edits & comments -->
+                      <div style="font-weight: 600; margin: 0.4rem 0 0.2rem">
+                        2. Order edits &amp; comments
+                      </div>
+                      <dl style="margin: 0 0 0.6rem 0;">
+                        <dt style="font-weight: 600;">GET /api/order_edits</dt>
+                        <dd style="margin: 0 0 0.25rem 0.9rem;">
+                          Fetch stored overrides for orders (for example Priority and Why notes) so they can be re-applied after file reload.
+                        </dd>
+
+                        <dt style="font-weight: 600;">POST /api/order_edits</dt>
+                        <dd style="margin: 0 0 0.25rem 0.9rem;">
+                          Upsert a single override such as <code>{ order, field, value }</code> when a user changes Priority or Why in the grid.
+                        </dd>
+
+                        <dt style="font-weight: 600;">GET /api/comments</dt>
+                        <dd style="margin: 0 0 0.25rem 0.9rem;">
+                          Load per-order free-text comments used by the Why and notes dialogs.
+                        </dd>
+
+                        <dt style="font-weight: 600;">POST /api/comments</dt>
+                        <dd style="margin: 0 0 0.25rem 0.9rem;">
+                          Save or update a comment for a given Sales Doc./Item combination.
+                        </dd>
+                      </dl>
+
+                      <!-- 3. Live workcenter confirmations -->
+                      <div style="font-weight: 600; margin: 0.4rem 0 0.2rem">
+                        3. Live workcenter confirmations
+                      </div>
+                      <dl style="margin: 0 0 0.6rem 0;">
+                        <dt style="font-weight: 600;">GET /api/workcenter/confirmations?name=PAINT</dt>
+                        <dd style="margin: 0 0 0.25rem 0.9rem;">
+                          Return live SAP confirmations for a single workcenter (used by the <strong>LiveWorkcenterConfirmations</strong> panel).
+                        </dd>
+
+                        <dt style="font-weight: 600;">GET /api/confirmations/workcenters</dt>
+                        <dd style="margin: 0 0 0.25rem 0.9rem;">
+                          Aggregate live confirmations by workcenter, so the Dashboard can show which centers currently have running work.
+                        </dd>
+                      </dl>
+
+                      <!-- 4. Material checks -->
+                      <div style="font-weight: 600; margin: 0.4rem 0 0.2rem">
+                        4. Material checks
+                      </div>
+                      <dl style="margin: 0 0 0.6rem 0;">
+                        <dt style="font-weight: 600;">GET /api/material_checks</dt>
+                        <dd style="margin: 0 0 0.25rem 0.9rem;">
+                          Fetch all material-check entries across centers for use in history and audit views.
+                        </dd>
+
+                        <dt style="font-weight: 600;">GET /api/material_checks/by_workcenter?name=PAINT</dt>
+                        <dd style="margin: 0 0 0.25rem 0.9rem;">
+                          Filter material checks for a specific center. Used in the Material Check table under each Pending view.
+                        </dd>
+
+                        <dt style="font-weight: 600;">POST /api/material_checks/save</dt>
+                        <dd style="margin: 0 0 0.25rem 0.9rem;">
+                          Save or update a single material-check record when a user edits the checklist for one order.
+                        </dd>
+
+                        <dt style="font-weight: 600;">POST /api/material_checks/bulk_save</dt>
+                        <dd style="margin: 0 0 0.25rem 0.9rem;">
+                          Bulk-save multiple material-check rows at once (for example after editing several orders then committing the batch).
+                        </dd>
+                      </dl>
+
+                      <!-- 5. Refresh & status endpoints -->
+                      <div style="font-weight: 600; margin: 0.4rem 0 0.2rem">
+                        5. Refresh &amp; status endpoints
+                      </div>
+                      <dl style="margin: 0 0 0.6rem 0;">
+                        <dt style="font-weight: 600;">POST /api/tableau/refresh</dt>
+                        <dd style="margin: 0 0 0.25rem 0.9rem;">
+                          Trigger a Tableau-based export to rebuild the latest backlog file from source dashboards.
+                        </dd>
+
+                        <dt style="font-weight: 600;">GET /api/tableau/status</dt>
+                        <dd style="margin: 0 0 0.25rem 0.9rem;">
+                          Poll Tableau refresh status for display in the UI (success, running, or error message).
+                        </dd>
+
+                        <dt style="font-weight: 600;">POST /api/om/refresh</dt>
+                        <dd style="margin: 0 0 0.25rem 0.9rem;">
+                          Kick off a job to refresh OM Period mapping data from the upstream OMS / database source.
+                        </dd>
+
+                        <dt style="font-weight: 600;">GET /api/om/status</dt>
+                        <dd style="margin: 0 0 0.25rem 0.9rem;">
+                          Check the status of the OM Period refresh job.
+                        </dd>
+
+                        <dt style="font-weight: 600;">POST /api/refresh_backlog</dt>
+                        <dd style="margin: 0 0 0.25rem 0.9rem;">
+                          Rebuild the main backlog JSON (for example BacklogDatabase.json and BacklogRaw.json) from current source files.
+                        </dd>
+
+                        <dt style="font-weight: 600;">GET /api/backlog/status</dt>
+                        <dd style="margin: 0 0 0.25rem 0.9rem;">
+                          Report whether the last backlog refresh succeeded, and when it last completed.
+                        </dd>
+                      </dl>
+
+                      <!-- 6. Responses & errors -->
+                      <div style="font-weight: 600; margin: 0.4rem 0 0.2rem">
+                        6. Responses &amp; errors
+                      </div>
+                      <p style="margin: 0 0 0.25rem 0.9rem;">
+                        <strong>All endpoints return JSON.</strong> On failure the server uses HTTP
+                        <strong>4xx/5xx</strong> codes and includes <strong>ok:false</strong> and an
+                        <strong>error</strong> message so you can quickly see what went wrong in the browser Network tab.
+                      </p>
+                    </div>
+                  </div>
+                </article>
+              </div>
+
+              <div class="page-footnote">
+                <strong>Version 3.0 | </strong>
+                <strong>Designed and Maintained by Yanbo Wang, FY2025</strong>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ===================== PAGE 4 – THIRD SYSTEM ===================== -->
+        <section
+          id="page4-system3"
+          class="page-section page-bg-slate border-t border-slate-200"
+        >
+          <!-- Page-4 specific styling to match Page-3 look -->
+          <style>
+            /* Glassy dark cards – same pattern as page 3 */
+            #page4-system3 .card-fill {
+              background: radial-gradient(circle at top left, rgba(161, 196, 253, 0.15), rgba(194, 233, 251, 0.2));
+              border-radius: 6px;
+              border: 1px solid rgba(148, 163, 184, 0.45);
+              box-shadow: 0 18px 40px rgba(15, 23, 42, 0.8);
+              backdrop-filter: blur(8px);
+            }
+
+            #page4-system3 .card-soft {
+              background: radial-gradient(circle at top left, rgba(161, 196, 253, 0.15), rgba(194, 233, 251, 0.2));
+            }
+
+            #page4-system3 .card-title-sm {
+              color: #e5f2ff;
+              font-weight: 700;
+              letter-spacing: 0.02em;
+            }
+
+            #page4-system3 .card-text-sm,
+            #page4-system3 ol,
+            #page4-system3 ul {
+              color: #8daec3;
+            }
+
+            #page4-system3 .page-footnote {
+              color: #9ca3af;
+            }
+
+            /* Subtle scrollbars inside cards (same style as page 3) */
+
+            /* Firefox */
+            #page4-system3 article.card-fill,
+            #page4-system3 .card-text-sm {
+              scrollbar-width: thin;
+              scrollbar-color: rgba(148, 163, 184, 0.45) transparent;
+            }
+
+            /* Chrome / Edge / WebKit */
+            #page4-system3 article.card-fill::-webkit-scrollbar,
+            #page4-system3 .card-text-sm::-webkit-scrollbar {
+              width: 6px;
+            }
+
+            #page4-system3 article.card-fill::-webkit-scrollbar-track,
+            #page4-system3 .card-text-sm::-webkit-scrollbar-track {
+              background: transparent;
+            }
+
+            #page4-system3 article.card-fill::-webkit-scrollbar-thumb,
+            #page4-system3 .card-text-sm::-webkit-scrollbar-thumb {
+              background: rgba(148, 163, 184, 0.45);
+              border-radius: 9999px;
+            }
+
+            #page4-system3 article.card-fill::-webkit-scrollbar-thumb:hover,
+            #page4-system3 .card-text-sm::-webkit-scrollbar-thumb:hover {
+              background: rgba(148, 163, 184, 0.7);
+            }
+          </style>
+
+          <div class="page-inner">
+            <div class="wrap section-main-flex">
+              <header class="section-header">
+                <div class="section-kicker">TCC PLANNING AND SCHEDULING</div>
+                <h2 class="section-title-main">
+                  Load vs Capacity Platform (For Sales)
+                </h2>
+                <p class="section-sub">
+                  High-level view of monthly loads vs capacity for Winding &amp; Roving, with
+                  interactive 3D charts, machine-level insights and a simulation playground to
+                  support capacity decisions.
+                </p>
+              </header>
+
+              <div class="section-two-cols">
+                <!-- Left: Guide Manual -->
+                <article class="card-fill card-soft">
+                  <div
+                    class="card-text-sm"
+                    style="max-height: calc(100vh - 230px); overflow-y: auto; padding-right: 0.5rem"
+                  >
+                    <div
+                      style="
+                        font-size: 1.5rem;
+                        font-weight: 900;
+                        text-align: center;
+                        color: #e5e7eb;
+                        margin-bottom: 0.25rem;
+                      "
+                    >
+                      Guide Manual
+                    </div>
+
+                    <ol class="list-decimal list-inside space-y-3" style="font-size: 1rem; color: #9dafe6">
+                      <!-- 1. PURPOSE -->
+                      <li>
+                        <div style="font-weight: 600; margin-bottom: 0.25rem">
+                          Purpose &amp; when to use
+                        </div>
+                        <p style="margin-bottom: 0.25rem">
+                          The Load vs Capacity platform shows, month by month, how much work is
+                          scheduled versus how much capacity we have, using the same Winding /
+                          Roving schedule and capacity extracts as the production planning tools.
+                          It focuses on <strong>forward-looking capacity checks</strong> rather
+                          than order-by-order detail.
+                        </p>
+                        <ul
+                          class="list-disc list-inside"
+                          style="margin-left: 0.25rem; margin-bottom: 0.25rem"
+                        >
+                          <li>
+                            Use it at the start of the week or month to see whether upcoming
+                            periods are overloaded or under-utilized by line.
+                          </li>
+                          <li>
+                            Use it in conversations with Production / Management / Sales to show
+                            whether proposed plans fit existing capacity.
+                          </li>
+                          <li>
+                            Combine it with the detailed Gantt and simulation tools when you need
+                            to move specific orders or add overtime.
+                          </li>
+                        </ul>
+                      </li>
+
+                      <!-- 2. FILTERS & MODES -->
+                      <li>
+                        <div style="font-weight: 600; margin-bottom: 0.25rem">
+                          Top filters &amp; modes
+                        </div>
+                        <p style="margin-bottom: 0.25rem">
+                          The filter bar at the top of the <strong>Lines</strong> and
+                          <strong>Simulation</strong> sections controls what is included in the 3D
+                          chart and tables.
+                        </p>
+                        <ul
+                          class="list-disc list-inside"
+                          style="margin-left: 0.25rem; margin-bottom: 0.25rem"
+                        >
+                          <li>
+                            <strong>Production Line:</strong> choose
+                            <strong>Line 1</strong>, <strong>Line 2</strong> or <strong>VPI</strong>.
+                            Only machines that belong to that line are included.
+                          </li>
+                          <li>
+                            <strong>Process:</strong> toggle between
+                            <strong>Winding</strong> and <strong>Roving</strong>. This switches
+                            the hour fields and date fields used to calculate loads (Wind Hours +
+                            Winding Start/End vs Rove Hours + Rove Start/End).
+                          </li>
+                          <li>
+                            <strong>Machine chips:</strong> once a line is selected, use the
+                            machine chips (<em>All</em> or a specific machine) to narrow the chart
+                            and insights to a single work center when needed.
+                          </li>
+                          <li>
+                            Changes in these filters immediately recalculate the monthly series
+                            and all insights. The chart only shows months from the current month
+                            onward.
+                          </li>
+                        </ul>
+                      </li>
+
+                      <!-- 3. READING THE 3D CHART -->
+                      <li>
+                        <div style="font-weight: 600; margin-bottom: 0.25rem">
+                          Reading the 3D chart
+                        </div>
+                        <p style="margin-bottom: 0.25rem">
+                          The main 3D chart shows 12+ months on the x-axis and load / capacity on
+                          the y-axis. Each month has a <strong>load bar</strong> and a
+                          <strong>capacity bar</strong>, plus a 3D <strong>load-ratio line</strong>
+                          running above the bars.
+                        </p>
+                        <ul
+                          class="list-disc list-inside"
+                          style="margin-left: 0.25rem; margin-bottom: 0.25rem"
+                        >
+                          <li>
+                            In the base view, the load bar is split into
+                            <em>Clean</em> and <em>Not Clean</em> hours. In Simulation, the base
+                            of the bar is the confirmed load, with <strong>extra simulated
+                            hours</strong> stacked on top in different colours per user.
+                          </li>
+                          <li>
+                            The capacity bar shows total available hours for the same month,
+                            based on the capacity Excel extract.
+                          </li>
+                          <li>
+                            Hover a bar to see an on-chart tooltip with
+                            <strong>Load</strong>, <strong>Capacity</strong> and
+                            <strong>Utilization %</strong>.
+                          </li>
+                          <li>
+                            Use the toolbar in the top-left of the chart:
+                            <strong>Reset View</strong>, <strong>Auto-Rotate</strong>,
+                            <strong>Show / Hide Labels</strong>, <strong>Show / Hide
+                            Insights</strong> and <strong>Download PNG</strong>.
+                            Click once on the chart to activate 3D controls, then drag to rotate
+                            or scroll to zoom.
+                          </li>
+                        </ul>
+                      </li>
+
+                      <!-- 4. INSIGHTS & PMAD VIEWS -->
+                      <li>
+                        <div style="font-weight: 600; margin-bottom: 0.25rem">
+                          Insights overlay &amp; PMAD split
+                        </div>
+                        <p style="margin-bottom: 0.25rem">
+                          When <strong>Insights</strong> are enabled, a glass-style panel appears
+                          over the chart with additional context for the selected line and, if
+                          applicable, machine.
+                        </p>
+                        <ul
+                          class="list-disc list-inside"
+                          style="margin-left: 0.25rem; margin-bottom: 0.25rem"
+                        >
+                          <li>
+                            <strong>Machine Design Spec:</strong> line-specific rules explaining
+                            which designs each machine is intended to run.
+                          </li>
+                          <li>
+                            <strong>PMAD split pie:</strong> a pie chart showing how many orders
+                            have Promised MAD in the current month, next month, future months, or
+                            previous months for the selected line.
+                          </li>
+                          <li>
+                            <strong>Top-utilization machines:</strong> a list with small bars
+                            showing total winding load ratio by machine, sorted from highest to
+                            lowest utilization.
+                          </li>
+                          <li>
+                            <strong>Per-machine PMAD pies:</strong> for the top machines, small
+                            pies show the same current / next / future / previous MAD split.
+                            Clicking a segment opens the contributing orders for that bucket.
+                          </li>
+                        </ul>
+                      </li>
+
+                      <!-- 5. ORDERS PANEL & SIMULATION -->
+                      <li>
+                        <div style="font-weight: 600; margin-bottom: 0.25rem">
+                          Orders panel &amp; simulation playground
+                        </div>
+                        <p style="margin-bottom: 0.25rem">
+                          The platform lets you drill down from monthly bars into individual
+                          orders, and run simple what-if simulations on top of the confirmed
+                          schedule.
+                        </p>
+                        <ul
+                          class="list-disc list-inside"
+                          style="margin-left: 0.25rem; margin-bottom: 0.25rem"
+                        >
+                          <li>
+                            <strong>Orders side panel:</strong> click a month in the 3D chart (or
+                            a PMAD bucket in the machine pies) to open a slide-in panel with the
+                            contributing orders. Columns include Sales Order, Item, Production
+                            Order, hours and Clean flag.
+                          </li>
+                          <li>
+                            Use the <strong>Download CSV</strong> button in that panel to export
+                            the current list for offline review or sharing.
+                          </li>
+                          <li>
+                            In the <strong>Simulation</strong> section, the left-hand table
+                            (“Simulation Playground”) shows simulated load vs capacity by month.
+                            Use <strong>+ Add</strong> to add hours by month and user, and
+                            <strong>Manage</strong> to delete remaining simulated hours.
+                          </li>
+                          <li>
+                            The <strong>Transfer Simulation to Confirmed Schedule</strong> window
+                            lets you move some of the simulated hours into the confirmed load
+                            series. Simulation data is stored in the browser
+                            (localStorage), so each user keeps their own scenario.
+                          </li>
+                        </ul>
+                      </li>
+                    </ol>
+
+                    <p style="margin-top: 0.75rem; font-size: 0.78rem; color: #9ca3af">
+                      General suggestion: use the <strong>Lines</strong> view for a clean
+                      month-by-month capacity picture, the <strong>Simulation</strong> view to test
+                      scenarios, and the <strong>orders panel</strong> when you need a list of
+                      concrete orders behind a month or PMAD bucket.
+                    </p>
+                  </div>
+                </article>
+
+                <!-- Right: System link + API guide -->
+                <article
+                  class="card-fill"
+                  style="max-height: calc(100vh - 230px); overflow-y: auto; padding-right: 0.5rem"
+                >
+                  <div>
+                    <div
+                      class="card-title-sm"
+                      style="font-size: 1.5rem; font-weight: 900; text-align: center"
+                    >
+                      System link
+                    </div>
+                    <p class="card-text-sm">
+                      Open the Load vs Capacity platform from inside the internal network. Use
+                      your assigned credentials to log in, then choose the
+                      <strong>Lines</strong> and <strong>Simulation</strong> sections from the
+                      navigation.
+                    </p>
+                  </div>
+
+                  <div
+                    class="card-footer-sm"
+                    style="font-size: 1.3rem; font-weight: 900; text-align: center; margin-top: 2.2rem"
+                  >
+                    <a
+                      href="../../demo-apps/load-vs-capacity-demo.html"
+                      target="_blank"
+                      style="color: #38bdf8; font-weight: 500; text-decoration: none"
+                    >
+                      <i class="fas fa-external-link-alt" style="margin-right: 0.35rem"></i>
+                      Open Load vs Capacity Platform
+                    </a>
+                    <span
+                      class="chip-status chip-green"
+                      style="font-size: 1rem; font-weight: 900; text-align: center"
+                    >
+                      Status: Normal
+                    </span>
+                  </div>
+
+                  <hr style="margin: 1rem 0; border-color: #1f2937" />
+
+                  <div>
+                    <div
+                      class="card-title-sm"
+                      style="font-size: 1.5rem; font-weight: 900; text-align: center; margin-top: 1.2rem"
+                    >
+                      API guide for Data Source
+                    </div>
+
+                    <div class="card-text-sm" style="font-size: 1rem">
+                      <!-- 1. Core data endpoints -->
+                      <div style="font-weight: 600; margin-bottom: 0.2rem">
+                        1. Core data endpoints
+                      </div>
+                      <dl style="margin: 0 0 0.6rem 0;">
+                        <dt style="font-weight: 600;">GET /api/files</dt>
+                        <dd style="margin: 0 0 0.25rem 0.9rem;">
+                          Lists all files in the server data directory (Excel / CSV / JSON),
+                          filtered to known formats and sorted by last modified time. Useful for
+                          checking which extracts are currently available to the app.
+                        </dd>
+
+                        <dt style="font-weight: 600;">GET /api/data?file=&lt;name&gt;</dt>
+                        <dd style="margin: 0 0 0.25rem 0.9rem;">
+                          Loads and parses a single data file. Supports
+                          <code>.xlsx</code>, <code>.xlsm</code>, <code>.xls</code>,
+                          <code>.csv</code> and <code>.json</code>.
+                          For Excel, the server reads the
+                          <code>Schedule</code> sheet if present, otherwise the first sheet, uses
+                          the first row as headers and returns an array of JSON rows with trimmed
+                          column names.
+                        </dd>
+                      </dl>
+
+                      <!-- 2. Files used by the Load vs Capacity app -->
+                      <div style="font-weight: 600; margin: 0.4rem 0 0.2rem">
+                        2. Files used by this platform
+                      </div>
+                      <ul
+                        class="list-disc list-inside"
+                        style="margin-left: 0.9rem; margin-bottom: 0.6rem"
+                      >
+                        <li>
+                          <code>casbq0020a.trench-group.net TCC capacity.xlsx</code> &mdash; daily
+                          capacity by work center. The app reads
+                          <strong>WorkCenter</strong>, <strong>calender_date / Calender_date</strong>
+                          and <strong>Capacity</strong>, then aggregates to
+                          monthly capacity per line / machine.
+                        </li>
+                        <li>
+                          <code>WR_Schedule.xlsx</code> &mdash; Winding &amp; Roving schedule.
+                          Key columns include <strong>Machine</strong>, <strong>Winding
+                          Start</strong>, <strong>Winding End</strong>, <strong>Rove
+                          Start</strong>, <strong>Rove End</strong>, <strong>Wind Hours</strong>,
+                          <strong>Rove Hours</strong>, <strong>Material</strong>,
+                          <strong>Promised MAD</strong>, <strong>Sales order</strong>,
+                          <strong>Item</strong>, <strong>Production Order</strong> and
+                          <strong>CLEAN</strong>. These are used to build monthly load, PMAD
+                          splits and the contributing orders lists.
+                        </li>
+                      </ul>
+
+                      <!-- 3. Single-cell updates -->
+                      <div style="font-weight: 600; margin: 0.4rem 0 0.2rem">
+                        3. Single-cell updates (optional)
+                      </div>
+                      <dl style="margin: 0 0 0.6rem 0;">
+                        <dt style="font-weight: 600;">POST /api/update</dt>
+                        <dd style="margin: 0 0 0.25rem 0.9rem;">
+                          Updates a single cell in the cached data for a given file. The payload
+                          is <code>{ file, order, field, value }</code>, where
+                          <code>order</code> matches the row’s <code>Order</code> column. For
+                          Excel sources, the server writes the result back as a “_modified” copy
+                          in the same directory. This endpoint is available for future admin
+                          tooling; the current UI remains read-only.
+                        </dd>
+                      </dl>
+
+                      <!-- 4. Comments store -->
+                      <div style="font-weight: 600; margin: 0.4rem 0 0.2rem">
+                        4. Comments store
+                      </div>
+                      <dl style="margin: 0 0 0.6rem 0;">
+                        <dt style="font-weight: 600;">GET /api/comments</dt>
+                        <dd style="margin: 0 0 0.25rem 0.9rem;">
+                          Returns all saved comments from <code>data/comments.json</code> as a
+                          simple map <code>{ salesDoc: comment }</code>.
+                        </dd>
+
+                        <dt style="font-weight: 600;">POST /api/comments</dt>
+                        <dd style="margin: 0 0 0.25rem 0.9rem;">
+                          Adds or removes a comment. Payload:
+                          <code>{ salesDoc, comment }</code>. Sending an empty or missing
+                          <code>comment</code> deletes the entry. This can be used by future UI
+                          components to store notes against specific sales documents.
+                        </dd>
+                      </dl>
+
+                      <!-- 5. Responses & errors -->
+                      <div style="font-weight: 600; margin: 0.4rem 0 0.2rem">
+                        5. Responses &amp; error handling
+                      </div>
+                      <p style="margin: 0 0 0.25rem 0.9rem;">
+                        <strong>All endpoints return JSON.</strong> On success, the data endpoints
+                        return arrays of row objects; on failure they return HTTP
+                        <strong>4xx/5xx</strong> codes with an <strong>error</strong> message.
+                        When something does not load as expected in the UI, check the browser
+                        Network tab for the failing request and server error text.
+                      </p>
+                    </div>
+                  </div>
+                </article>
+              </div>
+
+              <div class="page-footnote">
+                <strong>Version 1.0 | </strong>
+                <strong>Load vs Capacity Platform designed and maintained by Yanbo Wang, FY2025</strong>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================== PAGE 5 – NOTES & UPDATES ===================== -->
+        <section
+          id="page5-notes"
+          class="page-section page-bg-slate border-t border-slate-200"
+        >
+          <!-- Page-5 specific layout + scrollbar styling -->
+          <style>
+            /* Make this section always fill the viewport and stretch content */
+            #page5-notes .page-inner {
+              min-height: 100vh;
+              display: flex;
+            }
+
+            #page5-notes .wrap.section-main-flex {
+              display: flex;
+              flex-direction: column;
+              width: 100%;
+            }
+
+            /* Grid that takes the remaining height under the header */
+            #page5-notes .notes-grid {
+              display: grid;
+              grid-template-rows: minmax(0, 1.6fr) minmax(0, 1.4fr);
+              gap: 1.2rem;
+              height: calc(100vh - 220px); /* header + paddings ≈ 220px */
+            }
+
+            /* Dark glassy cards & shared styles */
+            #page5-notes .notes-card {
+              background: radial-gradient(circle at top left,rgba(161, 196, 253, 0.15), rgba(194, 233, 251, 0.2));
+              border-radius: 18px;
+              border: 1px solid rgba(148, 163, 184, 0.48);
+              box-shadow: 0 18px 40px rgba(15, 23, 42, 0.85);
+              padding: 1.05rem 1.3rem;
+              overflow-y: auto;
+            }
+
+            #page5-notes .notes-card h3,
+            #page5-notes .notes-card-title {
+              color: #e19cbb;
+            }
+
+            #page5-notes .notes-card p,
+            #page5-notes .notes-card li,
+            #page5-notes .notes-card span {
+              color: #b0a4e3;
+            }
+
+            /* Subtle scrollbars only inside the cards */
+
+            /* Firefox */
+            #page5-notes .notes-card {
+              scrollbar-width: thin;
+              scrollbar-color: rgba(148, 163, 184, 0.45) transparent;
+            }
+
+            /* Chrome / Edge / WebKit */
+            #page5-notes .notes-card::-webkit-scrollbar {
+              width: 6px;
+            }
+
+            #page5-notes .notes-card::-webkit-scrollbar-track {
+              background: transparent;
+            }
+
+            #page5-notes .notes-card::-webkit-scrollbar-thumb {
+              background: rgba(148, 163, 184, 0.45);
+              border-radius: 9999px;
+            }
+
+            #page5-notes .notes-card::-webkit-scrollbar-thumb:hover {
+              background: rgba(148, 163, 184, 0.7);
+            }
+          </style>
+
+          <div class="page-inner">
+            <div class="wrap section-main-flex">
+              <header class="section-header">
+                <div class="section-kicker">
+                  TCC PLANNING AND SCHEDULING
+                </div>
+                <h2 class="section-title-main">
+                  Notes &amp; Updates · Systems &amp; Database
+                </h2>
+                <p class="section-sub">
+                  Release history, system status notes, and future software plans.
+                  This page keeps a compact log and shortcuts to the OMS database.
+                </p>
+              </header>
+
+              <!-- Height-controlled area: fills rest of the screen -->
+              <div class="notes-grid">
+                <!-- TOP CARD · NOTES & UPDATES LIST -->
+                <article class="card-fill notes-card">
+                  <!-- Header row with icon + title -->
+                  <div
+                    style="
+                      display: flex;
+                      align-items: center;
+                      margin-bottom: 1.5rem;
+                    "
+                  >
+                    <div
+                      style="
+                        width: 2rem;
+                        height: 2rem;
+                        border-radius: 9999px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        margin-right: 0.65rem;
+                        background: rgba(15, 23, 42, 0.9);
+                        box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.45);
+                      "
+                    >
+                      <i
+                        class="fas fa-clipboard-list"
+                        style="color: #22c55e; font-size: 0.9rem"
+                      ></i>
+                    </div>
+                    <div
+                      class="notes-card-title"
+                      style="font-size: 1.5rem; font-weight: 800"
+                    >
+                      Notes &amp; Updates
+                    </div>
+                  </div>
+
+                  <!-- Updates list (3 items) -->
+                  <div
+                    style="
+                      display: flex;
+                      flex-direction: column;
+                      gap: 2rem;
+                    "
+                  >
+
+                    <!-- Item 1 -->
+                    <div
+                      style="
+                        border-radius: 0.85rem;
+                        border-left: 3px solid #22c55e;
+                        background: rgba(15, 23, 42, 0.06);
+                        padding: 0.9rem 1rem;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: flex-start;
+                        gap: 1rem;
+                      "
+                    >
+                      <div>
+                        <div
+                          style="
+                            color: #e19cbb;
+                            font-weight: 800;
+                            font-size: 1.5rem;
+                            margin-bottom: 0.25rem;
+                          "
+                        >
+                          Load vs Capacity (for Sales) Version 1.0
+                        </div>
+                        <p
+                          style="
+                            font-size: 1.2rem;
+                            color: #cbd5f5;
+                            margin-bottom: 0.4rem;
+                          "
+                        >
+                          3D Based load vs capacity bar charts, summarizations and simulation portal are now released.
+                          The current data source is Machine Load VBA file, which is updating every 2-3 weeks.
+                        </p>
+                        <div
+                          style="
+                            display: flex;
+                            flex-wrap: wrap;
+                            gap: 0.7rem;
+                            font-size: 1.2rem;
+                            color: #9ca3af;
+                          "
+                        >
+                          <span>
+                            <i
+                              class="fas fa-user"
+                              style="margin-right: 0.25rem"
+                            ></i>
+                            Admin Team
+                          </span>
+                          <span>
+                            <i
+                              class="fas fa-check-circle"
+                              style="margin-right: 0.25rem; color: #22c55e"
+                            ></i>
+                            Released
+                          </span>
+                        </div>
+                      </div>
+                      <span
+                        style="
+                          align-self: flex-start;
+                          font-size: 1.2rem;
+                          padding: 0.2rem 0.8rem;
+                          border-radius: 9999px;
+                          background: rgba(34, 197, 94, 0.14);
+                          color: #bbf7d0;
+                          white-space: nowrap;
+                        "
+                      >
+                        Nov 18, 2025
+                      </span>
+                    </div>
+
+                    <!-- Item 2 -->
+                    <div
+                      style="
+                        border-radius: 0.85rem;
+                        border-left: 3px solid #22c55e;
+                        background: rgba(15, 23, 42, 0.06);
+                        padding: 0.9rem 1rem;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: flex-start;
+                        gap: 1rem;
+                      "
+                    >
+                      <div>
+                        <div
+                          style="
+                            color: #e19cbb;
+                            font-weight: 800;
+                            font-size: 1.5rem;
+                            margin-bottom: 0.25rem;
+                          "
+                        >
+                          Schedule Visualization System Version 2.2
+                        </div>
+                        <p
+                          style="
+                            font-size: 1.2rem;
+                            color: #cbd5f5;
+                            margin-bottom: 0.4rem;
+                          "
+                        >
+                          Consolidated Machine Load Simulation page with
+                          Drag &amp; Drop functionalities.
+                        </p>
+                        <div
+                          style="
+                            display: flex;
+                            flex-wrap: wrap;
+                            gap: 0.7rem;
+                            font-size: 1.2rem;
+                            color: #9ca3af;
+                          "
+                        >
+                          <span>
+                            <i
+                              class="fas fa-user"
+                              style="margin-right: 0.25rem"
+                            ></i>
+                            Admin Team
+                          </span>
+                          <span>
+                            <i
+                              class="fas fa-check-circle"
+                              style="margin-right: 0.25rem; color: #22c55e"
+                            ></i>
+                            Testing
+                          </span>
+                        </div>
+                      </div>
+                      <span
+                        style="
+                          align-self: flex-start;
+                          font-size: 1.2rem;
+                          padding: 0.2rem 0.8rem;
+                          border-radius: 9999px;
+                          background: rgba(34, 197, 94, 0.14);
+                          color: #bbf7d0;
+                          white-space: nowrap;
+                        "
+                      >
+                        Nov 5, 2025
+                      </span>
+                    </div>
+
+                    <!-- Item 3 -->
+                    <div
+                      style="
+                        border-radius: 0.85rem;
+                        border-left: 3px solid #facc15;
+                        background: rgba(15, 23, 42, 0.06);
+                        padding: 0.9rem 1rem;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: flex-start;
+                        gap: 1rem;
+                      "
+                    >
+                      <div>
+                        <div
+                          style="
+                            color: #e19cbb;
+                            font-weight: 800;
+                            font-size: 1.5rem;
+                            margin-bottom: 0.25rem;
+                          "
+                        >
+                          Backend Status System Server Resumed
+                        </div>
+                        <p
+                          style="
+                            font-size: 1.2rem;
+                            color: #cbd5f5;
+                            margin-bottom: 0.4rem;
+                          "
+                        >
+                          The Tableau and SAP server access is now normal, and
+                          the system is back to normal.
+                        </p>
+                        <div
+                          style="
+                            display: flex;
+                            flex-wrap: wrap;
+                            gap: 0.7rem;
+                            font-size: 1.2rem;
+                            color: #9ca3af;
+                          "
+                        >
+                          <span>
+                            <i
+                              class="fas fa-user"
+                              style="margin-right: 0.25rem"
+                            ></i>
+                            Admin Team
+                          </span>
+                          <span>
+                            <i
+                              class="fas fa-check-circle"
+                              style="margin-right: 0.25rem; color: #22c55e"
+                            ></i>
+                            Completed
+                          </span>
+                        </div>
+                      </div>
+                      <span
+                        style="
+                          align-self: flex-start;
+                          font-size: 1.2rem;
+                          padding: 0.2rem 0.8rem;
+                          border-radius: 9999px;
+                          background: rgba(250, 204, 21, 0.12);
+                          color: #fef3c7;
+                          white-space: nowrap;
+                        "
+                      >
+                        Oct 24, 2025
+                      </span>
+                    </div>
+                  </div>
+                </article>
+
+                <!-- BOTTOM CARD · NEW SOFTWARE + OMS ACCESS -->
+                <article
+                  class="card-fill notes-card"
+                  style="
+                    padding: 0;
+                    border-radius: 18px;
+                    overflow: hidden;
+                    display: grid;
+                    grid-template-columns: minmax(0, 1.8fr) minmax(0, 2.2fr);
+                  "
+                >
+                  <!-- Left: text content -->
+                  <div
+                    style="
+                      padding: 1.1rem 1.3rem;
+                      background: radial-gradient(
+                          circle at top left,
+                          rgba(34, 197, 94, 0.35),
+                          transparent 0%
+                        ),
+                        radial-gradient(
+                          circle at bottom,
+                          rgba(59, 130, 246, 0.35),
+                          transparent 55%
+                        ),
+                        rgba(15, 23, 42, 0.97);
+                    "
+                  >
+                    <div
+                      class="notes-card-title"
+                      style="
+                        font-size: 1.5rem;
+                        font-weight: 800;
+                        margin-bottom: 0.35rem;
+                      "
+                    >
+                      New Software &amp; Systems to be Published
+                    </div>
+                    <p
+                      style="
+                        font-size: 1.2rem;
+                        color: #e19cbb;
+                        margin-bottom: 0.8rem;
+                      "
+                    >
+                      Future Release:
+                      <strong>Honsha Kanban Board</strong>;
+                      <strong>Frontend System</strong>;
+                      <strong>Enhanced OMS Interface</strong>;
+                      <strong>LLM Integrated Systems</strong>.
+                    </p>
+
+                    <ul
+                      class="list-disc list-inside"
+                      style="
+                        font-size: 1rem;
+                        color: #cbd5f5;
+                        margin-bottom: 0.9rem;
+                      "
+                    >
+                      <li>
+                        Planned road map for these future releases is from December to April.
+                      </li>
+                      <li>
+                        Will reuse the same backend data and logic already used in
+                        Backend Status systems for the Frontend System.
+                      </li>
+                      <li>
+                        OMS is to be re-designed with a more user-friendly interface to
+                        change OM Period and search for other information.
+                      </li>
+                      <li>
+                        Will deploy local-based Meta Llama AI model into current systems and software.
+                      </li>
+                    </ul>
+
+                    <!-- OMS / Database access block -->
+                    <div
+                      style="
+                        margin-top: 1.5rem;
+                        padding-top: 0.6rem;
+                        border-top: 1px solid rgba(148, 163, 184, 0.4);
+                      "
+                    >
+                      <div
+                        class="notes-card-title"
+                        style="
+                          margin-bottom: 0.3rem;
+                          font-size: 1.5rem;
+                          font-weight: 800;
+                        "
+                      >
+                        Database Portal Access
+                      </div>
+                      <p
+                        style="
+                          font-size: 1rem;
+                          color: #cbd5f5;
+                          margin-bottom: 0.55rem;
+                        "
+                      >
+                        Use this Database portal as the source of current software and future releases
+                      </p>
+                      <div
+                        class="card-footer-sm"
+                        style="
+                          display: flex;
+                          flex-wrap: wrap;
+                          gap: 0.6rem;
+                          align-items: center;
+                        "
+                      >
+                        <a
+                          href="https://casbq0006a.trench-group.net:44342/home"
+                          target="_blank"
+                          style="
+                            color: #38bdf8;
+                            font-weight: 500;
+                            text-decoration: none;
+                            font-size: 1.4rem;
+                          "
+                        >
+                          <i
+                            class="fas fa-database"
+                            style="margin-right: 0.3rem"
+                          ></i>
+                          Open OMS Portal
+                        </a>
+                        <span
+                          class="chip-status chip-neutral"
+                          style="
+                            font-size: 1rem;
+                            padding: 0.12rem 0.7rem;
+                            border-radius: 9999px;
+                            background: rgba(15, 23, 42, 0.9);
+                            border: 1px solid rgba(148, 163, 184, 0.6);
+                          "
+                        >
+                          casbq0006a.trench-group.net
+                        </span>
+                      </div>
+                      <div
+                        class="card-footer-sm"
+                        style="
+                          display: flex;
+                          flex-wrap: wrap;
+                          gap: 0.6rem;
+                          align-items: center;
+                        "
+                      >
+                        <a
+                          href="https://eu-west-1a.online.tableau.com/#/site/trenchgrouphsp/views/TCCReworkDashboard/TCCReworkDashboard1?:iid=1"
+                          target="_blank"
+                          style="
+                            color: #38bdf8;
+                            font-weight: 500;
+                            text-decoration: none;
+                            font-size: 1.4rem;
+                          "
+                        >
+                          <i
+                            class="fas fa-database"
+                            style="margin-right: 0.3rem"
+                          ></i>
+                          Open Tableau Rework Portal
+                        </a>
+                        <span
+                          class="chip-status chip-neutral"
+                          style="
+                            font-size: 1rem;
+                            padding: 0.12rem 0.7rem;
+                            border-radius: 9999px;
+                            background: rgba(15, 23, 42, 0.9);
+                            border: 1px solid rgba(148, 163, 184, 0.6);
+                          "
+                        >
+                          tableau server
+                        </span>
+                      </div>
+                      <div
+                        class="card-footer-sm"
+                        style="
+                          display: flex;
+                          flex-wrap: wrap;
+                          gap: 0.6rem;
+                          align-items: center;
+                        "
+                      >
+                        <a
+                          href="https://eu-west-1a.online.tableau.com/#/site/trenchgrouphsp/views/LoadvsCapacityDashboard/LoadvsCapacitySchedulingStatus?:iid=1"
+                          target="_blank"
+                          style="
+                            color: #38bdf8;
+                            font-weight: 500;
+                            text-decoration: none;
+                            font-size: 1.4rem;
+                          "
+                        >
+                          <i
+                            class="fas fa-database"
+                            style="margin-right: 0.3rem"
+                          ></i>
+                          Open Tableau Load vs Capacity Status Portal
+                        </a>
+                        <span
+                          class="chip-status chip-neutral"
+                          style="
+                            font-size: 1rem;
+                            padding: 0.12rem 0.7rem;
+                            border-radius: 9999px;
+                            background: rgba(15, 23, 42, 0.9);
+                            border: 1px solid rgba(148, 163, 184, 0.6);
+                          "
+                        >
+                          tableau server
+                        </span>
+                      </div>
+                      <div
+                        class="card-footer-sm"
+                        style="
+                          display: flex;
+                          flex-wrap: wrap;
+                          gap: 0.6rem;
+                          align-items: center;
+                        "
+                      >
+                        <a
+                          href="https://eu-west-1a.online.tableau.com/#/site/trenchgrouphsp/views/WorkCenterInfoDashboard/LINE1Dashboard?:iid=1"
+                          target="_blank"
+                          style="
+                            color: #38bdf8;
+                            font-weight: 500;
+                            text-decoration: none;
+                            font-size: 1.4rem;
+                          "
+                        >
+                          <i
+                            class="fas fa-database"
+                            style="margin-right: 0.3rem"
+                          ></i>
+                          Open Tableau Workcenter Info Portal
+                        </a>
+                        <span
+                          class="chip-status chip-neutral"
+                          style="
+                            font-size: 1rem;
+                            padding: 0.12rem 0.7rem;
+                            border-radius: 9999px;
+                            background: rgba(15, 23, 42, 0.9);
+                            border: 1px solid rgba(148, 163, 184, 0.6);
+                          "
+                        >
+                          tableau server
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Right: visual / hero panel -->
+                  <div
+                    style="
+                      background-image:
+                        linear-gradient(
+                          135deg,
+                          rgba(15, 23, 42, 0.55),
+                          rgba(15, 23, 42, 0.35)
+                        ),
+                        url('data/image10.png');
+                      background-size: cover;
+                      background-position: center;
+                      background-repeat: no-repeat;
+                      position: relative;
+                      display: flex;
+                      align-items: flex-end;
+                      justify-content: flex-start;
+                      padding: 1.1rem 1.3rem;
+                    "
+                  >
+                    <div
+                      style="
+                        font-size: 0.85rem;
+                        font-weight: 600;
+                        color: #f9fafb;
+                        text-shadow: 0 8px 22px rgba(15, 23, 42, 0.95);
+                        max-width: 65%;
+                      "
+                    >
+                      <div
+                        style="
+                          font-size: 1.5rem;
+                          font-weight: 800;
+                          margin-bottom: 0.25rem;
+                        "
+                      >
+                        Digital capacity boards, next generation.
+                      </div>
+                      <div style="font-size: 1.2rem; color: #e5e7eb">
+                        Concept visualization · Process Digitization · Scheduling Innovation.
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <!-- ===================== Footer ===================== -->
+      <footer>
+        <div class="footer-inner">
+          <span>© 2025 Trench Canada · Scheduling Team</span>
+          <span>Internal use only · Load vs Capacity Scheduling Systems</span>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

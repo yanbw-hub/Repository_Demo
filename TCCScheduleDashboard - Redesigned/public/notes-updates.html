@@ -1,0 +1,897 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Notes &amp; Updates · Systems &amp; Database</title>
+
+    <link rel="icon" type="image/png" sizes="32x32" href="./Logo.png" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Orbitron:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Existing bundles -->
+    <script src="./javascript/reload.js"></script>
+    <script src="./1986481368401444864/resource_5784810000.js"></script>
+    <link href="./1986481368401444864/all.min.css" rel="stylesheet" />
+    <link href="./1986481368401444864/tailwind.min.css" rel="stylesheet" />
+
+    <!-- Global styles -->
+    <link rel="stylesheet" href="assets/css/base.css" />
+
+    <!-- Page-local UI redesign -->
+    <style>
+      /* ===== 整页背景：深色玻璃 + 城市夜景 ===== */
+      .tcc-main {
+        position: relative;
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at top left, rgba(56, 189, 248, 0.14), transparent 55%),
+          radial-gradient(circle at bottom right, rgba(79, 70, 229, 0.16), transparent 60%),
+          linear-gradient(to bottom, rgba(15, 23, 42, 0.55), rgba(15, 23, 42, 0.56)),
+          url("https://getwallpapers.com/wallpaper/full/3/6/a/689553-background-hq-1920x1200-for-1080p.jpg");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+      }
+
+      /* ===== HERO 区 ===== */
+      .tcc-page-hero {
+        position: relative;
+        padding: 3.2rem 1.75rem 2.4rem;
+        border-bottom: 1px solid rgba(15, 23, 42, 0.05);
+        overflow: hidden;
+      }
+
+      .tcc-page-hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(circle at top right, rgba(56, 189, 248, 0.06), transparent 90%),
+          radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.08), transparent 95%);
+        opacity: 0.9;
+        mix-blend-mode: screen;
+        pointer-events: none;
+      }
+
+      .tcc-page-hero-inner {
+        position: relative;
+        z-index: 1;
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+        gap: 2.4rem;
+        align-items: stretch;
+      }
+
+      .tcc-page-breadcrumb {
+        font-size: 0.8rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: #9ca3af;
+        margin-bottom: 0.9rem;
+      }
+
+      .tcc-page-title {
+        font-size: clamp(2.1rem, 2.8vw, 2.6rem);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 0.85rem;
+      }
+
+      .tcc-page-subtitle {
+        max-width: 34rem;
+        color: #d1d5db;
+        font-size: 0.98rem;
+        line-height: 1.5;
+      }
+
+      .tcc-page-hero-badges {
+        margin-top: 1.2rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.55rem;
+      }
+
+      .tcc-page-hero-visual {
+        display: flex;
+        align-items: stretch;
+        justify-content: flex-end;
+      }
+
+      .tcc-page-hero-card {
+        position: relative;
+        width: 100%;
+        border-radius: 1.25rem;
+        padding: 1.6rem 1.7rem 1.5rem;
+        background:
+          radial-gradient(circle at top left, rgba(56, 189, 248, 0.1), transparent 88%),
+          radial-gradient(circle at bottom right, rgba(15, 23, 42, 0.1), transparent 90%),
+          rgba(15, 23, 42, 0.08);
+        border: 1px solid rgba(148, 163, 184, 0.6);
+        box-shadow:
+          0 26px 55px rgba(15, 23, 42, 0.95),
+          0 0 0 1px rgba(15, 23, 42, 0.9) inset;
+        backdrop-filter: blur(18px);
+        display: flex;
+        flex-direction: column;
+        gap: 0.85rem;
+      }
+
+      .tcc-page-hero-card h3 {
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: #e5e7eb;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+
+      .tcc-page-hero-card h3::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(
+          to right,
+          rgba(56, 189, 248, 0.05),
+          rgba(96, 165, 250, 0.08)
+        );
+      }
+
+      .tcc-page-hero-card p {
+        font-size: 0.9rem;
+        color: #e5e7f5;
+        margin: 0;
+      }
+
+      .tcc-page-hero-card small {
+        font-size: 0.78rem;
+        color: #9ca3af;
+      }
+
+      .tcc-page-hero-card .tcc-hero-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 0.4rem;
+        font-size: 0.78rem;
+        color: #9ca3af;
+      }
+
+      .tcc-page-hero-card .tcc-hero-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.25rem 0.7rem;
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.6);
+        background: rgba(15, 23, 42, 0.1);
+      }
+
+      /* ===== MAIN 内容：单列布局 ===== */
+      .tcc-page-main {
+        padding: 2.4rem 1.75rem 3.2rem;
+        border-top: 1px solid rgba(15, 23, 42, 0.1);
+      }
+
+      .tcc-page-main-inner {
+        max-width: 960px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        align-items: stretch;
+      }
+
+      /* 卡片通用样式 */
+      .tcc-note-card {
+        position: relative;
+        border-radius: 1.1rem;
+        padding: 1.7rem 1.8rem 1.6rem;
+        background:
+          radial-gradient(circle at top left, rgba(56, 189, 248, 0.22), transparent 62%),
+          radial-gradient(circle at bottom right, rgba(37, 99, 235, 0.25), transparent 60%),
+          rgba(15, 23, 42, 0.1);
+        border: 1px solid rgba(148, 163, 184, 0.7);
+        box-shadow:
+          0 22px 46px rgba(15, 23, 42, 0.95),
+          0 0 0 1px rgba(15, 23, 42, 0.9) inset;
+        backdrop-filter: blur(16px);
+        overflow: hidden;
+      }
+
+      .tcc-note-card h3 {
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: #e5e7eb;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+
+      .tcc-note-card h3::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: radial-gradient(circle, #38bdf8, #2563eb);
+        box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.25);
+      }
+
+      .tcc-note-card h3::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(
+          to right,
+          rgba(148, 163, 184, 0.7),
+          rgba(15, 23, 42, 0)
+        );
+      }
+
+      .tcc-note-card > p {
+        margin-top: 0.85rem;
+        font-size: 0.9rem;
+        color: #d1d5db;
+      }
+
+      /* 发布记录时间线 */
+      .tcc-note-timeline {
+        position: relative;
+        margin-top: 1.25rem;
+        padding-left: 1.4rem;
+      }
+
+      .tcc-note-timeline::before {
+        content: "";
+        position: absolute;
+        left: 0.4rem;
+        top: 0.15rem;
+        bottom: 0.25rem;
+        width: 2px;
+        background: linear-gradient(
+          to bottom,
+          rgba(148, 163, 184, 0.3),
+          rgba(56, 189, 248, 0.8)
+        );
+      }
+
+      .tcc-note-item {
+        position: relative;
+        padding: 0.4rem 0 1rem;
+        display: grid;
+        grid-template-columns: minmax(0, 4fr) auto;
+        gap: 0.8rem;
+        align-items: flex-start;
+      }
+
+      .tcc-note-item::before {
+        content: "";
+        position: absolute;
+        left: -1.15rem;
+        top: 0.7rem;
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        background: radial-gradient(circle, #f97316, #fb7185);
+        box-shadow:
+          0 0 0 4px rgba(248, 250, 252, 0.06),
+          0 0 16px rgba(251, 113, 133, 0.75);
+      }
+
+      .tcc-note-item-title {
+        font-weight: 600;
+        font-size: 0.95rem;
+        margin-bottom: 0.2rem;
+        margin-left: 0.5rem;
+      }
+
+      .tcc-note-item-title span.system-name {
+        color: #f9a8d4;
+      }
+
+      .tcc-note-item-title span.system-name-warning {
+        color: #facc15;
+      }
+
+      .tcc-note-item p {
+        margin: 0.1rem 0 0.35rem;
+        margin-left: 0.5rem;
+        font-size: 0.88rem;
+        color: #e5e7f5;
+      }
+
+      .tcc-note-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+        font-size: 0.8rem;
+        color: #9ca3af;
+        margin-left: 0.5rem;
+      }
+
+      .tcc-note-status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.18rem 0.55rem;
+        border-radius: 999px;
+        border: 1px solid rgba(34, 197, 94, 0.7);
+        background: rgba(22, 163, 74, 0.12);
+        color: #bbf7d0;
+      }
+
+      .tcc-note-status-pill.testing {
+        border-color: rgba(250, 204, 21, 0.7);
+        background: rgba(202, 138, 4, 0.12);
+        color: #fef9c3;
+      }
+
+      .tcc-note-date {
+        font-size: 0.8rem;
+        color: #9ca3af;
+        padding: 0.18rem 0.65rem;
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.55);
+        background: rgba(15, 23, 42, 0.95);
+        align-self: center;
+        margin-right: 0.5rem;
+      }
+
+      /* Roadmap / Portal 卡片细节 */
+      .tcc-note-card--side h3 + p {
+        margin-top: 0.85rem;
+      }
+
+      .tcc-roadmap-list {
+        margin-top: 0.8rem;
+        list-style: none;
+        padding: 0;
+      }
+
+      .tcc-roadmap-list li {
+        position: relative;
+        padding: 0.55rem 0 0.45rem 0;
+        font-size: 0.9rem;
+        color: #e5e7f5;
+      }
+
+      .tcc-roadmap-list li + li {
+        border-top: 1px dashed rgba(148, 163, 184, 0.35);
+      }
+
+      .tcc-roadmap-list strong {
+        color: #bfdbfe;
+      }
+
+      .tcc-note-card small {
+        font-size: 0.8rem;
+        color: #9ca3af;
+      }
+
+      .tcc-portals {
+        margin-top: 1.1rem;
+      }
+
+      .tcc-portals h4 {
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: #e5e7eb;
+        margin: 0 0 0.8rem;
+      }
+
+      .tcc-portal-link {
+        margin-bottom: 0.8rem;
+      }
+
+      .tcc-portal-link a {
+        font-size: 0.92rem;
+      }
+
+      .tcc-portal-link span {
+        font-size: 0.78rem;
+        color: #9ca3af;
+      }
+
+      /* tag-row 微调 */
+      .tcc-tag-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+        margin: 0.6rem 0 0.75rem;
+      }
+
+      .tcc-tag {
+        padding: 0.25rem 0.6rem;
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.7);
+        background: rgba(15, 23, 42, 0.92);
+        font-size: 0.78rem;
+        color: #e5e7eb;
+      }
+
+      /* 链接样式统一一点 */
+      .tcc-link-inline {
+        color: #bfdbfe;
+        text-decoration: none;
+        border-bottom: 1px dotted rgba(191, 219, 254, 0.7);
+      }
+
+      .tcc-link-inline:hover {
+        color: #e0f2fe;
+        border-bottom-style: solid;
+      }
+
+      /* ===== 自适应 ===== */
+      @media (max-width: 900px) {
+        .tcc-page-hero {
+          padding: 2.6rem 1.25rem 2rem;
+        }
+
+        .tcc-page-hero-inner {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 1.8rem;
+        }
+
+        .tcc-page-main {
+          padding: 1.9rem 1.25rem 2.4rem;
+        }
+
+        .tcc-page-main-inner {
+          max-width: 100%;
+          gap: 1.6rem;
+        }
+
+        .tcc-note-item {
+          grid-template-columns: minmax(0, 1fr);
+        }
+
+        .tcc-note-date {
+          justify-self: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="tcc-site">
+      <!-- ========== HEADER ========== -->
+      <header class="tcc-header">
+        <div class="tcc-nav-inner">
+          <a href="index.html" class="tcc-brand">
+            <img
+              src="./Logo2.png"
+              alt="TCC logo"
+              style="height: 100px; width: 120px; object-fit: contain;"
+            />
+            <div>
+              <div class="tcc-brand-text-main">Trench Canada Coils</div>
+              <div class="tcc-brand-text-sub">
+                A LEGACY OF INNOVATION
+              </div>
+            </div>
+          </a>
+
+          <nav class="tcc-nav-links">
+            <!-- HOME -->
+            <a href="index.html" class="tcc-nav-link">Home</a>
+
+            <!-- SYSTEMS 下拉菜单（逻辑保持不动） -->
+            <div
+              class="tcc-nav-dropdown"
+              style="position: relative;"
+              onmouseleave="document.getElementById('tcc-systems-menu').style.display='none';"
+            >
+              <div
+                type="button"
+                class="tcc-nav-link"
+                aria-haspopup="true"
+                aria-expanded="false"
+                onmouseover="document.getElementById('tcc-systems-menu').style.display='flex';"
+                onfocus="document.getElementById('tcc-systems-menu').style.display='flex';"
+                onclick="const m=document.getElementById('tcc-systems-menu'); m.style.display = (m.style.display==='flex'?'none':'flex');"
+              >
+                Systems
+                <i
+                  class="fas fa-chevron-down"
+                  style="margin-left: 0.25rem; font-size: 0.7em;"
+                ></i>
+              </div>
+
+              <div
+                id="tcc-systems-menu"
+                style="
+                  display: none;
+                  position: absolute;
+                  top: 100%;
+                  right: 0;
+                  padding: 0.4rem 0;
+                  background: rgba(15, 23, 42, 0.98);
+                  border-radius: 0.5rem;
+                  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.8);
+                  min-width: 220px;
+                  z-index: 50;
+                  flex-direction: column;
+                "
+              >
+                <a
+                  href="systems-portal.html"
+                  target="_blank"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Systems Portal
+                </a>
+                <a
+                  href="prodorder-status.html"
+                  target="_blank"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Production Order Status
+                </a>
+                <a
+                  href="schedule-visualization.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Schedule Visualization
+                </a>
+                <a
+                  href="backend-status.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Backend Status System
+                </a>
+                <a
+                  href="frontend-status.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Frontend Status System
+                </a>
+                <a
+                  href="machine-load-recalculation-studio.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Machine Load Recalculation Studio
+                </a>
+                <a
+                  href="load-vs-capacity.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Load vs Capacity
+                </a>
+                <a
+                  href="andon-board.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Production Andon Board
+                </a>
+                <a
+                  href="enhanced-oms.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Enhanced OMS
+                </a>
+              </div>
+            </div>
+
+            <!-- NOTES & UPDATES -->
+            <a href="notes-updates.html" class="tcc-nav-link">
+              Notes &amp; Updates
+            </a>
+
+            <!-- AI ASSISTANT -->
+            <a
+              href="../../demo-apps/ai-assistant-demo.html"
+              class="tcc-nav-link"
+              data-ai-assistant-link="1"
+            >
+              AI ASSISTANT
+            </a>
+          </nav>
+
+          <button class="tcc-nav-toggle" aria-label="Toggle navigation">
+            <span></span>
+          </button>
+        </div>
+      </header>
+
+      <main class="tcc-main">
+        <!-- HERO -->
+        <section class="tcc-page-hero tcc-fade-in-on-load">
+          <div class="tcc-page-hero-inner">
+            <div class="reveal-on-scroll">
+              <div class="tcc-page-breadcrumb">
+                Scheduling Systems · Notes &amp; Updates
+              </div>
+              <h1 class="tcc-page-title">
+                Notes &amp; Updates
+              </h1>
+              <p class="tcc-page-subtitle">
+                Release history, system status notes, roadmaps
+                and key data sources.
+              </p>
+              <div class="tcc-page-hero-badges">
+                <span class="tcc-badge">
+                  <i class="fas fa-clipboard-list"></i>
+                  Release log
+                </span>
+                <span class="tcc-badge">
+                  <i class="fas fa-road"></i>
+                  Roadmap &amp; portals
+                </span>
+              </div>
+            </div>
+
+            <div class="tcc-page-hero-visual reveal-on-scroll">
+              <div class="tcc-page-hero-card">
+                <h3>Scheduling System at a glance</h3>
+                <p>
+                  This page tracks how our digital scheduling tools evolve: what
+                  updated, what is in progress, and which external portals each
+                  system depends on.
+                </p>
+                <small>
+                  Note: use this page together with each system’s own Guide Manual
+                  when onboarding new team members or preparing status updates.
+                </small>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- MAIN CONTENT：单列，两张卡纵向叠放 -->
+        <section class="tcc-page-main">
+          <div class="tcc-page-main-inner">
+            <!-- 卡片 1：Release notes timeline -->
+            <article class="tcc-note-card reveal-on-scroll">
+              <h3>Release notes &amp; recent changes</h3>
+              <p>
+                Most recent three updates to the core scheduling
+                tools. For more detail, see each system’s dedicated page.
+              </p>
+
+              <div class="tcc-note-timeline">
+                <!-- Note 1 -->
+                <div class="tcc-note-item">
+                  <div>
+                    <div class="tcc-note-item-title">
+                      <span class="system-name">Backend System</span>
+                      · Version 3.1
+                    </div>
+                    <p>
+                      A specified dashboard version for displaying in shop floor TV has been created.
+                    </p>
+                    <div class="tcc-note-meta">
+                      <span><i class="fas fa-user"></i> Admin Team</span>
+                    </div>
+                  </div>
+                  <span class="tcc-note-date">FEB 04, 2026</span>
+                </div>
+
+                <!-- Note 2 -->
+                <div class="tcc-note-item">
+                  <div>
+                    <div class="tcc-note-item-title">
+                      <span class="system-name">Scheduling and Planning AI Assistant</span>
+                      · Version 0.1
+                    </div>
+                    <p>
+                      Local AI data assistant has been introduced to help
+                      analyze the data and give suggestions as the first step.
+                    </p>
+                    <div class="tcc-note-meta">
+                      <span><i class="fas fa-user"></i> Admin Team</span>
+                    </div>
+                  </div>
+                  <span class="tcc-note-date">JAN 21, 2026</span>
+                </div>
+
+                <!-- Note 3 -->
+                <div class="tcc-note-item">
+                  <div>
+                    <div class="tcc-note-item-title">
+                      <span class="system-name">Backend App</span>
+                      · Version 3.1
+                    </div>
+                    <p>
+                      New features of Gantt Chart have been brought into the backend app,
+                      showing working process of each center.
+                    </p>
+                    <div class="tcc-note-meta">
+                      <span><i class="fas fa-user"></i> Admin Team</span>
+                    </div>
+                  </div>
+                  <span class="tcc-note-date">DEC 09, 2025</span>
+                </div>
+
+              </div>
+            </article>
+
+            <!-- 卡片 2：Roadmap + portals，跟在下面 -->
+            <article class="tcc-note-card tcc-note-card--side reveal-on-scroll">
+              <h3>Roadmap &amp; Database Access</h3>
+              <p>
+                Upcoming software directions reusing the current data and logic,
+                plus quick access to OMS and Tableau portals.
+              </p>
+
+              <ul class="tcc-roadmap-list">
+                <li>
+                  <strong>Honsha Kanban Board version 2.0</strong> – enhanced version of the current Kanban board,
+                  with more features to be added.
+                </li>
+                <li>
+                  <strong>Frontend System</strong> – reuse the same backend data and logic already
+                  used in Backend Status systems for the Frontend System.
+                </li>
+                <li>
+                  <strong>Enhanced OMS Interface</strong> – more user-friendly OM
+                  Period adjustments, search and filters embedded directly into the
+                  OMS portal.
+                </li>
+                <li>
+                  <strong>LLM-integrated systems</strong> – local Meta Ollama
+                  integration to assist anomaly explanations and
+                  simple text generation within dashboards.
+                </li>
+              </ul>
+
+              <small>
+                Release Plan: approximately December–April (subject to change
+                based on priorities and available capacity).
+              </small>
+
+              <hr
+                style="margin: 1.2rem 0; border-color: rgba(148,163,184,0.45)"
+              />
+
+              <div class="tcc-portals">
+                <h4>Database &amp; Tableau portals</h4>
+                <p>
+                  These portals power the current systems and will remain key
+                  reference points for future releases.
+                </p>
+
+                <div class="tcc-tag-row">
+                  <span class="tcc-tag">OMS</span>
+                  <span class="tcc-tag">Tableau Rework</span>
+                  <span class="tcc-tag">Tableau L&amp;C</span>
+                  <span class="tcc-tag">Tableau Center Info</span>
+                </div>
+
+                <div class="tcc-portal-link">
+                  <a
+                    href="https://casbq0006a.trench-group.net:44342/home"
+                    target="_blank"
+                    class="tcc-link-inline"
+                  >
+                    <i class="fas fa-database"></i>
+                    &nbsp;Open OMS Portal
+                  </a>
+                  <br />
+                  <span>casbq0006a.trench-group.net</span>
+                </div>
+
+                <div class="tcc-portal-link">
+                  <a
+                    href="https://eu-west-1a.online.tableau.com/#/site/trenchgrouphsp/views/TCCReworkDashboard/TCCReworkDashboard1?:iid=1"
+                    target="_blank"
+                    class="tcc-link-inline"
+                  >
+                    <i class="fas fa-database"></i>
+                    &nbsp;Open Tableau Rework Portal
+                  </a>
+                  <br />
+                  <span>Tableau Online</span>
+                </div>
+
+                <div class="tcc-portal-link">
+                  <a
+                    href="https://eu-west-1a.online.tableau.com/#/site/trenchgrouphsp/views/LoadvsCapacityDashboard/LoadvsCapacitySchedulingStatus?:iid=1"
+                    target="_blank"
+                    class="tcc-link-inline"
+                  >
+                    <i class="fas fa-database"></i>
+                    &nbsp;Open Tableau Load vs Capacity Status
+                  </a>
+                  <br />
+                  <span>Tableau Online</span>
+                </div>
+
+                <div class="tcc-portal-link">
+                  <a
+                    href="https://eu-west-1a.online.tableau.com/#/site/trenchgrouphsp/views/WorkCenterInfoDashboard/LINE1Dashboard?:iid=1"
+                    target="_blank"
+                    class="tcc-link-inline"
+                  >
+                    <i class="fas fa-database"></i>
+                    &nbsp;Open Tableau Workcenter Info
+                  </a>
+                  <br />
+                  <span>Tableau Online</span>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <footer class="tcc-footer">
+        <div class="tcc-footer-inner">
+          <span>© 2025 Trench Canada · Scheduling Team</span>
+          <span>Notes &amp; Updates · Version 1.0</span>
+        </div>
+      </footer>
+    </div>
+
+    <!-- full-screen marquee border overlay -->
+    <div id="tcc-marquee-border" aria-hidden="true"></div>
+
+    <!-- main UI script -->
+    <script src="assets/js/main.js"></script>
+
+    <!-- AI ASSISTANT hover -> glow + click -> jump -->
+    <script>
+      (function () {
+        const AI_URL = "../../demo-apps/ai-assistant-demo.html";
+
+        function glowOn() {
+          document.body.classList.add("tcc-marquee-on");
+        }
+
+        function glowOff() {
+          document.body.classList.remove("tcc-marquee-on");
+        }
+
+        function goAiAssistant(e) {
+          if (e) e.preventDefault();
+          glowOn(); // 点击时也顺便亮一下（不影响：马上跳转页面）
+          setTimeout(() => {
+            window.location.href = AI_URL;
+          }, 380);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+          const nodes = document.querySelectorAll("[data-ai-assistant-link='1']");
+          nodes.forEach((el) => {
+            // ✅ 鼠标移上去就生效
+            el.addEventListener("mouseenter", glowOn);
+            el.addEventListener("mouseleave", glowOff);
+
+            // ✅ 键盘 tab 聚焦也生效（更完整）
+            el.addEventListener("focus", glowOn);
+            el.addEventListener("blur", glowOff);
+
+            // ✅ 点击仍然跳转
+            el.addEventListener("click", goAiAssistant);
+          });
+        });
+      })();
+    </script>
+
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>

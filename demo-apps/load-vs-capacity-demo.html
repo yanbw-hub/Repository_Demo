@@ -1,0 +1,522 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Load vs Capacity Platform — Demo Preview</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/font-awesome/css/all.min.css" />
+
+<style>
+  :root{
+    --bg-0:#020617;
+    --bg-1:#0f172a;
+    --panel:rgba(15,23,42,0.9);
+    --border:rgba(148,163,184,0.5);
+    --text-h:#e5e7eb;
+    --text-b:#cbd5f5;
+    --text-m:#9ca3af;
+    --ok:#22c55e;
+    --ok-2:#4ade80;
+    --warn:#f59e0b;
+    --warn-2:#fbbf24;
+    --danger:#f87171;
+    --danger-2:#ef4444;
+    --info:#38bdf8;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'IBM Plex Sans', system-ui, sans-serif;
+    color:var(--text-b);
+    background:
+      radial-gradient(circle at 12% 8%, rgba(56,189,248,0.16), transparent 45%),
+      radial-gradient(circle at 88% 15%, rgba(168,85,247,0.12), transparent 50%),
+      radial-gradient(circle at 50% 95%, rgba(37,99,235,0.18), transparent 55%),
+      linear-gradient(180deg, var(--bg-0), var(--bg-1) 60%, var(--bg-0));
+    min-height:100vh;
+    line-height:1.55;
+  }
+  a{color:inherit;}
+  .wrap{max-width:1280px; margin:0 auto; padding:1.5rem 1.5rem 3rem;}
+
+  /* header */
+  header.top{
+    display:flex; align-items:center; justify-content:space-between; gap:1rem;
+    padding-bottom:1.1rem; margin-bottom:1.4rem;
+    border-bottom:1px solid rgba(148,163,184,0.25);
+    flex-wrap:wrap;
+  }
+  .brand{display:flex; align-items:center; gap:0.85rem;}
+  .brand img{height:45px; width:auto; object-fit:contain;}
+  .brand-text h1{font-size:1.15rem; margin:0; color:var(--text-h); letter-spacing:0.02em;}
+  .brand-text span{font-size:0.78rem; color:var(--text-m);}
+  .back-link{
+    font-size:0.85rem; color:var(--text-m); text-decoration:none;
+    display:flex; align-items:center; gap:0.4rem; transition:color .15s ease;
+  }
+  .back-link:hover{color:var(--info);}
+
+  .demo-pill{
+    display:inline-flex; align-items:center; gap:0.5rem;
+    font-size:0.72rem; letter-spacing:0.06em; text-transform:uppercase;
+    padding:0.4rem 0.9rem; border-radius:999px;
+    background:rgba(56,189,248,0.1);
+    border:1px solid rgba(56,189,248,0.45);
+    color:#7dd3fc; margin-bottom:1.3rem;
+  }
+  .demo-pill i{color:var(--info);}
+
+  .page-title{font-size:1.7rem; color:var(--text-h); margin:0 0 0.4rem;}
+  .page-sub{color:var(--text-m); max-width:60rem; margin:0 0 1.8rem; font-size:0.95rem;}
+
+  .grid{display:grid; grid-template-columns: 2.1fr 1fr; gap:1.4rem; align-items:start;}
+  @media (max-width:980px){ .grid{grid-template-columns:1fr;} }
+
+  .card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:0.9rem;
+    padding:1.4rem 1.5rem;
+    box-shadow:0 18px 40px rgba(2,6,23,0.55);
+    backdrop-filter:blur(10px);
+    margin-bottom:1.4rem;
+  }
+  .card h2{
+    font-size:1rem; color:var(--text-h); margin:0 0 0.2rem;
+    display:flex; align-items:center; gap:0.55rem;
+  }
+  .card h2 i{color:var(--info);}
+  .card .card-sub{font-size:0.82rem; color:var(--text-m); margin:0 0 1.1rem;}
+
+  /* KPI row */
+  .kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:0.9rem; margin-bottom:1.4rem;}
+  @media (max-width:780px){ .kpis{grid-template-columns:repeat(2,1fr);} }
+  .kpi{
+    background:rgba(15,23,42,0.75);
+    border:1px solid var(--border);
+    border-radius:0.75rem;
+    padding:0.9rem 1rem;
+  }
+  .kpi .label{font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-m); margin-bottom:0.35rem;}
+  .kpi .value{font-size:1.5rem; font-weight:600; color:var(--text-h);}
+  .kpi .value.ok{color:var(--ok-2);}
+  .kpi .value.warn{color:var(--warn-2);}
+  .kpi .value.danger{color:var(--danger);}
+  .kpi .sub{font-size:0.76rem; color:var(--text-m); margin-top:0.2rem;}
+
+  /* chart */
+  .chart-shell{position:relative; padding-top:1rem;}
+  .chart-legend{display:flex; gap:1.2rem; flex-wrap:wrap; margin-bottom:1rem; font-size:0.78rem; color:var(--text-m);}
+  .chart-legend .dot{display:inline-block; width:9px; height:9px; border-radius:2px; margin-right:0.4rem;}
+  .chart-area{
+    position:relative;
+    height:330px;
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    padding:0 1.6rem;
+    border-bottom:1px solid rgba(148,163,184,0.3);
+  }
+  .chart-area::before{ /* gridlines */
+    content:"";
+    position:absolute; inset:0 1.6rem 0 1.6rem;
+    background-image: repeating-linear-gradient(to top, rgba(148,163,184,0.14) 0, rgba(148,163,184,0.14) 1px, transparent 1px, transparent 25%);
+    pointer-events:none;
+  }
+  .ratio-svg{position:absolute; left:0; top:0; width:100%; height:330px; pointer-events:none; overflow:visible;}
+  .month-col{
+    position:relative;
+    width:13%;
+    height:100%;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+  }
+  .cap-line{
+    position:absolute;
+    left:-6px; right:-6px;
+    height:0;
+    border-top:2px dashed rgba(226,232,240,0.65);
+  }
+  .cap-line span{
+    position:absolute; right:0; top:-1.15rem; font-size:0.65rem; color:var(--text-m);
+    white-space:nowrap;
+  }
+  .bar3d{
+    position:relative;
+    width:38px;
+    transition:height .5s cubic-bezier(.4,0,.2,1);
+  }
+  .bar-front{
+    position:absolute; left:0; bottom:0; width:100%; height:100%;
+    border-radius:3px 3px 0 0;
+    transition:background .35s ease, height .5s cubic-bezier(.4,0,.2,1);
+  }
+  .bar-top{
+    position:absolute; left:0; top:-8px; width:100%; height:9px;
+    transform:skewX(-42deg); transform-origin:bottom left;
+    border-radius:2px 2px 0 0;
+    transition:background .35s ease;
+  }
+  .bar-side{
+    position:absolute; right:-9px; top:0; width:9px; height:100%;
+    transform:skewY(-48deg); transform-origin:top left;
+    transition:background .35s ease, height .5s cubic-bezier(.4,0,.2,1);
+  }
+  .month-labels{display:flex; justify-content:space-between; padding:0 1.6rem; margin-top:0.6rem;}
+  .month-labels span{width:13%; text-align:center; font-size:0.78rem; color:var(--text-m);}
+  .month-value{
+    position:absolute; top:-1.9rem; left:50%; transform:translateX(-50%);
+    font-size:0.68rem; color:var(--text-h); white-space:nowrap; font-weight:500;
+  }
+
+  /* status colors applied via JS */
+  .status-ok .bar-front{background:linear-gradient(180deg, var(--ok-2), #15803d);}
+  .status-ok .bar-top{background:#86efac;}
+  .status-ok .bar-side{background:#166534;}
+  .status-warn .bar-front{background:linear-gradient(180deg, var(--warn-2), #b45309);}
+  .status-warn .bar-top{background:#fde68a;}
+  .status-warn .bar-side{background:#92400e;}
+  .status-danger .bar-front{background:linear-gradient(180deg, var(--danger), #b91c1c);}
+  .status-danger .bar-top{background:#fca5a5;}
+  .status-danger .bar-side{background:#7f1d1d;}
+
+  /* simulation controls */
+  .sim-row{display:flex; align-items:center; gap:1rem; flex-wrap:wrap; margin-bottom:1rem;}
+  .sim-slider{flex:1; min-width:220px; display:flex; align-items:center; gap:0.8rem;}
+  input[type=range]{
+    flex:1; height:5px; border-radius:999px; background:rgba(148,163,184,0.3);
+    -webkit-appearance:none; appearance:none; outline:none;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none; appearance:none;
+    width:16px; height:16px; border-radius:50%;
+    background:var(--info); border:2px solid #e0f2fe; cursor:pointer;
+    box-shadow:0 0 0 3px rgba(56,189,248,0.25);
+  }
+  .sim-btn{
+    width:34px; height:34px; border-radius:0.5rem;
+    background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.4);
+    color:#7dd3fc; font-size:0.95rem; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:background .15s ease;
+  }
+  .sim-btn:hover{background:rgba(56,189,248,0.25);}
+  .sim-btn:active{transform:translateY(1px);}
+  #simValue{font-variant-numeric:tabular-nums; color:var(--text-h); font-weight:600; min-width:3.4rem; text-align:right;}
+  .reset-btn{
+    font-size:0.78rem; color:var(--text-m); background:none; border:1px solid var(--border);
+    border-radius:0.5rem; padding:0.4rem 0.7rem; cursor:pointer;
+  }
+  .reset-btn:hover{color:var(--text-h); border-color:var(--info);}
+
+  .readout{
+    display:flex; align-items:center; gap:0.7rem;
+    background:rgba(15,23,42,0.75);
+    border:1px solid var(--border);
+    border-radius:0.6rem;
+    padding:0.8rem 1rem;
+    font-size:0.88rem; color:var(--text-h);
+  }
+  .readout i{color:var(--warn-2); font-size:1.05rem;}
+  #readoutText b{color:var(--info);}
+  #readoutText b.danger-txt{color:var(--danger);}
+
+  /* about panel */
+  .about p{font-size:0.88rem; color:var(--text-b); margin:0 0 0.9rem;}
+  .about ul{margin:0; padding-left:1.2rem; font-size:0.85rem; color:var(--text-b);}
+  .about ul li{margin-bottom:0.55rem;}
+  .about ul li i{color:var(--info); margin-right:0.4rem; width:1rem;}
+
+  .nav-pages{display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:0.2rem;}
+  .nav-pages span{
+    font-size:0.72rem; color:var(--text-m);
+    border:1px solid rgba(148,163,184,0.3);
+    border-radius:999px; padding:0.28rem 0.7rem;
+  }
+
+  footer{
+    text-align:center; font-size:0.78rem; color:var(--text-m);
+    margin-top:1.5rem; padding-top:1.2rem; border-top:1px solid rgba(148,163,184,0.2);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <img src="../Enhanced entrance for systems/Logo2.png" alt="Trench Canada" />
+      <div class="brand-text">
+        <h1>Load vs Capacity Platform</h1>
+        <span>Sales &amp; Production capacity view — Coils, TCC</span>
+      </div>
+    </div>
+    <a class="back-link" href="../Enhanced entrance for systems/apple-style-portal.html">
+      <i class="fas fa-arrow-left"></i> Back to Systems Portal
+    </a>
+  </header>
+
+  <div class="demo-pill"><i class="fas fa-flask"></i> DEMO PREVIEW · Sample data only, not connected to any live system</div>
+
+  <h2 class="page-title">Monthly Load vs Capacity</h2>
+  <p class="page-sub">
+    A quick, visual read on whether booked / forecast load fits inside available production capacity, month by month —
+    built for fast Sales ↔ Production conversations rather than detailed scheduling. Use the simulation control below to
+    see how an extra slice of order volume would shift each month relative to the capacity ceiling.
+  </p>
+
+  <div class="grid">
+    <div>
+      <div class="kpis">
+        <div class="kpi">
+          <div class="label">Avg Load Ratio</div>
+          <div class="value" id="kpiAvg">92%</div>
+          <div class="sub">across 6-month window</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Months Over Capacity</div>
+          <div class="value" id="kpiOver">1 / 6</div>
+          <div class="sub" id="kpiOverSub">Jul 2026</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Peak Month</div>
+          <div class="value" id="kpiPeak">Jul · 103%</div>
+          <div class="sub">highest load ratio</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Headroom (Aug)</div>
+          <div class="value ok" id="kpiHeadroom">+11%</div>
+          <div class="sub">capacity remaining</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2><i class="fas fa-cubes"></i> Load vs Capacity — 6 Month View</h2>
+        <p class="card-sub">Fabricated demo data — hours of scheduled coil-line load per month, against available capacity. Dashed line marks the capacity ceiling; the amber line traces load ratio across the window.</p>
+
+        <div class="chart-legend">
+          <span><i class="dot" style="background:var(--ok-2)"></i>Under capacity (&lt;90%)</span>
+          <span><i class="dot" style="background:var(--warn-2)"></i>Near capacity (90–100%)</span>
+          <span><i class="dot" style="background:var(--danger)"></i>Over capacity (&gt;100%)</span>
+          <span><i class="dot" style="background:#fbbf24; border-radius:50%;"></i>Load ratio line</span>
+        </div>
+
+        <div class="chart-shell">
+          <div class="chart-area" id="chartArea">
+            <svg class="ratio-svg" id="ratioSvg" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+            <!-- month columns injected by JS -->
+          </div>
+          <div class="month-labels" id="monthLabels"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2><i class="fas fa-sliders-h"></i> Simulation — Additional Load</h2>
+        <p class="card-sub">Model an incremental order volume on top of the current forecast and see which months would cross the capacity ceiling.</p>
+
+        <div class="sim-row">
+          <button class="sim-btn" id="simMinus" aria-label="decrease"><i class="fas fa-minus"></i></button>
+          <div class="sim-slider">
+            <input type="range" id="simSlider" min="0" max="30" step="1" value="0" />
+          </div>
+          <button class="sim-btn" id="simPlus" aria-label="increase"><i class="fas fa-plus"></i></button>
+          <span id="simValue">+0%</span>
+          <button class="reset-btn" id="simReset">Reset</button>
+        </div>
+
+        <div class="readout">
+          <i class="fas fa-triangle-exclamation"></i>
+          <span id="readoutText">Projected load ratio: <b>92%</b> avg → <b>92%</b> avg. No additional months move over capacity.</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card about">
+        <h2><i class="fas fa-circle-info"></i> About this system</h2>
+        <p>
+          The Load vs Capacity Platform gives Sales and Production a shared, high-level picture of whether
+          upcoming order volume fits within available coil-line capacity — without needing to dig into the
+          detailed shop-floor schedule. It's designed as a conversation tool: quick to read in a meeting,
+          quick to re-run with a "what if" scenario.
+        </p>
+        <ul>
+          <li><i class="fas fa-chart-column"></i>Monthly load-vs-capacity visualization across a rolling multi-month window</li>
+          <li><i class="fas fa-wave-square"></i>Load ratio trendline to spot months trending toward or past the ceiling</li>
+          <li><i class="fas fa-sliders-h"></i>Lightweight simulation overlay for "additional load %" what-if scenarios</li>
+          <li><i class="fas fa-people-arrows"></i>Built for Sales ↔ Production capacity discussions, not detailed line scheduling</li>
+          <li><i class="fas fa-table-list"></i>Companion views for schedules, SAP orders, shift workload and vacation capacities</li>
+        </ul>
+        <div class="nav-pages">
+          <span>Dashboard</span><span>Schedules</span><span>Simulation</span><span>SAP Orders</span>
+          <span>Shift Workload</span><span>Vacation Capacities</span><span>Rescheduling</span><span>Reports</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>© 2026 Trench Canada · Scheduling Team — Demo preview, sample data only.</footer>
+</div>
+
+<script>
+(function(){
+  // ---- fabricated sample data (hours per month) ----
+  var months = ["Mar 2026","Apr 2026","May 2026","Jun 2026","Jul 2026","Aug 2026"];
+  var monthsShort = ["Mar","Apr","May","Jun","Jul","Aug"];
+  var capacity   = [4200, 4200, 4350, 4350, 4500, 4500];
+  var baseLoad   = [3600, 3900, 4100, 4300, 4650, 4000];
+
+  var maxScale = 5400; // px-height reference (hours) for the chart
+  var chartArea = document.getElementById('chartArea');
+  var monthLabels = document.getElementById('monthLabels');
+  var ratioSvg = document.getElementById('ratioSvg');
+  var slider = document.getElementById('simSlider');
+  var simValue = document.getElementById('simValue');
+  var readoutText = document.getElementById('readoutText');
+
+  function statusFor(ratio){
+    if (ratio > 1.0) return 'danger';
+    if (ratio >= 0.90) return 'warn';
+    return 'ok';
+  }
+  function statusColor(status){
+    return status === 'danger' ? '#f87171' : (status === 'warn' ? '#fbbf24' : '#4ade80');
+  }
+  function pct(n){ return Math.round(n*100) + '%'; }
+
+  // build month columns + labels once
+  var cols = [];
+  for (var i=0;i<months.length;i++){
+    var col = document.createElement('div');
+    col.className = 'month-col';
+
+    var capLine = document.createElement('div');
+    capLine.className = 'cap-line';
+    var capSpan = document.createElement('span');
+    capSpan.textContent = 'cap ' + capacity[i] + 'h';
+    capLine.appendChild(capSpan);
+    col.appendChild(capLine);
+
+    var bar = document.createElement('div');
+    bar.className = 'bar3d';
+    var front = document.createElement('div'); front.className='bar-front';
+    var top = document.createElement('div'); top.className='bar-top';
+    var side = document.createElement('div'); side.className='bar-side';
+    bar.appendChild(front); bar.appendChild(top); bar.appendChild(side);
+
+    var val = document.createElement('div');
+    val.className = 'month-value';
+    bar.appendChild(val);
+
+    col.appendChild(bar);
+    chartArea.appendChild(col);
+    cols.push({col:col, bar:bar, capLine:capLine, val:val});
+
+    var lbl = document.createElement('span');
+    lbl.textContent = monthsShort[i];
+    monthLabels.appendChild(lbl);
+  }
+
+  function render(extraPct){
+    var chartH = 300; // usable px height inside chart-area
+    var ratios = [];
+    var overMonths = [];
+
+    for (var i=0;i<months.length;i++){
+      var load = baseLoad[i] * (1 + extraPct/100);
+      var ratio = load / capacity[i];
+      ratios.push(ratio);
+      if (ratio > 1.0) overMonths.push(monthsShort[i]+' '+months[i].split(' ')[1]);
+
+      var status = statusFor(ratio);
+      var barH = Math.min((load / maxScale) * chartH, chartH + 40);
+      var capH = (capacity[i] / maxScale) * chartH;
+
+      var c = cols[i];
+      c.bar.style.height = barH + 'px';
+      c.bar.className = 'bar3d status-' + status;
+      c.capLine.style.bottom = capH + 'px';
+      c.val.textContent = Math.round(load) + 'h · ' + pct(ratio);
+    }
+
+    // ratio line (SVG), viewBox 0..100 x, 0..100 y (y=0 top, y=100 bottom)
+    // map ratio 0..1.3 -> y 100..0 (clamped)
+    var pts = [];
+    for (var i=0;i<ratios.length;i++){
+      var x = (i/(months.length-1)) * 96 + 2; // small padding
+      var clamped = Math.min(ratios[i], 1.3);
+      var y = 100 - (clamped/1.3)*100;
+      pts.push([x,y]);
+    }
+    var polyPoints = pts.map(function(p){return p[0]+','+p[1];}).join(' ');
+
+    var segs = '';
+    for (var i=0;i<pts.length-1;i++){
+      var avg = (ratios[i]+ratios[i+1])/2;
+      var col = statusColor(statusFor(avg));
+      segs += '<line x1="'+pts[i][0]+'" y1="'+pts[i][1]+'" x2="'+pts[i+1][0]+'" y2="'+pts[i+1][1]+'" stroke="'+col+'" stroke-width="1.6" vector-effect="non-scaling-stroke" />';
+    }
+    var dots = '';
+    for (var i=0;i<pts.length;i++){
+      dots += '<circle cx="'+pts[i][0]+'" cy="'+pts[i][1]+'" r="1.6" fill="'+statusColor(statusFor(ratios[i]))+'" stroke="#0f172a" stroke-width="0.4" />';
+    }
+    ratioSvg.innerHTML = segs + dots;
+
+    // KPIs
+    var avgRatio = ratios.reduce(function(a,b){return a+b;},0)/ratios.length;
+    document.getElementById('kpiAvg').textContent = pct(avgRatio);
+    document.getElementById('kpiAvg').className = 'value ' + statusFor(avgRatio);
+
+    var overCount = overMonths.length;
+    document.getElementById('kpiOver').textContent = overCount + ' / 6';
+    document.getElementById('kpiOver').className = 'value ' + (overCount>0 ? 'danger' : 'ok');
+    document.getElementById('kpiOverSub').textContent = overCount>0 ? overMonths.join(', ') : 'none currently';
+
+    var peakIdx = 0;
+    for (var i=1;i<ratios.length;i++){ if (ratios[i]>ratios[peakIdx]) peakIdx=i; }
+    document.getElementById('kpiPeak').textContent = monthsShort[peakIdx] + ' · ' + pct(ratios[peakIdx]);
+    document.getElementById('kpiPeak').className = 'value ' + statusFor(ratios[peakIdx]);
+
+    var headroom = 1 - ratios[ratios.length-1];
+    var hEl = document.getElementById('kpiHeadroom');
+    hEl.textContent = (headroom>=0?'+':'') + Math.round(headroom*100) + '%';
+    hEl.className = 'value ' + (headroom<0?'danger':(headroom<0.1?'warn':'ok'));
+
+    // readout
+    var baseAvg = baseLoad.reduce(function(a,b,i){return a+b/capacity[i];},0)/baseLoad.length;
+    var text = 'Projected load ratio: <b>'+pct(baseAvg)+'</b> avg → <b class="'+(avgRatio>1?'danger-txt':'')+'">'+pct(avgRatio)+'</b> avg. ';
+    if (overCount>0){
+      text += 'Over capacity in <b class="danger-txt">'+overMonths.join(', ')+'</b>.';
+    } else {
+      text += 'No months projected over capacity.';
+    }
+    readoutText.innerHTML = text;
+  }
+
+  slider.addEventListener('input', function(){
+    simValue.textContent = '+' + slider.value + '%';
+    render(parseFloat(slider.value));
+  });
+  document.getElementById('simMinus').addEventListener('click', function(){
+    slider.value = Math.max(0, parseFloat(slider.value) - 1);
+    slider.dispatchEvent(new Event('input'));
+  });
+  document.getElementById('simPlus').addEventListener('click', function(){
+    slider.value = Math.min(30, parseFloat(slider.value) + 1);
+    slider.dispatchEvent(new Event('input'));
+  });
+  document.getElementById('simReset').addEventListener('click', function(){
+    slider.value = 0;
+    slider.dispatchEvent(new Event('input'));
+  });
+
+  render(0);
+})();
+</script>
+</body>
+</html>

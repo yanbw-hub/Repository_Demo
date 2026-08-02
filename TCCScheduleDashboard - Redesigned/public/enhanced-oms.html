@@ -1,0 +1,905 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Enhanced OMS</title>
+
+    <link rel="icon" type="image/png" sizes="32x32" href="./Logo.png" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Orbitron:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Existing bundles -->
+    <script src="./javascript/reload.js"></script>
+    <script src="./1986481368401444864/resource_5784810000.js"></script>
+    <link href="./1986481368401444864/all.min.css" rel="stylesheet" />
+    <link href="./1986481368401444864/tailwind.min.css" rel="stylesheet" />
+
+    <!-- Global styles -->
+    <link rel="stylesheet" href="assets/css/base.css" />
+
+    <style>
+      .tcc-main {
+        position: relative;
+        background:
+          radial-gradient(circle at top left, rgba(56, 189, 248, 0.13), transparent 58%),
+          radial-gradient(circle at bottom right, rgba(37, 99, 235, 0.12), transparent 60%),
+          linear-gradient(to bottom, rgba(2, 6, 23, 0.06), rgba(2, 6, 23, 0.08)),
+          url('https://wallpaperaccess.com/full/402864.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+      }
+
+      .tcc-page-hero {
+        padding-block: 3.25rem 2.4rem;
+        border-bottom: 1px solid rgba(15, 23, 42, 0.85);
+        position: relative;
+      }
+
+      .tcc-page-hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(circle at top right, rgba(125, 211, 252, 0.18), transparent 55%),
+          radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.18), transparent 55%);
+        opacity: 0.8;
+        pointer-events: none;
+      }
+
+      .tcc-page-hero-inner {
+        position: relative;
+        z-index: 1;
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+        gap: 2.4rem;
+        align-items: stretch;
+      }
+
+      .tcc-page-breadcrumb {
+        font-size: 0.8rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: #9ca3af;
+        margin-bottom: 0.8rem;
+      }
+
+      .tcc-page-title {
+        font-size: clamp(2rem, 2.6vw, 2.4rem);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        margin-bottom: 0.75rem;
+      }
+
+      .tcc-page-subtitle {
+        max-width: 42rem;
+        color: #d1d5db;
+      }
+
+      .tcc-page-hero-badges {
+        margin-top: 1.1rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .tcc-page-hero-visual {
+        display: flex;
+        align-items: stretch;
+        justify-content: flex-end;
+      }
+
+      .tcc-page-hero-card {
+        position: relative;
+        width: 100%;
+        border-radius: 1rem;
+        padding: 1.4rem 1.5rem 1.2rem;
+        background:
+          radial-gradient(circle at top left, rgba(59, 130, 246, 0.35), transparent 60%),
+          radial-gradient(circle at bottom right, rgba(8, 47, 73, 0.55), transparent 60%),
+          rgba(15, 23, 42, 0.54);
+        border: 1px solid rgba(148, 163, 184, 0.45);
+        box-shadow:
+          0 22px 45px rgba(15, 23, 42, 0.95),
+          0 0 0 1px rgba(15, 23, 42, 0.9) inset;
+        backdrop-filter: blur(14px);
+      }
+
+      .tcc-page-hero-card h3 {
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: #e5e7eb;
+        margin-bottom: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+
+      .tcc-page-hero-card h3::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(
+          to right,
+          rgba(59, 130, 246, 0.2),
+          rgba(56, 189, 248, 0.7)
+        );
+      }
+
+      .tcc-page-hero-card ul {
+        margin-left: 0;
+        padding-left: 1rem;
+        font-size: 0.9rem;
+        color: #cbd5f5;
+      }
+
+      .tcc-page-hero-card li + li {
+        margin-top: 0.4rem;
+      }
+
+      .tcc-page-hero-card .tcc-tag-row {
+        margin-top: 1rem;
+      }
+
+      .tcc-page-main {
+        padding: 2.4rem 1.75rem 3.25rem;
+        border-top: 1px solid rgba(15, 23, 42, 0.9);
+      }
+
+      .tcc-page-main-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+        gap: 2rem;
+        align-items: stretch;
+      }
+
+      .tcc-page-main-inner .tcc-panel {
+        position: relative;
+        min-height: 0;
+        max-height: 65vh;
+        padding: 1.6rem 1.7rem 1.5rem;
+        border-radius: 1rem;
+        border: 1px solid rgba(148, 163, 184, 0.42);
+        background:
+          radial-gradient(circle at top left, rgba(56, 189, 248, 0.25), transparent 62%),
+          radial-gradient(circle at bottom right, rgba(37, 99, 235, 0.28), transparent 60%),
+          rgba(15, 23, 42, 0.36);
+        box-shadow:
+          0 22px 48px rgba(15, 23, 42, 0.98),
+          0 0 0 1px rgba(15, 23, 42, 0.9) inset;
+        backdrop-filter: blur(18px);
+        overflow-y: auto;
+      }
+
+      .tcc-page-main-inner .tcc-panel::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: linear-gradient(
+          135deg,
+          rgba(96, 165, 250, 0.22),
+          transparent 55%
+        );
+        mix-blend-mode: soft-light;
+        opacity: 0.9;
+        pointer-events: none;
+      }
+
+      .tcc-page-main-inner .tcc-panel > * {
+        position: relative;
+        z-index: 1;
+      }
+
+      .tcc-page-main-inner .tcc-panel h3 {
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: #e5e7eb;
+        margin-bottom: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+
+      .tcc-page-main-inner .tcc-panel h3::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: radial-gradient(circle, #38bdf8, #2563eb);
+        box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.25);
+      }
+
+      .tcc-page-main-inner .tcc-panel h3::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(
+          to right,
+          rgba(15, 23, 42, 0),
+          rgba(148, 163, 184, 0.8)
+        );
+      }
+
+      .tcc-page-main-inner .tcc-panel h4 {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: #e5e7eb;
+        margin: 1.1rem 0 0.35rem;
+      }
+
+      .tcc-page-main-inner .tcc-panel p {
+        font-size: 0.9rem;
+        color: #d1d5db;
+      }
+
+      .tcc-page-main-inner .tcc-panel ul {
+        margin-top: 0.5rem;
+        padding-left: 1.1rem;
+        font-size: 0.9rem;
+        color: #cbd5f5;
+      }
+
+      .tcc-page-main-inner .tcc-panel ul li + li {
+        margin-top: 0.25rem;
+      }
+
+      .tcc-page-main-inner .tcc-panel dl {
+        font-size: 0.88rem;
+        color: #d1d5db;
+      }
+
+      .tcc-page-main-inner .tcc-panel dl dt {
+        color: #e5e7eb;
+      }
+
+      .tcc-page-main-inner .tcc-panel dl dd {
+        color: #cbd5f5;
+      }
+
+      .tcc-page-main-inner .tcc-panel .tcc-tag-row {
+        margin-top: 0.6rem;
+      }
+
+      .tcc-page-main-inner .tcc-panel .tcc-tag {
+        border-radius: 9999px;
+        border: 1px solid rgba(148, 163, 184, 0.5);
+        background: rgba(15, 23, 42, 0.9);
+      }
+
+      .tcc-page-main-inner .tcc-panel p[style*="font-size: 0.8rem"] {
+        color: #9ca3af !important;
+      }
+
+      .tcc-page-main-inner .tcc-panel {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(148, 163, 184, 0.45) transparent;
+      }
+
+      .tcc-page-main-inner .tcc-panel::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .tcc-page-main-inner .tcc-panel::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      .tcc-page-main-inner .tcc-panel::-webkit-scrollbar-thumb {
+        background: rgba(148, 163, 184, 0.45);
+        border-radius: 9999px;
+      }
+
+      .tcc-page-main-inner .tcc-panel::-webkit-scrollbar-thumb:hover {
+        background: rgba(148, 163, 184, 0.7);
+      }
+
+      .tcc-page-main-inner .tcc-panel ol.list-decimal {
+        margin-top: 0.75rem;
+        padding-left: 1.1rem;
+      }
+
+      .tcc-page-main-inner .tcc-panel ol.list-decimal > li {
+        padding-top: 0.55rem;
+        margin-top: 0.2rem;
+        border-top: 1px dashed rgba(148, 163, 184, 0.25);
+      }
+
+      .tcc-page-main-inner .tcc-panel ol.list-decimal > li:first-child {
+        border-top: 0;
+      }
+
+      .tcc-page-main-inner .tcc-panel ol.list-decimal > li > div:first-child {
+        display: inline-block;
+        margin-left: 0.3rem;
+        font-weight: 600;
+        color: #e5e7eb;
+      }
+
+      .tcc-page-main-inner .tcc-panel ul.list-disc {
+        margin-top: 0.3rem;
+        padding-left: 1.1rem;
+        font-size: 0.9rem;
+        color: #cbd5f5;
+      }
+
+      .tcc-page-main-inner .tcc-panel ul.list-disc li + li {
+        margin-top: 0.25rem;
+      }
+
+      @media (max-width: 900px) {
+        .tcc-page-hero {
+          padding-block: 2.4rem 1.9rem;
+        }
+
+        .tcc-page-hero-inner {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 1.9rem;
+        }
+
+        .tcc-page-main {
+          padding: 1.8rem 1.25rem 2.3rem;
+        }
+
+        .tcc-page-main-inner {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 1.6rem;
+        }
+
+        .tcc-page-main-inner .tcc-panel {
+          max-height: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="tcc-site">
+      <header class="tcc-header">
+        <div class="tcc-nav-inner">
+          <a href="index.html" class="tcc-brand">
+            <img src="./Logo2.png" alt="TCC logo" style="height: 100px; width: 120px; object-fit: contain;" />
+            <div>
+              <div class="tcc-brand-text-main">Trench Canada Coils</div>
+              <div class="tcc-brand-text-sub">
+                A LEGACY OF INNOVATION
+              </div>
+            </div>
+          </a>
+
+          <nav class="tcc-nav-links">
+            <a href="index.html" class="tcc-nav-link">Home</a>
+
+            <div
+              class="tcc-nav-dropdown"
+              style="position: relative;"
+              onmouseleave="document.getElementById('tcc-systems-menu').style.display='none';"
+            >
+              <div
+                class="tcc-nav-link"
+                aria-haspopup="true"
+                aria-expanded="false"
+                onmouseover="document.getElementById('tcc-systems-menu').style.display='flex';"
+                onfocus="document.getElementById('tcc-systems-menu').style.display='flex';"
+                onclick="const m=document.getElementById('tcc-systems-menu'); m.style.display = (m.style.display==='flex'?'none':'flex');"
+              >
+                Systems
+                <i
+                  class="fas fa-chevron-down"
+                  style="margin-left: 0.25rem; font-size: 0.7em;"
+                ></i>
+              </div>
+
+              <div
+                id="tcc-systems-menu"
+                style="
+                  display: none;
+                  position: absolute;
+                  top: 100%;
+                  right: 0;
+                  padding: 0.4rem 0;
+                  background: rgba(15, 23, 42, 0.98);
+                  border-radius: 0.5rem;
+                  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.8);
+                  min-width: 240px;
+                  z-index: 50;
+                  flex-direction: column;
+                "
+              >
+                <a
+                  href="systems-portal.html"
+                  target="_blank"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Systems Portal
+                </a>
+                <a
+                  href="prodorder-status.html"
+                  target="_blank"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Production Order Status
+                </a>
+                <a
+                  href="schedule-visualization.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Schedule Visualization
+                </a>
+                <a
+                  href="backend-status.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Backend Status System
+                </a>
+                <a
+                  href="frontend-status.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Frontend Status System
+                </a>
+                <a
+                  href="machine-load-recalculation-studio.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Machine Load Recalculation Studio
+                </a>
+
+                <a
+                  href="load-vs-capacity.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Load vs Capacity
+                </a>
+                <a
+                  href="andon-board.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Production Andon Board
+                </a>
+                <a
+                  href="enhanced-oms.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Enhanced OMS
+                </a>
+              </div>
+            </div>
+
+            <a href="notes-updates.html" class="tcc-nav-link">
+              Notes &amp; Updates
+            </a>
+
+            <a
+              href="../../demo-apps/ai-assistant-demo.html"
+              class="tcc-nav-link"
+              data-ai-assistant-link="1"
+            >
+              AI ASSISTANT
+            </a>
+          </nav>
+
+          <button class="tcc-nav-toggle" aria-label="Toggle navigation">
+            <span></span>
+          </button>
+        </div>
+      </header>
+
+      <main class="tcc-main">
+        <section class="tcc-page-hero tcc-fade-in-on-load">
+          <div class="tcc-page-hero-inner">
+            <div class="reveal-on-scroll">
+              <div class="tcc-page-breadcrumb">
+                Scheduling Systems · SQL Batch Update
+              </div>
+              <h1 class="tcc-page-title">Enhanced OMS</h1>
+              <p class="tcc-page-subtitle">
+                Internal tool for validating, previewing and batch-updating
+                <strong>OM Period</strong> values in the SQL-backed OMS table.
+                It is designed for safe updates based on uploaded order rows,
+                duplicate detection and controlled write-back to the target
+                database table.
+              </p>
+              <div class="tcc-page-hero-badges">
+                <span class="tcc-badge">
+                  <i class="fas fa-database"></i>
+                  SQL table write-back
+                </span>
+                <span class="tcc-badge">
+                  <i class="fas fa-layer-group"></i>
+                  Batch Management
+                </span>
+                <span class="tcc-badge">
+                  <i class="fas fa-shield-alt"></i>
+                  Validation first
+                </span>
+              </div>
+            </div>
+
+            <div class="tcc-page-hero-visual reveal-on-scroll">
+              <div class="tcc-page-hero-card">
+                <h3>How to use this System</h3>
+                <ul>
+                  <li>Open the tool from internal network only</li>
+                  <li>Upload or paste rows containing SalesDoc and Item values</li>
+                  <li>Preview valid, duplicate and invalid records before update</li>
+                  <li>Select the target OM Period and run the batch update</li>
+                  <li>Check database connection health before major changes</li>
+                  <li>This system is intended for desktop usage only</li>
+                </ul>
+                <div class="tcc-tag-row">
+                  <span class="tcc-tag">SQL-backed OMS table</span>
+                  <span class="tcc-tag">Preview + update workflow</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="tcc-page-main">
+          <div class="tcc-page-main-inner">
+            <article class="tcc-panel reveal-on-scroll">
+              <h3>Guide Manual</h3>
+              <p>
+                This guide explains how to use the
+                <strong>Enhanced OMS</strong> app to safely update OM Period
+                values in the target SQL table. The system is structured around
+                a simple workflow: check connection, prepare input rows, preview
+                the matched records, then commit the update.
+              </p>
+
+              <ol class="list-decimal list-inside space-y-3">
+                <li>
+                  <div><strong>Health Check</strong></div>
+                  <p>
+                    Before uploading or updating anything, use the system health
+                    indicator to confirm that the backend can connect to the
+                    configured SQL source.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      A healthy status means the backend, ODC metadata and SQL
+                      connection are all available.
+                    </li>
+                    <li>
+                      If the status is unavailable, do not continue with bulk
+                      changes until the connection issue is resolved.
+                    </li>
+                    <li>
+                      Use this step before every important update batch.
+                    </li>
+                  </ul>
+                </li>
+
+                <li>
+                  <div><strong>Prepare Input Rows</strong></div>
+                  <p>
+                    The app expects rows that identify orders by
+                    <strong>SalesDoc</strong> and <strong>Item</strong>. These
+                    values are normalized before matching against the target SQL
+                    records.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      Keep SalesDoc and Item clean and consistent with the
+                      database format.
+                    </li>
+                    <li>
+                      Remove accidental blank rows before submitting the batch.
+                    </li>
+                    <li>
+                      If your source contains repeated rows, the app will
+                      separate duplicates during preview.
+                    </li>
+                  </ul>
+                </li>
+
+                <li>
+                  <div><strong>Preview Before Update</strong></div>
+                  <p>
+                    The preview step validates the submitted rows and summarizes
+                    how many are unique, duplicated or invalid.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      Review the valid row count before committing any update.
+                    </li>
+                    <li>
+                      Check invalid rows carefully to catch formatting mistakes.
+                    </li>
+                    <li>
+                      Use preview as the main safety layer before writing to SQL.
+                    </li>
+                  </ul>
+                </li>
+
+                <li>
+                  <div><strong>Choose OM Period</strong></div>
+                  <p>
+                    After previewing the rows, select the target
+                    <strong>OM Period</strong> that should be written back to the
+                    matching records.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      Make sure the chosen period is the correct business period
+                      for the affected orders.
+                    </li>
+                    <li>
+                      One batch should only apply one OM Period value at a time.
+                    </li>
+                    <li>
+                      If you need to apply different OM Period values, split the
+                      data into separate batches.
+                    </li>
+                  </ul>
+                </li>
+
+                <li>
+                  <div><strong>Run Bulk Update</strong></div>
+                  <p>
+                    When the preview results look correct, submit the update to
+                    write the OM Period value into the target SQL table.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      The system updates matched records in chunks to reduce risk
+                      and improve stability.
+                    </li>
+                    <li>
+                      Only validated record IDs are included in the write-back.
+                    </li>
+                    <li>
+                      Review the returned affected-row count after each run.
+                    </li>
+                  </ul>
+                </li>
+
+                <li>
+                  <div><strong>Error Handling</strong></div>
+                  <p>
+                    All important failures are returned as JSON errors from the
+                    backend so you can inspect them quickly in the browser
+                    network panel or terminal logs.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      Connection issues usually appear during the health-check
+                      step.
+                    </li>
+                    <li>
+                      Validation issues usually appear during preview.
+                    </li>
+                    <li>
+                      Update issues usually appear as 4xx or 5xx responses with
+                      a backend error message.
+                    </li>
+                  </ul>
+                </li>
+
+                <li>
+                  <div><strong>Recommended Working Practice</strong></div>
+                  <p>
+                    Use small test batches first, confirm the result in SQL,
+                    then proceed with the full batch.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      Start with a few known orders when deploying or testing.
+                    </li>
+                    <li>
+                      Keep a copy of the input rows used for each update batch.
+                    </li>
+                    <li>
+                      Coordinate with planning or scheduling owners before
+                      changing large volumes.
+                    </li>
+                  </ul>
+                </li>
+              </ol>
+
+              <p style="margin-top: 0.75rem; font-size: 0.8rem; color: #9ca3af">
+                General Suggestion: always follow the sequence
+                <strong>Health Check → Preview → Validate → Bulk Update</strong>.
+                This keeps the process transparent and reduces the chance of
+                writing incorrect OM Period values into the production table.
+              </p>
+            </article>
+
+            <article class="tcc-panel reveal-on-scroll">
+              <h3>System Link &amp; guide for Data Source</h3>
+
+              <p>
+                Open the tool from internal network. This application is used to
+                validate and update SQL-backed OM Period data through a small
+                backend service and a browser-based batch management interface.
+              </p>
+
+              <p style="margin-top: 0.75rem">
+                <a
+                  href="../../demo-apps/enhanced-oms-demo.html"
+                  target="_blank"
+                  class="tcc-link-inline"
+                  style="font-size: 0.95rem"
+                >
+                  <i class="fas fa-external-link-alt"></i>
+                  Open Enhanced OMS
+                </a>
+              </p>
+
+              <div class="tcc-tag-row">
+                <span class="tcc-tag">Demo preview - Frontend</span>
+                <span class="tcc-tag">Demo preview - API</span>
+                <span class="tcc-tag">Status: Internal</span>
+              </div>
+
+              <hr style="margin: 1.2rem 0; border-color: rgba(148,163,184,0.45)" />
+
+              <h4>1. Connection &amp; system metadata</h4>
+              <dl style="margin: 0 0 0.6rem 0;">
+                <dt>GET /api/health</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Check whether the backend is alive and whether it can connect
+                  to the configured SQL source. Also returns a brief connection
+                  summary, including target database, schema and table.
+                </dd>
+              </dl>
+
+              <h4>2. Input validation &amp; preview</h4>
+              <dl style="margin: 0 0 0.6rem 0;">
+                <dt>POST /api/preview</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Validate incoming rows before update. The payload is typically
+                  <code>{ rows: [...] }</code>. The response includes:
+                  <code>inputRowCount</code>,
+                  <code>validUniqueInputCount</code>,
+                  <code>duplicateInputCount</code>,
+                  <code>invalidRowCount</code>,
+                  <code>validRows</code> and <code>invalidRows</code>.
+                </dd>
+              </dl>
+
+              <h4>3. Bulk OM Period update</h4>
+              <dl style="margin: 0 0 0.6rem 0;">
+                <dt>POST /api/update-omperiod</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Commit the selected OM Period to the validated rows in the
+                  target SQL table. Typical payload:
+                  <code>{ rows: [...], omPeriod: "P4" }</code>.
+                </dd>
+
+                <dt>Update behavior</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  The backend resolves target IDs first, then updates the OM
+                  Period column in chunks to improve reliability for larger
+                  batches.
+                </dd>
+              </dl>
+
+              <h4>4. Core matching logic</h4>
+              <dl style="margin: 0 0 0.6rem 0;">
+                <dt>Matching keys</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Records are identified using the configured
+                  <code>SalesDoc</code> and <code>Item</code> columns, while the
+                  update is ultimately applied to the resolved SQL row IDs.
+                </dd>
+
+                <dt>Configured columns</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  The backend reads its target column names from environment
+                  variables such as <code>OM_DB_ID_COLUMN</code>,
+                  <code>OM_DB_SALESDOC_COLUMN</code>,
+                  <code>OM_DB_ITEM_COLUMN</code> and
+                  <code>OM_DB_OMPERIOD_COLUMN</code>.
+                </dd>
+
+                <dt>Configured target table</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  The destination SQL table is derived from the ODC / env
+                  configuration and is normally the OMS comments / OM Period
+                  table used by scheduling.
+                </dd>
+              </dl>
+
+              <h4>5. Expected JSON responses</h4>
+              <dl style="margin: 0 0 0.6rem 0;">
+                <dt>Success</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Successful requests return JSON with
+                  <code>ok: true</code> plus additional payload details.
+                </dd>
+
+                <dt>Failure</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Failed requests return HTTP <strong>4xx</strong> or
+                  <strong>5xx</strong> responses with
+                  <code>ok: false</code> and an <code>error</code> message.
+                </dd>
+              </dl>
+
+              <h4>6. Operational notes</h4>
+              <p style="margin: 0 0 0.25rem 0.9rem; font-size: 0.9rem;">
+                Use this tool only on the internal network. For high-volume
+                changes, validate a small batch first and confirm the output in
+                SQL before applying the full update set.
+              </p>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <footer class="tcc-footer">
+        <div class="tcc-footer-inner">
+          <span>© 2026 Trench Canada · Scheduling Team</span>
+          <span>
+            Enhanced OMS · Version 1.0 · Designed &amp; Maintained by
+            Yanbo Wang (FY2026)
+          </span>
+        </div>
+      </footer>
+    </div>
+
+    <div id="tcc-marquee-border" aria-hidden="true"></div>
+
+    <script src="assets/js/main.js"></script>
+
+    <script>
+      (function () {
+        const AI_URL = "../../demo-apps/ai-assistant-demo.html";
+
+        function glowOn() {
+          document.body.classList.add("tcc-marquee-on");
+        }
+
+        function glowOff() {
+          document.body.classList.remove("tcc-marquee-on");
+        }
+
+        function goAiAssistant(e) {
+          if (e) e.preventDefault();
+          glowOn();
+          setTimeout(() => {
+            window.location.href = AI_URL;
+          }, 380);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+          const nodes = document.querySelectorAll("[data-ai-assistant-link='1']");
+          nodes.forEach((el) => {
+            el.addEventListener("mouseenter", glowOn);
+            el.addEventListener("mouseleave", glowOff);
+            el.addEventListener("focus", glowOn);
+            el.addEventListener("blur", glowOff);
+            el.addEventListener("click", goAiAssistant);
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>

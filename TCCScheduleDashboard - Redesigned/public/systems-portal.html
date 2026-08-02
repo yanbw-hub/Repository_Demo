@@ -1,0 +1,930 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>TCC Scheduling Major Board</title>
+
+    <link rel="icon" type="image/png" sizes="32x32" href="./Logo.png" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Orbitron:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Existing bundles -->
+    <script src="./javascript/reload.js"></script>
+    <script src="./1986481368401444864/resource_5784810000.js"></script>
+    <link href="./1986481368401444864/all.min.css" rel="stylesheet" />
+    <link href="./1986481368401444864/tailwind.min.css" rel="stylesheet" />
+
+    <!-- Global styles -->
+    <link rel="stylesheet" href="assets/css/base.css" />
+
+    <!-- Page-local UI redesign：保留背景图 + 单一卡片 Portal -->
+    <style>
+      /* ===== 整页背景：保留你现在这张图 ===== */
+      .tcc-main {
+        position: relative;
+        background:
+          radial-gradient(circle at top left, rgba(56, 189, 248, 0.13), transparent 58%),
+          radial-gradient(circle at bottom right, rgba(37, 99, 235, 0.12), transparent 60%),
+          linear-gradient(to bottom, rgba(2, 6, 23, 0.56), rgba(2, 6, 23, 0.58)),
+          url('https://getwallpapers.com/wallpaper/full/8/7/3/546599.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+      }
+
+      /* ===== HERO：居中标题 + 信息条 ===== */
+      .tcc-page-hero {
+        padding-block: 3.1rem 2.2rem;
+        border-bottom: 1px solid rgba(15, 23, 42, 0.75);
+        position: relative;
+      }
+
+      .tcc-page-hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(circle at top right, rgba(125, 211, 252, 0.2), transparent 55%),
+          radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.2), transparent 55%);
+        opacity: 0.85;
+        pointer-events: none;
+      }
+
+      .tcc-page-hero-inner {
+        position: relative;
+        z-index: 1;
+        max-width: 1100px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1.8rem;
+        align-items: stretch;
+      }
+
+      .tcc-page-breadcrumb {
+        font-size: 0.8rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: #9ca3af;
+        margin-bottom: 0.4rem;
+      }
+
+      .tcc-page-title {
+        font-size: clamp(2.1rem, 2.8vw, 2.5rem);
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        margin-bottom: 0.7rem;
+        text-align: center;
+      }
+
+      .tcc-page-subtitle {
+        max-width: 46rem;
+        margin: 0 auto;
+        color: #d1d5db;
+        text-align: center;
+        font-size: 0.98rem;
+      }
+
+      .portal-hero-row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.9rem;
+      }
+
+      .portal-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.4rem 0.85rem;
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.6);
+        background: radial-gradient(circle at top left, rgba(30, 64, 175, 0.9), rgba(15, 23, 42, 0.95));
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.85);
+        font-size: 0.8rem;
+        color: #e5e7eb;
+      }
+
+      .portal-chip i {
+        font-size: 0.85rem;
+        color: #38bdf8;
+      }
+
+      .portal-hero-meta {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.75rem;
+        font-size: 0.8rem;
+        color: #9ca3af;
+      }
+
+      .portal-hero-meta-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.3rem 0.7rem;
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid rgba(31, 41, 55, 0.95);
+      }
+
+      .portal-hero-meta-item i {
+        font-size: 0.85rem;
+        color: #60a5fa;
+      }
+
+      /* ===== MAIN：只保留一张 Portal 卡片 ===== */
+      .tcc-page-main {
+        padding: 2.4rem 1.4rem 3.2rem;
+        border-top: 1px solid rgba(15, 23, 42, 0.9);
+      }
+
+      .tcc-page-main-inner {
+        max-width: 900px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .portal-card {
+        position: relative;
+        border-radius: 1rem;
+        padding: 1.6rem 1.6rem 1.4rem;
+        background:
+          radial-gradient(circle at top left, rgba(56, 189, 248, 0.2), transparent 65%),
+          radial-gradient(circle at bottom right, rgba(37, 99, 235, 0.3), transparent 60%),
+          rgba(15, 23, 42, 0.92);
+        border: 1px solid rgba(148, 163, 184, 0.55);
+        box-shadow:
+          0 18px 40px rgba(15, 23, 42, 0.98),
+          0 0 0 1px rgba(15, 23, 42, 0.9) inset;
+        backdrop-filter: blur(18px);
+      }
+
+      .portal-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: linear-gradient(
+          135deg,
+          rgba(96, 165, 250, 0.5),
+          transparent 55%
+        );
+        mix-blend-mode: soft-light;
+        opacity: 0.6;
+        pointer-events: none;
+      }
+
+      .portal-card-inner {
+        position: relative;
+        z-index: 1;
+      }
+
+      .portal-card-header {
+        display: flex;
+        justify-content: space-between;
+        gap: 0.75rem;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+      }
+
+      .portal-card-title {
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: #e5e7eb;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .portal-card-title::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: radial-gradient(circle, #38bdf8, #2563eb);
+        box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.3);
+      }
+
+      .portal-card-sub {
+        font-size: 0.86rem;
+        color: #d1d5db;
+        margin-top: 0.25rem;
+        max-width: 32rem;
+      }
+
+      .portal-status-pill {
+        font-size: 0.75rem;
+        border-radius: 999px;
+        padding: 0.25rem 0.7rem;
+        border: 1px solid rgba(74, 222, 128, 0.9);
+        color: #bbf7d0;
+        background: radial-gradient(circle at top left, rgba(22, 163, 74, 0.75), rgba(15, 23, 42, 0.98));
+        white-space: nowrap;
+      }
+
+      .portal-group-label {
+        margin-top: 0.4rem;
+        margin-bottom: 0.3rem;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: #9ca3af;
+        padding-top: 0.6rem;
+        border-top: 1px solid rgba(30, 64, 175, 0.7);
+      }
+
+      .portal-app-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0.7rem;
+        margin-top: 0.4rem;
+      }
+
+      .portal-app-tile {
+        display: grid;
+        grid-template-columns: minmax(0, 4fr) auto;
+        gap: 0.6rem;
+        padding: 0.7rem 0.8rem 0.75rem;
+        border-radius: 0.75rem;
+        border: 1px solid rgba(148, 163, 184, 0.55);
+        background: rgba(15, 23, 42, 0.92);
+      }
+
+      .portal-app-name {
+        font-size: 0.92rem;
+        font-weight: 600;
+        color: #e5e7eb;
+        margin-bottom: 0.15rem;
+      }
+
+      .portal-app-desc {
+        font-size: 0.85rem;
+        color: #cbd5f5;
+        margin-bottom: 0.25rem;
+      }
+
+      .portal-app-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.7rem;
+        align-items: center;
+        margin-top: 0.1rem;
+      }
+
+      .portal-app-link {
+        font-size: 0.82rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        color: #bfdbfe;
+        text-decoration: none;
+      }
+
+      .portal-app-link i {
+        font-size: 0.8rem;
+      }
+
+      .portal-app-link-secondary {
+        opacity: 0.88;
+        font-size: 0.8rem;
+      }
+
+      .portal-app-link-secondary i {
+        font-size: 0.75rem;
+      }
+
+      .portal-app-meta {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 0.3rem;
+        font-size: 0.78rem;
+      }
+
+      .portal-app-status {
+        border-radius: 999px;
+        padding: 0.15rem 0.6rem;
+        border: 1px solid rgba(74, 222, 128, 0.85);
+        color: #bbf7d0;
+        background: rgba(22, 163, 74, 0.18);
+      }
+
+      .portal-app-status.offline {
+        border-color: rgba(248, 113, 113, 0.9);
+        color: #fecaca;
+        background: rgba(185, 28, 28, 0.25);
+      }
+
+      .portal-app-url {
+        color: #9ca3af;
+        font-family: "IBM Plex Sans", ui-monospace, SFMono-Regular, Menlo, Monaco,
+          Consolas, "Liberation Mono", "Courier New", monospace;
+      }
+
+      .portal-card-footer {
+        margin-top: 0.9rem;
+        font-size: 0.78rem;
+        color: #9ca3af;
+      }
+
+      .portal-card-footer strong {
+        color: #e5e7eb;
+      }
+
+      .portal-tag-row {
+        margin-top: 0.7rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        font-size: 0.78rem;
+      }
+
+      .portal-tag {
+        border-radius: 999px;
+        padding: 0.18rem 0.7rem;
+        border: 1px solid rgba(148, 163, 184, 0.6);
+        background: rgba(15, 23, 42, 0.96);
+        color: #e5e7eb;
+      }
+
+      /* 自适应：小屏保持单列，间距略缩小 */
+      @media (max-width: 900px) {
+        .tcc-page-hero {
+          padding-block: 2.4rem 1.9rem;
+        }
+
+        .tcc-page-main {
+          padding: 2rem 1rem 2.6rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="tcc-site">
+      <!-- ========== HEADER ========== -->
+      <header class="tcc-header">
+        <div class="tcc-nav-inner">
+          <a href="index.html" class="tcc-brand">
+            <img src="./Logo2.png" alt="TCC logo" style="height: 100px; width: 120px; object-fit: contain;" />
+            <div>
+              <div class="tcc-brand-text-main">Trench Canada Coils</div>
+              <div class="tcc-brand-text-sub">
+                A LEGACY OF INNOVATION
+              </div>
+            </div>
+          </a>
+
+          <nav class="tcc-nav-links">
+            <!-- HOME -->
+            <a href="index.html" class="tcc-nav-link">Home</a>
+
+            <!-- SYSTEMS 下拉菜单 -->
+            <div
+              class="tcc-nav-dropdown"
+              style="position: relative;"
+              onmouseleave="document.getElementById('tcc-systems-menu').style.display='none';"
+            >
+              <div
+                type="button"
+                class="tcc-nav-link"
+                aria-haspopup="true"
+                aria-expanded="false"
+                onmouseover="document.getElementById('tcc-systems-menu').style.display='flex';"
+                onfocus="document.getElementById('tcc-systems-menu').style.display='flex';"
+                onclick="const m=document.getElementById('tcc-systems-menu'); m.style.display = (m.style.display==='flex'?'none':'flex');"
+              >
+                Systems
+                <i
+                  class="fas fa-chevron-down"
+                  style="margin-left: 0.25rem; font-size: 0.7em;"
+                ></i>
+              </div>
+
+              <!-- 下拉列表：五个 systems -->
+              <div
+                id="tcc-systems-menu"
+                style="
+                  display: none;
+                  position: absolute;
+                  top: 100%;
+                  right: 0;
+                  padding: 0.4rem 0;
+                  background: rgba(15, 23, 42, 0.98);
+                  border-radius: 0.5rem;
+                  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.8);
+                  min-width: 220px;
+                  z-index: 50;
+                  flex-direction: column;
+                "
+              >
+                <a
+                  href="systems-portal.html"
+                  target="_blank"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Systems Portal
+                </a>
+                <a
+                  href="prodorder-status.html"
+                  target="_blank"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Production Order Status
+                </a>
+                <a
+                  href="schedule-visualization.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Schedule Visualization
+                </a>
+                <a
+                  href="backend-status.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Backend Status System
+                </a>
+                <a
+                  href="frontend-status.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Frontend Status System
+                </a>
+                <a
+                  href="machine-load-recalculation-studio.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Machine Load Recalculation Studio
+                </a>
+                <a
+                  href="load-vs-capacity.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Load vs Capacity
+                </a>
+                <a
+                  href="andon-board.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Production Andon Board
+                </a>
+                <a
+                  href="enhanced-oms.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Enhanced OMS
+                </a>
+              </div>
+            </div>
+
+            <!-- NOTES & UPDATES -->
+            <a href="notes-updates.html" class="tcc-nav-link">
+              Notes &amp; Updates
+            </a>
+
+            <!-- AI ASSISTANT -->
+            <a
+              href="../../demo-apps/ai-assistant-demo.html"
+              class="tcc-nav-link"
+              data-ai-assistant-link="1"
+            >
+              AI ASSISTANT
+            </a>
+          </nav>
+
+          <button class="tcc-nav-toggle" aria-label="Toggle navigation">
+            <span></span>
+          </button>
+        </div>
+      </header>
+
+      <main class="tcc-main">
+        <!-- HERO -->
+        <section class="tcc-page-hero tcc-fade-in-on-load">
+          <div class="tcc-page-hero-inner">
+            <div>
+              <div class="tcc-page-breadcrumb">
+                TCC Planning &amp; Scheduling · Systems Portal
+              </div>
+              <h1 class="tcc-page-title">Scheduling Systems Portal</h1>
+              <p class="tcc-page-subtitle">
+                Central hub to launch core scheduling applications, OMS database
+                views, and Tableau dashboards supporting Winding &amp; Roving and
+                downstream centers.
+              </p>
+            </div>
+
+            <div class="portal-hero-row">
+              <span class="portal-chip">
+                <i class="fas fa-sitemap"></i>
+                Core scheduling apps
+              </span>
+              <span class="portal-chip">
+                <i class="fas fa-database"></i>
+                OMS &amp; Tableau data sources
+              </span>
+              <span class="portal-chip">
+                <i class="fas fa-user-shield"></i>
+                Internal access only
+              </span>
+            </div>
+
+            <div class="portal-hero-meta">
+              <span class="portal-hero-meta-item">
+                <i class="fas fa-desktop"></i>
+                5 internal web apps
+              </span>
+              <span class="portal-hero-meta-item">
+                <i class="fas fa-chart-bar"></i>
+                4 Tableau dashboards
+              </span>
+              <span class="portal-hero-meta-item">
+                <i class="fas fa-users-cog"></i>
+                Maintained by Scheduling Team
+              </span>
+            </div>
+          </div>
+        </section>
+
+        <!-- MAIN：单一卡片，包含两组链接 -->
+        <section class="tcc-page-main">
+          <div class="tcc-page-main-inner">
+            <section class="portal-card reveal-on-scroll">
+              <div class="portal-card-inner">
+                <div class="portal-card-header">
+                  <div>
+                    <div class="portal-card-title">
+                      Systems &amp; data portals
+                    </div>
+                    <p class="portal-card-sub">
+                      All core scheduling applications plus OMS and Tableau data
+                      portals, in one place. Use from the internal network with
+                      your assigned credentials.
+                    </p>
+                  </div>
+                  <span class="portal-status-pill">Overall status: Normal</span>
+                </div>
+
+                <!-- Group 1: Core systems -->
+                <div class="portal-group-label">
+                  Core systems &amp; internal apps
+                </div>
+                <div class="portal-app-grid">
+                  <div class="portal-app-tile">
+                    <div>
+                      <div class="portal-app-name">
+                        Production Order Schedules System
+                      </div>
+                      <p class="portal-app-desc">
+                        Root schedule view to display production order schedules
+                        by workcenter.
+                      </p>
+                      <div class="portal-app-links">
+                        <a
+                          href="../../demo-apps/prodorder-status-demo.html"
+                          target="_blank"
+                          class="portal-app-link"
+                        >
+                          Open system
+                          <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <a
+                          href="prodorder-status.html"
+                          class="portal-app-link portal-app-link-secondary"
+                        >
+                          Learn more
+                          <i class="fas fa-arrow-right"></i>
+                        </a>
+                      </div>
+                    </div>
+                    <div class="portal-app-meta">
+                      <span class="portal-app-status">Online</span>
+                      <span class="portal-app-url">Demo preview</span>
+                    </div>
+                  </div>
+
+                  <div class="portal-app-tile">
+                    <div>
+                      <div class="portal-app-name">Andon Board System</div>
+                      <p class="portal-app-desc">
+                        Visual floor-level status boards showing live center
+                        status and key backlog signals for the shop floor.
+                      </p>
+                      <div class="portal-app-links">
+                        <a
+                          href="../../demo-apps/andon-board-demo.html"
+                          target="_blank"
+                          class="portal-app-link"
+                        >
+                          Open system
+                          <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <a
+                          href="andon-board.html"
+                          class="portal-app-link portal-app-link-secondary"
+                        >
+                          Learn more
+                          <i class="fas fa-arrow-right"></i>
+                        </a>
+                      </div>
+                    </div>
+                    <div class="portal-app-meta">
+                      <span class="portal-app-status">Online</span>
+                      <span class="portal-app-url">Demo preview</span>
+                    </div>
+                  </div>
+
+                  <div class="portal-app-tile">
+                    <div>
+                      <div class="portal-app-name">
+                        Schedule Visualization System
+                      </div>
+                      <p class="portal-app-desc">
+                        Integrated visualization system of W&R schedules plus a
+                        simulation playground.
+                      </p>
+                      <div class="portal-app-links">
+                        <a
+                          href="../../demo-apps/schedule-visualization-demo.html"
+                          target="_blank"
+                          class="portal-app-link"
+                        >
+                          Open system
+                          <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <a
+                          href="schedule-visualization.html"
+                          class="portal-app-link portal-app-link-secondary"
+                        >
+                          Learn more
+                          <i class="fas fa-arrow-right"></i>
+                        </a>
+                      </div>
+                    </div>
+                    <div class="portal-app-meta">
+                      <span class="portal-app-status">Online</span>
+                      <span class="portal-app-url">Demo preview</span>
+                    </div>
+                  </div>
+
+                  <div class="portal-app-tile">
+                    <div>
+                      <div class="portal-app-name">Backend Status System</div>
+                      <p class="portal-app-desc">
+                        Backlog &amp; OM Period status with per-center Pending
+                        tables, live confirmations and material checks.
+                      </p>
+                      <div class="portal-app-links">
+                        <a
+                          href="../../demo-apps/backend-status-demo.html"
+                          target="_blank"
+                          class="portal-app-link"
+                        >
+                          Open system
+                          <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <a
+                          href="backend-status.html"
+                          class="portal-app-link portal-app-link-secondary"
+                        >
+                          Learn more
+                          <i class="fas fa-arrow-right"></i>
+                        </a>
+                      </div>
+                    </div>
+                    <div class="portal-app-meta">
+                      <span class="portal-app-status">Online</span>
+                      <span class="portal-app-url">Demo preview</span>
+                    </div>
+                  </div>
+
+                  <div class="portal-app-tile">
+                    <div>
+                      <div class="portal-app-name">
+                        Load vs Capacity Platform (for Sales)
+                      </div>
+                      <p class="portal-app-desc">
+                        3D monthly load vs capacity visualization with simple
+                        simulation overlay.
+                      </p>
+                      <div class="portal-app-links">
+                        <a
+                          href="../../demo-apps/load-vs-capacity-demo.html"
+                          target="_blank"
+                          class="portal-app-link"
+                        >
+                          Open system
+                          <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <a
+                          href="load-vs-capacity.html"
+                          class="portal-app-link portal-app-link-secondary"
+                        >
+                          Learn more
+                          <i class="fas fa-arrow-right"></i>
+                        </a>
+                      </div>
+                    </div>
+                    <div class="portal-app-meta">
+                      <span class="portal-app-status">Online</span>
+                      <span class="portal-app-url">Demo preview</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Group 2: OMS + Tableau -->
+                <div class="portal-group-label">
+                  OMS &amp; Tableau data portals
+                </div>
+                <div class="portal-app-grid">
+                  <div class="portal-app-tile">
+                    <div>
+                      <div class="portal-app-name">OMS Portal (Database)</div>
+                      <p class="portal-app-desc">
+                        Main OMS database portal. Source of OM Period data used in the scheduling tools.
+                      </p>
+                      <a
+                        href="https://casbq0006a.trench-group.net:44342/home"
+                        target="_blank"
+                        class="portal-app-link"
+                      >
+                        Open OMS Portal
+                        <i class="fas fa-external-link-alt"></i>
+                      </a>
+                    </div>
+                    <div class="portal-app-meta">
+                      <span class="portal-app-status">Online</span>
+                      <span class="portal-app-url">casbq0006a.trench-group.net</span>
+                    </div>
+                  </div>
+
+                  <div class="portal-app-tile">
+                    <div>
+                      <div class="portal-app-name">
+                        Tableau – TCC Rework Dashboard
+                      </div>
+                      <p class="portal-app-desc">
+                        Trend and breakdown of rework volume by month, failure
+                        mode and department.
+                      </p>
+                      <a
+                        href="https://eu-west-1a.online.tableau.com/#/site/trenchgrouphsp/views/TCCReworkDashboard/TCCReworkDashboard1?:iid=1"
+                        target="_blank"
+                        class="portal-app-link"
+                      >
+                        Open dashboard
+                        <i class="fas fa-external-link-alt"></i>
+                      </a>
+                    </div>
+                    <div class="portal-app-meta">
+                      <span class="portal-app-status">Online</span>
+                      <span class="portal-app-url">Tableau Online</span>
+                    </div>
+                  </div>
+
+                  <div class="portal-app-tile">
+                    <div>
+                      <div class="portal-app-name">
+                        Tableau – Load vs Capacity
+                      </div>
+                      <p class="portal-app-desc">
+                        High-level capacity dashboard used as a reference view
+                        alongside the internal Load vs Capacity Platform.
+                      </p>
+                      <a
+                        href="https://eu-west-1a.online.tableau.com/#/site/trenchgrouphsp/views/LoadvsCapacityDashboard/LoadvsCapacitySchedulingStatus?:iid=1"
+                        target="_blank"
+                        class="portal-app-link"
+                      >
+                        Open dashboard
+                        <i class="fas fa-external-link-alt"></i>
+                      </a>
+                    </div>
+                    <div class="portal-app-meta">
+                      <span class="portal-app-status">Online</span>
+                      <span class="portal-app-url">Tableau Online</span>
+                    </div>
+                  </div>
+
+                  <div class="portal-app-tile">
+                    <div>
+                      <div class="portal-app-name">
+                        Tableau – Workcenter Info
+                      </div>
+                      <p class="portal-app-desc">
+                        Line-level dashboards (e.g. LINE 1) used to generate
+                        snapshots for Workcenter Information views.
+                      </p>
+                      <a
+                        href="https://eu-west-1a.online.tableau.com/#/site/trenchgrouphsp/views/WorkCenterInfoDashboard/LINE1Dashboard?:iid=1"
+                        target="_blank"
+                        class="portal-app-link"
+                      >
+                        Open dashboard
+                        <i class="fas fa-external-link-alt"></i>
+                      </a>
+                    </div>
+                    <div class="portal-app-meta">
+                      <span class="portal-app-status">Online</span>
+                      <span class="portal-app-url">Tableau Online</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="portal-card-footer">
+                  <strong>Note:</strong> If any system or portal appears offline or you
+                  cannot access a dashboard, contact the Scheduling Team or IT support for assistance.
+                </div>
+
+                <div class="portal-tag-row">
+                  <span class="portal-tag">Core systems</span>
+                  <span class="portal-tag">OMS</span>
+                  <span class="portal-tag">Tableau Online</span>
+                  <span class="portal-tag">Internal only</span>
+                </div>
+              </div>
+            </section>
+          </div>
+        </section>
+      </main>
+
+      <footer class="tcc-footer">
+        <div class="tcc-footer-inner">
+          <span>© 2025 Trench Canada · Scheduling Team</span>
+          <span>Systems Portal · Version 1.0</span>
+        </div>
+      </footer>
+    </div>
+
+    <!-- full-screen marquee border overlay -->
+    <div id="tcc-marquee-border" aria-hidden="true"></div>
+
+    <!-- main UI script -->
+    <script src="assets/js/main.js"></script>
+
+    <!-- AI ASSISTANT hover -> glow + click -> jump -->
+    <script>
+      (function () {
+        const AI_URL = "../../demo-apps/ai-assistant-demo.html";
+
+        function glowOn() {
+          document.body.classList.add("tcc-marquee-on");
+        }
+
+        function glowOff() {
+          document.body.classList.remove("tcc-marquee-on");
+        }
+
+        function goAiAssistant(e) {
+          if (e) e.preventDefault();
+          glowOn(); // 点击时也顺便亮一下（不影响：马上跳转页面）
+          setTimeout(() => {
+            window.location.href = AI_URL;
+          }, 380);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+          const nodes = document.querySelectorAll("[data-ai-assistant-link='1']");
+          nodes.forEach((el) => {
+            // ✅ 鼠标移上去就生效
+            el.addEventListener("mouseenter", glowOn);
+            el.addEventListener("mouseleave", glowOff);
+
+            // ✅ 键盘 tab 聚焦也生效（更完整）
+            el.addEventListener("focus", glowOn);
+            el.addEventListener("blur", glowOff);
+
+            // ✅ 点击仍然跳转
+            el.addEventListener("click", goAiAssistant);
+          });
+        });
+      })();
+    </script>
+
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>

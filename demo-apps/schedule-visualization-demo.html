@@ -1,0 +1,706 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Prod Orders Schedule — Demo Preview</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/font-awesome/css/all.min.css">
+
+<style>
+  :root{
+    --bg-deep:#020617;
+    --bg-panel:rgba(15,23,42,0.9);
+    --border:rgba(148,163,184,0.5);
+    --text-head:#e5e7eb;
+    --text-body:#cbd5f5;
+    --text-muted:#9ca3af;
+    --ok:#22c55e;
+    --warn:#f59e0b;
+    --danger:#f87171;
+    --info:#38bdf8;
+    --purple:#a855f7;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'IBM Plex Sans', system-ui, sans-serif;
+    color:var(--text-body);
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 8% 8%, rgba(56,189,248,0.16), transparent 45%),
+      radial-gradient(circle at 92% 12%, rgba(168,85,247,0.14), transparent 42%),
+      radial-gradient(circle at 50% 95%, rgba(37,99,235,0.18), transparent 55%),
+      var(--bg-deep);
+    background-attachment:fixed;
+    padding-bottom:3rem;
+  }
+  a{color:var(--info); text-decoration:none;}
+  a:hover{text-decoration:underline;}
+
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0.9rem 2rem;
+    border-bottom:1px solid var(--border);
+    background:rgba(2,6,23,0.75);
+    backdrop-filter:blur(10px);
+    position:sticky; top:0; z-index:50;
+    flex-wrap:wrap; gap:0.75rem;
+  }
+  .topbar-left{display:flex; align-items:center; gap:0.9rem;}
+  .topbar-left h1{
+    font-size:1.05rem; margin:0; color:var(--text-head); font-weight:600;
+    line-height:1.2;
+  }
+  .topbar-left span.sub{display:block; font-size:0.72rem; color:var(--text-muted); font-weight:400;}
+  .back-link{font-size:0.85rem; display:flex; align-items:center; gap:0.4rem; white-space:nowrap;}
+
+  .container{max-width:1400px; margin:0 auto; padding:1.5rem 2rem 0;}
+
+  .demo-pill{
+    display:inline-flex; align-items:center; gap:0.5rem;
+    background:rgba(56,189,248,0.12);
+    border:1px solid rgba(56,189,248,0.45);
+    color:#7dd3fc;
+    padding:0.4rem 0.9rem;
+    border-radius:999px;
+    font-size:0.78rem;
+    font-weight:600;
+    letter-spacing:0.02em;
+    margin-bottom:1.25rem;
+  }
+  .demo-pill i{color:var(--info);}
+
+  .page-head{
+    display:flex; align-items:flex-end; justify-content:space-between;
+    flex-wrap:wrap; gap:1rem;
+    margin-bottom:1.25rem;
+  }
+  .page-head h2{margin:0 0 0.3rem; font-size:1.6rem; color:var(--text-head); font-weight:700;}
+  .page-head p{margin:0; color:var(--text-muted); font-size:0.9rem; max-width:640px;}
+
+  .card{
+    background:var(--bg-panel);
+    border:1px solid var(--border);
+    border-radius:0.9rem;
+    box-shadow:0 10px 30px rgba(0,0,0,0.35);
+    backdrop-filter:blur(8px);
+    padding:1.25rem 1.4rem;
+  }
+
+  .grid-top{
+    display:grid;
+    grid-template-columns:1.55fr 1fr;
+    gap:1.25rem;
+    margin-bottom:1.25rem;
+  }
+  @media (max-width:1000px){ .grid-top{grid-template-columns:1fr;} }
+
+  .card h3{
+    margin:0 0 0.9rem;
+    font-size:0.95rem;
+    color:var(--text-head);
+    font-weight:600;
+    display:flex; align-items:center; gap:0.5rem;
+  }
+  .card h3 i{color:var(--info);}
+
+  /* Backlog mini chart */
+  .backlog-chart-wrap svg{width:100%; height:auto; display:block;}
+  .backlog-legend{display:flex; gap:1.1rem; margin-top:0.6rem; flex-wrap:wrap; font-size:0.72rem; color:var(--text-muted);}
+  .backlog-legend .dot{display:inline-block; width:8px; height:8px; border-radius:2px; margin-right:0.35rem;}
+
+  /* Controls */
+  .controls{
+    display:flex; flex-wrap:wrap; align-items:center; gap:0.75rem;
+    margin-bottom:1.1rem;
+  }
+  .controls label{font-size:0.72rem; color:var(--text-muted); display:block; margin-bottom:0.25rem;}
+  .control-group{display:flex; flex-direction:column;}
+  select, input[type="date"]{
+    background:rgba(2,6,23,0.6);
+    border:1px solid var(--border);
+    color:var(--text-body);
+    border-radius:0.5rem;
+    padding:0.4rem 0.6rem;
+    font-family:inherit;
+    font-size:0.82rem;
+  }
+  select:focus, input:focus{outline:1px solid var(--info);}
+
+  .btn{
+    display:inline-flex; align-items:center; gap:0.5rem;
+    background:linear-gradient(135deg, rgba(56,189,248,0.25), rgba(37,99,235,0.3));
+    border:1px solid rgba(56,189,248,0.55);
+    color:#e0f2fe;
+    padding:0.55rem 1.05rem;
+    border-radius:0.55rem;
+    font-size:0.82rem;
+    font-weight:600;
+    cursor:pointer;
+    transition:transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .btn:hover{transform:translateY(-1px); box-shadow:0 6px 18px rgba(56,189,248,0.25);}
+  .btn:active{transform:translateY(0);}
+  .btn.secondary{
+    background:rgba(148,163,184,0.08);
+    border-color:var(--border);
+    color:var(--text-body);
+  }
+  .btn[disabled]{opacity:0.55; cursor:not-allowed; transform:none;}
+
+  /* Gantt */
+  .gantt-card{margin-bottom:1.25rem;}
+  .gantt-wrap{overflow-x:auto; padding-bottom:0.5rem;}
+  .gantt{
+    position:relative;
+    min-width:920px;
+  }
+  .gantt-axis{
+    display:grid;
+    grid-template-columns:110px 1fr;
+    border-bottom:1px solid rgba(148,163,184,0.25);
+    padding-bottom:0.4rem;
+    margin-bottom:0.4rem;
+  }
+  .gantt-axis .days{
+    position:relative;
+    display:grid;
+  }
+  .day-label{
+    font-size:0.68rem;
+    color:var(--text-muted);
+    text-align:center;
+    border-left:1px solid rgba(148,163,184,0.12);
+    padding-top:0.1rem;
+  }
+  .day-label.weekend{color:#64748b; background:rgba(148,163,184,0.04);}
+  .day-label .dow{display:block; font-size:0.6rem; opacity:0.7;}
+
+  .gantt-row{
+    display:grid;
+    grid-template-columns:110px 1fr;
+    align-items:center;
+    min-height:52px;
+    border-bottom:1px solid rgba(148,163,184,0.08);
+  }
+  .gantt-row-label{
+    font-size:0.8rem;
+    font-weight:600;
+    color:var(--text-head);
+    display:flex; align-items:center; gap:0.4rem;
+    padding-right:0.5rem;
+  }
+  .gantt-row-label .lline{width:8px; height:8px; border-radius:50%; flex-shrink:0;}
+  .gantt-track{
+    position:relative;
+    height:52px;
+    background-image:repeating-linear-gradient(to right, rgba(148,163,184,0.08) 0, rgba(148,163,184,0.08) 1px, transparent 1px, transparent var(--daywidth));
+  }
+  .bar{
+    position:absolute;
+    top:9px;
+    height:34px;
+    border-radius:0.4rem;
+    font-size:0.68rem;
+    color:#04121f;
+    font-weight:600;
+    display:flex; align-items:center;
+    padding:0 0.5rem;
+    overflow:hidden;
+    white-space:nowrap;
+    cursor:pointer;
+    border:1px solid rgba(255,255,255,0.25);
+    box-shadow:0 2px 8px rgba(0,0,0,0.35);
+    transition:top 0.5s ease, left 0.5s ease, width 0.5s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .bar:hover{transform:translateY(-2px) scale(1.01); box-shadow:0 6px 16px rgba(0,0,0,0.5); z-index:5;}
+  .bar.status-ontime{background:linear-gradient(135deg,#4ade80,#22c55e);}
+  .bar.status-risk{background:linear-gradient(135deg,#fbbf24,#f59e0b);}
+  .bar.status-overdue{background:linear-gradient(135deg,#f87171,#ef4444); color:#2b0a0a;}
+  .bar.status-clean{background:repeating-linear-gradient(135deg,#38bdf8,#38bdf8 6px,#0ea5e9 6px,#0ea5e9 12px);}
+
+  .tooltip{
+    position:fixed;
+    z-index:200;
+    background:rgba(2,6,23,0.97);
+    border:1px solid var(--border);
+    border-radius:0.6rem;
+    padding:0.65rem 0.8rem;
+    font-size:0.75rem;
+    color:var(--text-body);
+    box-shadow:0 10px 30px rgba(0,0,0,0.5);
+    pointer-events:none;
+    max-width:260px;
+    display:none;
+  }
+  .tooltip .tt-title{color:var(--text-head); font-weight:700; margin-bottom:0.3rem; font-size:0.8rem;}
+  .tooltip .tt-row{display:flex; justify-content:space-between; gap:1rem; margin-bottom:0.15rem;}
+  .tooltip .tt-row span:first-child{color:var(--text-muted);}
+  .tooltip .tt-flag{
+    display:inline-block; margin-top:0.35rem; font-size:0.68rem;
+    padding:0.1rem 0.45rem; border-radius:999px;
+  }
+
+  .legend-row{
+    display:flex; flex-wrap:wrap; gap:1.1rem; margin-top:0.9rem;
+    font-size:0.72rem; color:var(--text-muted);
+  }
+  .legend-row .dot{width:10px; height:10px; border-radius:3px; display:inline-block; margin-right:0.35rem;}
+
+  /* About panel */
+  .about-card{margin-bottom:1.25rem;}
+  .about-card p.lead{font-size:0.88rem; color:var(--text-body); margin:0 0 0.9rem; line-height:1.55;}
+  .about-list{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:0.7rem;}
+  .about-list li{
+    display:flex; gap:0.6rem; align-items:flex-start;
+    background:rgba(148,163,184,0.05);
+    border:1px solid rgba(148,163,184,0.15);
+    border-radius:0.6rem;
+    padding:0.6rem 0.75rem;
+    font-size:0.8rem;
+    line-height:1.45;
+  }
+  .about-list li i{color:var(--info); margin-top:0.15rem;}
+
+  .toast-wrap{
+    position:fixed; bottom:1.5rem; right:1.5rem; z-index:300;
+    display:flex; flex-direction:column; gap:0.6rem;
+  }
+  .toast{
+    background:rgba(15,23,42,0.97);
+    border:1px solid rgba(34,197,94,0.5);
+    border-left:4px solid var(--ok);
+    border-radius:0.6rem;
+    padding:0.75rem 1rem;
+    font-size:0.82rem;
+    color:var(--text-head);
+    box-shadow:0 10px 30px rgba(0,0,0,0.5);
+    display:flex; align-items:center; gap:0.6rem;
+    animation:toast-in 0.3s ease;
+    min-width:260px;
+  }
+  .toast i{color:var(--ok);}
+  @keyframes toast-in{
+    from{opacity:0; transform:translateY(12px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+  .toast.fade-out{animation:toast-out 0.35s ease forwards;}
+  @keyframes toast-out{
+    to{opacity:0; transform:translateY(-8px);}
+  }
+
+  footer{
+    text-align:center;
+    color:var(--text-muted);
+    font-size:0.75rem;
+    margin-top:2rem;
+    padding:1.25rem 1rem 0;
+    border-top:1px solid rgba(148,163,184,0.15);
+  }
+
+  .stat-mini{display:flex; gap:0.9rem; flex-wrap:wrap; margin-bottom:0.9rem;}
+  .stat-chip{
+    flex:1; min-width:120px;
+    background:rgba(148,163,184,0.06);
+    border:1px solid rgba(148,163,184,0.18);
+    border-radius:0.6rem;
+    padding:0.55rem 0.7rem;
+  }
+  .stat-chip .val{font-size:1.15rem; font-weight:700; color:var(--text-head);}
+  .stat-chip .lbl{font-size:0.68rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.03em;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <img src="../Enhanced entrance for systems/Logo2.png" style="height:45px;width:auto;object-fit:contain" alt="Trench logo">
+    <div>
+      <h1>TCC Scheduling &amp; Visualization Platform</h1>
+      <span class="sub">Prod Orders Schedule — Winding &amp; Roving</span>
+    </div>
+  </div>
+  <a class="back-link" href="../Enhanced entrance for systems/apple-style-portal.html"><i class="fas fa-arrow-left"></i> Back to Systems Portal</a>
+</div>
+
+<div class="container">
+  <span class="demo-pill"><i class="fas fa-flask"></i> DEMO PREVIEW · Sample data only, not connected to any live system</span>
+
+  <div class="page-head">
+    <div>
+      <h2>Prod Orders Schedule</h2>
+      <p>Gantt-style view of winding-line production orders, grouped by line, with backlog context and a quick what-if simulation. All orders, dates and figures below are fabricated for this preview.</p>
+    </div>
+  </div>
+
+  <div class="grid-top">
+    <div class="card gantt-card" style="margin-bottom:0;">
+      <h3><i class="fas fa-sliders-h"></i> Schedule Filters</h3>
+      <div class="controls">
+        <div class="control-group">
+          <label for="lineFilter">Line</label>
+          <select id="lineFilter">
+            <option value="ALL">All Lines</option>
+            <option value="WIND1">WIND1</option>
+            <option value="WIND2">WIND2</option>
+            <option value="WIND3">WIND3</option>
+            <option value="WIND4">WIND4</option>
+            <option value="WIND5">WIND5</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label for="startDate">Start date</label>
+          <input type="date" id="startDate" value="2026-08-03">
+        </div>
+        <div class="control-group">
+          <label for="endDate">End date</label>
+          <input type="date" id="endDate" value="2026-08-23">
+        </div>
+        <div class="control-group">
+          <label for="scheduleType">Schedule type</label>
+          <select id="scheduleType">
+            <option>L1</option>
+            <option>L2</option>
+            <option>VPI</option>
+          </select>
+        </div>
+        <div class="control-group" style="justify-content:flex-end;">
+          <label>&nbsp;</label>
+          <button class="btn" id="runSimBtn"><i class="fas fa-bolt"></i> Run Simulation</button>
+        </div>
+      </div>
+      <div class="stat-mini" id="statMini"></div>
+    </div>
+
+    <div class="card" style="margin-bottom:0;">
+      <h3><i class="fas fa-chart-bar"></i> Backlog by Month (Winding &amp; Roving)</h3>
+      <div class="backlog-chart-wrap" id="backlogChart"></div>
+      <div class="backlog-legend">
+        <span><span class="dot" style="background:#38bdf8;"></span>Open backlog (hrs)</span>
+        <span><span class="dot" style="background:#f59e0b;"></span>PMAD at-risk (hrs)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card gantt-card">
+    <h3><i class="fas fa-stream"></i> Winding Lines — Production Schedule</h3>
+    <div class="gantt-wrap">
+      <div class="gantt" id="ganttRoot"></div>
+    </div>
+    <div class="legend-row">
+      <span><span class="dot" style="background:linear-gradient(135deg,#4ade80,#22c55e);"></span>On time</span>
+      <span><span class="dot" style="background:linear-gradient(135deg,#fbbf24,#f59e0b);"></span>At risk</span>
+      <span><span class="dot" style="background:linear-gradient(135deg,#f87171,#ef4444);"></span>Overdue</span>
+      <span><span class="dot" style="background:repeating-linear-gradient(135deg,#38bdf8,#38bdf8 4px,#0ea5e9 4px,#0ea5e9 8px);"></span>Clean order</span>
+    </div>
+  </div>
+
+  <div class="card about-card">
+    <h3><i class="fas fa-circle-info"></i> About this system</h3>
+    <p class="lead">
+      The real <strong>TCC Scheduling &amp; Visualization Integrated Platform</strong> is the production planning
+      tool used by Winding &amp; Roving planners to sequence orders across WIND1–WIND5, check machine loading,
+      and stress-test the schedule before committing changes back to SAP. It combines SAP exports (characteristics,
+      hours, lead orders, production orders, sales orders, and calendars) with an editable Gantt-style schedule
+      table, then recalculates finish dates through a scheduling engine so planners can preview and download an
+      updated schedule workbook. This preview shows only the visual style and core Gantt/simulation interaction
+      of the Prod Orders Schedule screen, running entirely on invented sample data.
+    </p>
+    <ul class="about-list">
+      <li><i class="fas fa-gauge-high"></i> <strong>Dashboard</strong> — control-tower home page summarizing backlog, load vs capacity, reworks and vacation status.</li>
+      <li><i class="fas fa-table-list"></i> <strong>Backlog Summary</strong> — SAP orders, TCC backlog and vacation tables joined into month/line drill-downs with CSV export.</li>
+      <li><i class="fas fa-timeline"></i> <strong>Prod Orders Schedule</strong> — the Gantt view shown here: L1/L2/VPI schedule types, line filters, and per-order hover detail.</li>
+      <li><i class="fas fa-flask-vial"></i> <strong>Simulation &amp; Machine Load Simulation</strong> — capacity-driven what-if runs that project finish dates and line loading under different assumptions.</li>
+      <li><i class="fas fa-scale-balanced"></i> <strong>Reworks, Vacation Management &amp; Load vs Capacity</strong> — supporting views used to communicate risk and impact to management.</li>
+    </ul>
+  </div>
+</div>
+
+<footer>© 2026 Trench Canada · Scheduling Team — Demo preview, sample data only.</footer>
+
+<div class="tooltip" id="tooltip"></div>
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- fabricated sample data ---------- */
+  var LINES = [
+    { id:'WIND1', color:'#38bdf8' },
+    { id:'WIND2', color:'#a855f7' },
+    { id:'WIND3', color:'#22c55e' },
+    { id:'WIND4', color:'#f59e0b' },
+    { id:'WIND5', color:'#f87171' }
+  ];
+
+  var MATERIALS = ['CU-4210-HV','CU-3380-LV','AL-5502-XT','CU-6120-MV','CU-2290-HV','AL-4470-LV','CU-7710-XT','CU-1180-MV'];
+
+  function pad(n){ return n<10 ? '0'+n : ''+n; }
+  function toISO(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+  function addDays(d,n){ var r=new Date(d); r.setDate(r.getDate()+n); return r; }
+  function fmtShort(d){ return (d.getMonth()+1)+'/'+d.getDate(); }
+  function seededRand(seed){
+    var s = seed % 2147483647; if (s<=0) s += 2147483646;
+    return function(){ s = (s*16807) % 2147483647; return (s-1)/2147483646; };
+  }
+
+  var WINDOW_START = new Date(2026,7,3);   // Aug 3 2026 (Mon)
+  var WINDOW_DAYS = 21;
+
+  var rand = seededRand(42);
+  var ORDERS = [];
+  var soCounter = 480512;
+
+  LINES.forEach(function(line, li){
+    var cursor = 0;
+    var count = 4 + Math.floor(rand()*2); // 4-5 orders per line
+    for (var i=0;i<count;i++){
+      var dur = 2 + Math.floor(rand()*4); // 2-5 days
+      var gap = Math.floor(rand()*2); // 0-1 day gap
+      cursor += gap;
+      if (cursor + dur > WINDOW_DAYS) { dur = Math.max(1, WINDOW_DAYS - cursor); }
+      if (cursor >= WINDOW_DAYS) break;
+      var start = addDays(WINDOW_START, cursor);
+      var end = addDays(WINDOW_START, cursor + dur - 1);
+      var hours = (dur * (7 + Math.round(rand()*6)));
+      var statusRoll = rand();
+      var status = statusRoll < 0.62 ? 'ontime' : (statusRoll < 0.85 ? 'risk' : 'overdue');
+      var clean = rand() < 0.22;
+      ORDERS.push({
+        id: line.id + '-' + i,
+        line: line.id,
+        color: line.color,
+        so: '45' + (soCounter++),
+        material: MATERIALS[Math.floor(rand()*MATERIALS.length)],
+        startOffset: cursor,
+        duration: dur,
+        start: start,
+        end: end,
+        hours: hours,
+        status: clean ? 'clean' : status,
+        baseStatus: status,
+        clean: clean
+      });
+      cursor += dur;
+    }
+  });
+
+  var BACKLOG_MONTHS = [
+    { m:'Apr', open: 4200, risk: 900 },
+    { m:'May', open: 4600, risk: 1100 },
+    { m:'Jun', open: 5300, risk: 1400 },
+    { m:'Jul', open: 4950, risk: 1250 },
+    { m:'Aug', open: 5700, risk: 1600 },
+    { m:'Sep', open: 5100, risk: 1300 }
+  ];
+
+  /* ---------- backlog mini chart (inline SVG) ---------- */
+  function renderBacklogChart(){
+    var w = 460, h = 200, padL = 34, padB = 26, padT = 10, padR = 10;
+    var chartW = w - padL - padR, chartH = h - padT - padB;
+    var maxVal = Math.max.apply(null, BACKLOG_MONTHS.map(function(d){ return d.open + d.risk; }));
+    maxVal = Math.ceil(maxVal/1000)*1000;
+    var groupW = chartW / BACKLOG_MONTHS.length;
+    var barW = groupW * 0.42;
+
+    var svg = '<svg viewBox="0 0 '+w+' '+h+'" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Sans, sans-serif">';
+
+    // gridlines
+    for (var g=0; g<=4; g++){
+      var gy = padT + chartH - (chartH*g/4);
+      svg += '<line x1="'+padL+'" y1="'+gy+'" x2="'+(w-padR)+'" y2="'+gy+'" stroke="rgba(148,163,184,0.15)" stroke-width="1"/>';
+      svg += '<text x="'+(padL-8)+'" y="'+(gy+3)+'" text-anchor="end" font-size="9" fill="#9ca3af">'+Math.round(maxVal*g/4)+'</text>';
+    }
+
+    BACKLOG_MONTHS.forEach(function(d, i){
+      var x0 = padL + i*groupW + (groupW-barW*2-4)/2;
+      var openH = (d.open/maxVal)*chartH;
+      var riskH = (d.risk/maxVal)*chartH;
+      var yOpen = padT + chartH - openH;
+      var yRisk = padT + chartH - riskH;
+      svg += '<rect x="'+x0+'" y="'+yOpen+'" width="'+barW+'" height="'+openH+'" rx="2" fill="#38bdf8" opacity="0.9"><title>'+d.m+' open backlog: '+d.open+' hrs</title></rect>';
+      svg += '<rect x="'+(x0+barW+4)+'" y="'+yRisk+'" width="'+barW+'" height="'+riskH+'" rx="2" fill="#f59e0b" opacity="0.9"><title>'+d.m+' PMAD at-risk: '+d.risk+' hrs</title></rect>';
+      svg += '<text x="'+(x0+barW+2)+'" y="'+(h-padB+14)+'" text-anchor="middle" font-size="10" fill="#cbd5f5">'+d.m+'</text>';
+    });
+
+    svg += '</svg>';
+    document.getElementById('backlogChart').innerHTML = svg;
+  }
+
+  /* ---------- gantt rendering ---------- */
+  var dayWidthPx = 44;
+
+  function statusColor(status){
+    return status;
+  }
+
+  function buildAxisDays(startDate, days){
+    var html = '';
+    for (var i=0;i<days;i++){
+      var d = addDays(startDate, i);
+      var dow = d.getDay();
+      var weekend = (dow===0 || dow===6);
+      html += '<div class="day-label'+(weekend?' weekend':'')+'" style="width:'+dayWidthPx+'px;">'+fmtShort(d)+'<span class="dow">'+['Su','Mo','Tu','We','Th','Fr','Sa'][dow]+'</span></div>';
+    }
+    return html;
+  }
+
+  function renderGantt(){
+    var lineFilter = document.getElementById('lineFilter').value;
+    var startVal = document.getElementById('startDate').value;
+    var endVal = document.getElementById('endDate').value;
+    var viewStart = startVal ? new Date(startVal+'T00:00:00') : WINDOW_START;
+    var viewEnd = endVal ? new Date(endVal+'T00:00:00') : addDays(WINDOW_START, WINDOW_DAYS-1);
+    var viewDays = Math.max(1, Math.round((viewEnd - viewStart)/86400000) + 1);
+
+    var linesToShow = lineFilter === 'ALL' ? LINES : LINES.filter(function(l){ return l.id===lineFilter; });
+
+    var root = document.getElementById('ganttRoot');
+    root.style.setProperty('--daywidth', dayWidthPx+'px');
+
+    var html = '<div class="gantt-axis"><div></div><div class="days" style="grid-template-columns:repeat('+viewDays+', '+dayWidthPx+'px);">'+buildAxisDays(viewStart, viewDays)+'</div></div>';
+
+    linesToShow.forEach(function(line){
+      html += '<div class="gantt-row">';
+      html += '<div class="gantt-row-label"><span class="lline" style="background:'+line.color+';"></span>'+line.id+'</div>';
+      html += '<div class="gantt-track" style="width:'+(viewDays*dayWidthPx)+'px;" data-line="'+line.id+'"></div>';
+      html += '</div>';
+    });
+
+    root.innerHTML = html;
+
+    // place bars
+    var tracks = root.querySelectorAll('.gantt-track');
+    tracks.forEach(function(track){
+      var lineId = track.getAttribute('data-line');
+      var orders = ORDERS.filter(function(o){ return o.line === lineId; });
+      orders.forEach(function(o){
+        var offsetDays = Math.round((o.start - viewStart)/86400000);
+        var left = offsetDays * dayWidthPx;
+        var width = o.duration * dayWidthPx - 6;
+        if (offsetDays + o.duration <= 0 || offsetDays >= viewDays) return; // out of view
+        var bar = document.createElement('div');
+        bar.className = 'bar status-' + o.status;
+        bar.style.left = Math.max(0,left) + 'px';
+        bar.style.width = Math.max(20, width) + 'px';
+        bar.textContent = 'SO#' + o.so;
+        bar.dataset.id = o.id;
+        bar.addEventListener('mouseenter', function(e){ showTooltip(e, o); });
+        bar.addEventListener('mousemove', function(e){ moveTooltip(e); });
+        bar.addEventListener('mouseleave', hideTooltip);
+        track.appendChild(bar);
+      });
+    });
+
+    renderStats(linesToShow);
+  }
+
+  function renderStats(linesToShow){
+    var ids = linesToShow.map(function(l){return l.id;});
+    var visible = ORDERS.filter(function(o){ return ids.indexOf(o.line) !== -1; });
+    var totalHrs = visible.reduce(function(a,o){return a+o.hours;},0);
+    var overdue = visible.filter(function(o){ return o.baseStatus === 'overdue'; }).length;
+    var risk = visible.filter(function(o){ return o.baseStatus === 'risk'; }).length;
+    var clean = visible.filter(function(o){ return o.clean; }).length;
+    var html = '';
+    html += statChip(visible.length, 'Orders in view');
+    html += statChip(totalHrs.toLocaleString(), 'Scheduled hours');
+    html += statChip(risk, 'At risk', '#fbbf24');
+    html += statChip(overdue, 'Overdue', '#f87171');
+    html += statChip(clean, 'Clean orders', '#38bdf8');
+    document.getElementById('statMini').innerHTML = html;
+  }
+  function statChip(val, label, color){
+    return '<div class="stat-chip"><div class="val" style="'+(color?'color:'+color+';':'')+'">'+val+'</div><div class="lbl">'+label+'</div></div>';
+  }
+
+  var tooltipEl = document.getElementById('tooltip');
+  function showTooltip(e, o){
+    var statusLabel = { ontime:'On time', risk:'At risk', overdue:'Overdue', clean:'Clean' }[o.status] || o.baseStatus;
+    var statusColorMap = { ontime:'#22c55e', risk:'#f59e0b', overdue:'#f87171', clean:'#38bdf8' };
+    tooltipEl.innerHTML =
+      '<div class="tt-title">Sales Order #'+o.so+'</div>' +
+      '<div class="tt-row"><span>Line</span><span>'+o.line+'</span></div>' +
+      '<div class="tt-row"><span>Material</span><span>'+o.material+'</span></div>' +
+      '<div class="tt-row"><span>Start</span><span>'+toISO(o.start)+'</span></div>' +
+      '<div class="tt-row"><span>End</span><span>'+toISO(o.end)+'</span></div>' +
+      '<div class="tt-row"><span>Hours</span><span>'+o.hours+' h</span></div>' +
+      '<div class="tt-row"><span>Clean flag</span><span>'+(o.clean?'Yes':'No')+'</span></div>' +
+      '<span class="tt-flag" style="background:'+statusColorMap[o.status]+'22; color:'+statusColorMap[o.status]+'; border:1px solid '+statusColorMap[o.status]+'55;">'+statusLabel+'</span>';
+    tooltipEl.style.display = 'block';
+    moveTooltip(e);
+  }
+  function moveTooltip(e){
+    var x = e.clientX + 16, y = e.clientY + 16;
+    var maxX = window.innerWidth - 280, maxY = window.innerHeight - 180;
+    if (x > maxX) x = e.clientX - 280;
+    if (y > maxY) y = e.clientY - 180;
+    tooltipEl.style.left = x + 'px';
+    tooltipEl.style.top = y + 'px';
+  }
+  function hideTooltip(){ tooltipEl.style.display = 'none'; }
+
+  /* ---------- fake "run simulation" ---------- */
+  function runSimulation(){
+    var btn = document.getElementById('runSimBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Recalculating…';
+
+    setTimeout(function(){
+      // pick up to 3 random orders and nudge their offset/duration slightly
+      var pool = ORDERS.slice();
+      var moved = [];
+      for (var i=0; i<3 && pool.length>0; i++){
+        var idx = Math.floor(Math.random()*pool.length);
+        var o = pool.splice(idx,1)[0];
+        var shift = (Math.random()<0.5?-1:1) * (1 + Math.floor(Math.random()*2));
+        var newDur = Math.max(1, o.duration + (Math.random()<0.5?-1:1));
+        o.start = addDays(o.start, shift);
+        o.end = addDays(o.start, newDur - 1);
+        o.duration = newDur;
+        o.hours = Math.max(4, o.hours + shift*3);
+        // occasionally improve status
+        if (o.baseStatus === 'overdue' && Math.random() < 0.5){ o.baseStatus = 'risk'; if(!o.clean) o.status='risk'; }
+        else if (o.baseStatus === 'risk' && Math.random() < 0.5){ o.baseStatus = 'ontime'; if(!o.clean) o.status='ontime'; }
+        moved.push(o.so);
+      }
+      renderGantt();
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-bolt"></i> Run Simulation';
+      showToast('Simulation complete — 3 orders rescheduled');
+    }, 900);
+  }
+
+  function showToast(msg){
+    var wrap = document.getElementById('toastWrap');
+    var t = document.createElement('div');
+    t.className = 'toast';
+    t.innerHTML = '<i class="fas fa-circle-check"></i><span>'+msg+'</span>';
+    wrap.appendChild(t);
+    setTimeout(function(){
+      t.classList.add('fade-out');
+      setTimeout(function(){ t.remove(); }, 400);
+    }, 3200);
+  }
+
+  /* ---------- wiring ---------- */
+  document.getElementById('lineFilter').addEventListener('change', renderGantt);
+  document.getElementById('startDate').addEventListener('change', renderGantt);
+  document.getElementById('endDate').addEventListener('change', renderGantt);
+  document.getElementById('scheduleType').addEventListener('change', function(){
+    showToast('Switched to ' + this.value + ' schedule view (sample data unchanged)');
+  });
+  document.getElementById('runSimBtn').addEventListener('click', runSimulation);
+
+  renderBacklogChart();
+  renderGantt();
+})();
+</script>
+
+</body>
+</html>

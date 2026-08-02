@@ -1,0 +1,297 @@
+﻿<!doctype html>
+<html lang="en">
+ <head> 
+  <meta charset="utf-8"> 
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"> 
+  <title>TCC Schedule Major Dashboard</title>
+  <script src="../javascript/reload.js"></script> 
+  <script src="./1986481368401444864/resource_5784810000.js"></script> 
+  <link href="./1986481368401444864/all.min.css" rel="stylesheet"> 
+  <script>tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        neon: {
+          pink: '#ff2a6d',
+          blue: '#05d9e8',
+          purple: '#d300c5',
+          yellow: '#fee800',
+          green: '#05ffa1'
+        },
+        dark: {
+          900: '#050a15',
+          800: '#0d1117',
+          700: '#161b22',
+          600: '#1d2129'
+        }
+      },
+      fontFamily: {
+        cyber: ['Orbitron', 'sans-serif']
+      },
+      animation: {
+        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'float': 'float 6s ease-in-out infinite',
+        'glow': 'glow 2s ease-in-out infinite alternate'
+      },
+      keyframes: {
+        float: {
+          '0%, 100%': {
+            transform: 'translateY(0)'
+          },
+          '50%': {
+            transform: 'translateY(-10px)'
+          }
+        },
+        glow: {
+          '0%': {
+            boxShadow: '0 0 5px rgba(5, 217, 232, 0.5), 0 0 10px rgba(5, 217, 232, 0.3)'
+          },
+          '100%': {
+            boxShadow: '0 0 10px rgba(5, 217, 232, 0.8), 0 0 20px rgba(5, 217, 232, 0.5), 0 0 30px rgba(5, 217, 232, 0.3)'
+          }
+        }
+      }
+    }
+  }
+};</script> 
+  <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow-neon-blue {
+                text-shadow: 0 0 5px rgba(5, 217, 232, 0.7), 0 0 10px rgba(5, 217, 232, 0.5);
+            }
+            .text-shadow-neon-pink {
+                text-shadow: 0 0 5px rgba(255, 42, 109, 0.7), 0 0 10px rgba(255, 42, 109, 0.5);
+            }
+            .text-shadow-neon-purple {
+                text-shadow: 0 0 5px rgba(211, 0, 197, 0.7), 0 0 10px rgba(211, 0, 197, 0.5);
+            }
+            .bg-grid {
+                background-image: linear-gradient(rgba(5, 217, 232, 0.1) 1px, transparent 1px),
+                                linear-gradient(90deg, rgba(5, 217, 232, 0.1) 1px, transparent 1px);
+                background-size: 20px 20px;
+            }
+            .glass {
+                backdrop-filter: blur(10px);
+                background-color: rgba(29, 33, 41, 0.6);
+            }
+            .border-glow-blue {
+                box-shadow: 0 0 5px rgba(5, 217, 232, 0.7), 0 0 10px rgba(5, 217, 232, 0.3);
+            }
+            .border-glow-pink {
+                box-shadow: 0 0 5px rgba(255, 42, 109, 0.7), 0 0 10px rgba(255, 42, 109, 0.3);
+            }
+            .border-glow-purple {
+                box-shadow: 0 0 5px rgba(211, 0, 197, 0.7), 0 0 10px rgba(211, 0, 197, 0.3);
+            }
+        }
+    </style> 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap" rel="stylesheet">
+ </head> 
+ <body class="bg-dark-900 text-gray-300 min-h-screen font-cyber bg-grid overflow-x-hidden"> 
+  <!-- Background Elements --> 
+  <div class="fixed inset-0 z-0 opacity-20" data-ytindex="0" data-ytoriginindex="0"> 
+   <div class="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-neon-pink blur-[100px] animate-pulse-slow"> 
+   </div> 
+   <div class="absolute top-2/3 right-1/3 w-80 h-80 rounded-full bg-neon-blue blur-[120px] animate-pulse-slow" style="animation-delay: 1s;"> 
+   </div> 
+   <div class="absolute bottom-1/4 right-1/4 w-72 h-72 rounded-full bg-neon-purple blur-[110px] animate-pulse-slow" style="animation-delay: 2s;"> 
+   </div> 
+  </div> 
+  <!-- [MODULE] a7g_主内容区域 --> 
+  <div class="relative z-10 container mx-auto px-4 py-8 max-w-7xl" data-ytextravalue="extra-wsxt01qje" data-ytindex="1" data-ytoriginindex="1" style="width:;height:"> 
+   <!-- [MODULE] b2x_页面标题 --> 
+   <header class="mb-12 text-center" data-ytextravalue="extra-oqzgi0xm8" data-ytindex="0" data-ytoriginindex="0"> 
+    <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold text-white mb-2 animate-glow" data-ytindex="0" data-ytoriginindex="0"> <span class="text-neon-blue text-shadow-neon-blue" contenteditable="false" style="display: inline-block; outline: none;"> TCC SCHEDULING </span> <span class="text-white"> DASH </span> <span class="text-neon-pink text-shadow-neon-pink"> BOARD </span> </h1> 
+    <p class="text-gray-400 text-lg max-w-2xl mx-auto" contenteditable="false" data-ytindex="1" data-ytoriginindex="1" data-ytparentvalue="extra-oqzgi0xm8" style="outline: none;"> Current and future releases of systems for Scheduling Team </p>
+   </header> 
+   <!-- [/MODULE] b2x_页面标题 -- 显示页面主标题和副标题，采用霓虹科技风格设计 --> 
+   <!-- [MODULE] c3v_链接管理区域 --> 
+   <div class="mb-16" data-ytextravalue="extra-v32261zv6" data-ytindex="1" data-ytoriginindex="1"> 
+    <!-- [MODULE] e5g_链接管理区域:链接列表 --> 
+    <h2 class="text-2xl font-bold mb-6 text-white flex items-center" data-ytindex="0" data-ytoriginindex="1"> <i class="fas fa-history text-neon-blue mr-3"> </i> <span class contenteditable="false" style="outline: none;"> Quick Access Systems and Databases </span> </h2> 
+    <!-- [/MODULE] e5g_链接管理区域:链接列表 -- 显示所有已添加的链接卡片，支持响应式布局 --> 
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" data-ytindex="1" data-ytoriginindex="2" id="links-container"> 
+     <!-- Initial links will be added here by JavaScript --> 
+    </div> 
+   </div> 
+   <!-- [/MODULE] c3v_链接管理区域 -- 包含添加链接表单和链接列表展示，支持添加新链接功能 --> 
+   <!-- [MODULE] d4f_更新日志区域:日志列表 --> 
+   <div class="glass rounded-xl p-6 mb-10 border border-neon-blue/30 border-glow-blue animate-float" data-selectorname="#id-qc6sd" data-ytextravalue="extra-gnf1hwy9y" data-ytindex="3" data-ytoriginindex="3" data-ytparentvalue="extra-wsxt01qje" style="opacity: 1; color: rgb(209, 213, 219); font-family: Orbitron, sans-serif; font-size: 16px; font-weight: 400; font-style: normal; line-height: 24px; text-align: start; text-indent: 0px; padding-top: 24px;"> 
+    <div class="flex justify-between items-center mb-6" data-ytindex="2" data-ytoriginindex="0" data-ytparentvalue="extra-gnf1hwy9y" style="opacity: 1; color: rgb(209, 213, 219); font-family: Orbitron, sans-serif; font-size: 16px; font-weight: 400; font-style: normal; line-height: 24px; text-align: start; text-indent: 0px;"> 
+     <h2 class="text-2xl font-bold text-white flex items-center"> <i class="fas fa-list-alt text-neon-green mr-3"> </i> <span class contenteditable="false" style="outline: none;"> Notes &amp; Updates </span> </h2> 
+     <div class="flex space-x-2"> 
+     </div> 
+    </div> 
+    <div class="space-y-4" data-ytindex="1" data-ytoriginindex="1" id="update-logs-container"> 
+     <!-- Update Log Entry 1 --> 
+     <div class="bg-dark-700 rounded-lg p-4 border-l-4 border-neon-pink hover:bg-dark-600 transition-colors" style> 
+      <div class="flex justify-between items-start mb-2"> 
+       <h3 class="font-bold text-white text-lg" contenteditable="false" style="outline: none;"> Schedule Visualization System Version 2.2 </h3> 
+       <span class="text-xs bg-neon-pink/20 text-neon-pink px-2 py-1 rounded"> Nov 5, 2025 </span> 
+      </div> 
+      <p class="text-gray-300 mb-3" contenteditable="false" style="outline: none;"> Consolidated Machine Load Simulation page with Drag &amp; Drop functionalities. </p> 
+      <div class="flex items-center text-sm text-gray-400" style> 
+       <span class="inline-flex items-center mr-4"> <i class="fas fa-user mr-1"> </i> Admin Team </span> 
+       <span class="inline-flex items-center" contenteditable="false" style="outline: none;"> <i class="fas fa-check-circle text-neon-green mr-1"> </i> Testing </span> 
+      </div> 
+     </div> 
+     <!-- Update Log Entry 2 --> 
+     <div class="bg-dark-700 rounded-lg p-4 border-l-4 border-neon-yellow hover:bg-dark-600 transition-colors"> 
+      <div class="flex justify-between items-start mb-2"> 
+       <h3 class="font-bold text-white text-lg" contenteditable="false" style="outline: none;"> Backend Status System Server Resumed </h3> 
+       <span class="text-xs bg-neon-yellow/20 text-neon-yellow px-2 py-1 rounded"> Oct 24, 2025 </span> 
+      </div> 
+      <p class="text-gray-300 mb-3" contenteditable="false" style="outline: none;"> The tableau and SAP server access is now normal, and the system is back to normal. </p> 
+      <div class="flex items-center text-sm text-gray-400"> 
+       <span class="inline-flex items-center mr-4" contenteditable="false" style="outline: none;"> <i class="fas fa-user mr-1"> </i> Admin Team </span> 
+       <span class="inline-flex items-center"> <i class="fas fa-check-circle text-neon-green mr-1"> </i> Completed </span> 
+      </div> 
+     </div> 
+     <!-- Update Log Entry 3 --> 
+     <div class="bg-dark-700 rounded-lg p-4 border-l-4 border-neon-green hover:bg-dark-600 transition-colors"> 
+      <div class="flex justify-between items-start mb-2"> 
+       <h3 class="font-bold text-white text-lg" contenteditable="false" style="outline: none;"> Backend Status System Version 3.0 </h3> 
+       <span class="text-xs bg-neon-green/20 text-neon-green px-2 py-1 rounded"> Sep 3, 2025 </span> 
+      </div> 
+      <p class="text-gray-300 mb-3" contenteditable="false" style="outline: none;"> More admin functionalities and new current operator information in each pending page. </p> 
+      <div class="flex items-center text-sm text-gray-400"> 
+       <span class="inline-flex items-center mr-4" contenteditable="false" style="outline: none;"> <i class="fas fa-user mr-1"> </i> Admin Team </span> 
+       <span class="inline-flex items-center"> <i class="fas fa-check-circle text-neon-green mr-1"> </i> Completed </span> 
+      </div> 
+     </div> 
+     <!-- Update Log Entry 4 --> 
+    </div> 
+   </div> 
+   <!-- [/MODULE] d4f_更新日志区域:日志列表 --> 
+   <!-- [MODULE] f6h_科技背景展示 --> 
+   <div class="glass rounded-xl overflow-hidden border border-neon-purple/30 animate-float" data-ytextravalue="extra-rujm547mn" data-ytindex="2" data-ytoriginindex="4" data-ytparentvalue="extra-wsxt01qje" style="animation-delay: 0.5s; opacity: 1; color: rgb(209, 213, 219); font-family: Orbitron, sans-serif; font-size: 16px; font-weight: 400; font-style: normal; line-height: 24px; text-align: start; text-indent: 0px;"> 
+    <img alt="Futuristic neon tech background" class="w-full h-64 object-cover opacity-70" data-ytindex="2" data-ytoriginindex="0" data-ytparentvalue="extra-rujm547mn" src="./1986481368401444864/8e0ed4265687e688ce27c66265331bf6.png" style="opacity: 0.7; color: rgb(209, 213, 219); font-family: Orbitron, sans-serif; font-size: 16px; font-weight: 400; font-style: normal; line-height: 24px; text-align: start; text-indent: 0px; padding-top: 0px;"> 
+    <div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-dark-900 to-transparent" data-ytindex="1" data-ytoriginindex="1"> 
+     <h2 class="text-2xl font-bold text-white mb-2" contenteditable="false" style="outline: none;"> New Softwares &amp; Systems to be Published </h2> 
+     <p class="text-gray-300 max-w-2xl" contenteditable="false" style="outline: none;"> Future Release: Frontend System </p> 
+    </div> 
+   </div> 
+   <!-- [/MODULE] f6h_科技背景展示 -- 展示一张霓虹科技风格的背景图片，带有渐变叠加层和描述文字 --> 
+  </div> 
+  <!-- [/MODULE] a7g_主内容区域 -- 包含页面所有内容，采用霓虹科技风格设计，支持链接管理功能 --> 
+  <!-- Footer --> 
+  <footer class="relative z-10 py-8 text-center text-gray-500 text-sm" data-ytindex="3" data-ytoriginindex="3"> 
+   <p class contenteditable="false" style="outline: none;"> © 2025 Trench | Designed by Yanbo Wang, Scheduling Team </p> 
+  </footer> 
+  <!-- [JSMOD] g8j_链接管理功能 --> 
+  <script data-ytindex="4" data-ytoriginindex="4" id="link-management">
+
+// Sample initial links
+var initialLinks = [{
+  id: 1,
+  name: "Schedule Visualize System",
+  url: "../../demo-apps/backend-status-demo.html",
+  description: "W&R Schedule & Simulation",
+  color: "blue"
+}, {
+  id: 2,
+  name: "Backend Status System",
+  url: "../../demo-apps/schedule-visualization-demo.html",
+  description: "Real-time Backend Order Status",
+  color: "green"
+}, {
+  id: 3,
+  name: "OMS Database",
+  url: "https://casbq0006a.trench-group.net:44342/home",
+  description: "Order management with Period Flags",
+  color: "pink"
+}
+];
+
+// DOM Elements
+var linkForm = document.getElementById('link-form');
+var linksContainer = document.getElementById('links-container');
+// Initialize the links
+document.addEventListener('DOMContentLoaded', function () {
+  renderLinks();
+  setupEventListeners();
+});
+// Setup event listeners
+function setupEventListeners() {
+  // Form submission
+  linkForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    addNewLink();
+  });
+}
+// Render all links
+function renderLinks() {
+  linksContainer.innerHTML = '';
+  initialLinks.forEach(function (link) {
+    var linkCard = createLinkCard(link);
+    linksContainer.appendChild(linkCard);
+  });
+}
+// Create a single link card
+function createLinkCard(link) {
+  var colors = {
+    blue: 'border-neon-blue/30 border-glow-blue text-neon-blue',
+    pink: 'border-neon-pink/30 border-glow-pink text-neon-pink',
+    green: 'border-neon-green/30 text-neon-green',
+    purple: 'border-neon-purple/30 text-neon-purple',
+    yellow: 'border-neon-yellow/30 text-neon-yellow'
+  };
+  var card = document.createElement('div');
+  card.className = "glass rounded-xl p-6 border animate-float transition-all hover:scale-105".concat(colors[link.color] || colors.blue);
+  card.style.animationDelay = "".concat(Math.random() * 2, "s");
+  card.style.animationDuration = "".concat(4 + Math.random() * 2, "s");
+  card.innerHTML = "<div class=\"flex justify-between items-start mb-4\">\n                    <h3 class=\"text-xl font-bold text-white\">".concat(link.name, "</h3>\n                    <button class=\"delete-link text-gray-400 hover:text-neon-pink transition-colors\" data-id=\"").concat(link.id, "\">\n                        <i class=\"fas fa-trash-alt\"></i>\n                    </button>\n                </div>\n                <p class=\"text-gray-400 text-sm mb-4\">").concat(link.description || 'No description provided', "</p>\n                <div class=\"flex items-center justify-between\">\n                    <a href=\"").concat(link.url, "\" target=\"_blank\" class=\"inline-flex items-center text-white hover:text-neon-blue transition-colors\">\n                        <i class=\"fas fa-external-link-alt mr-2\"></i>\n                        Visit Site\n                    </a>\n                    <span class=\"text-xs bg-dark-700 px-3 py-1 rounded-full text-gray-300\">").concat(new URL(link.url).hostname, "</span>\n                </div>");
+  // Add delete functionality
+  var deleteBtn = card.querySelector('.delete-link');
+  deleteBtn.addEventListener('click', function () {
+    deleteLink(link.id);
+  });
+  return card;
+}
+// Add a new link
+function addNewLink() {
+  var urlInput = document.getElementById('link-url');
+  var nameInput = document.getElementById('link-name');
+  var descriptionInput = document.getElementById('link-description');
+  // Validate inputs
+  if (!urlInput.value || !nameInput.value) {
+    alert('Please fill in the required fields');
+    return;
+  }
+  // Create new link object
+  var newLink = {
+    id: Date.now(),
+    // Use timestamp as unique ID
+    name: nameInput.value,
+    url: urlInput.value,
+    description: descriptionInput.value,
+    color: getRandomColor()
+  };
+  // Add to links array and re-render
+  initialLinks.push(newLink);
+  renderLinks();
+  // Reset form
+  linkForm.reset();
+  // Show success message
+  alert('Link added successfully!');
+}
+// Delete a link
+function deleteLink(id) {
+  var index = initialLinks.findIndex(function (link) {
+    return link.id === id;
+  });
+  if (index !== -1) {
+    initialLinks.splice(index, 1);
+    renderLinks();
+  }
+}
+// Get random color for link cards
+function getRandomColor() {
+  var colors = ['blue', 'pink', 'green', 'purple', 'yellow'];
+  return colors[Math.floor(Math.random() * colors.length)];
+}</script> 
+  <!-- [/JSMOD] g8j_链接管理功能 -- 处理链接的添加、删除和展示功能，包括表单提交处理、链接卡片渲染和动画效果控制 -->  
+ </body>
+</html>

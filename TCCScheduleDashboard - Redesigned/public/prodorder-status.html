@@ -1,0 +1,963 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>TCC Scheduling Major Board</title>
+
+    <link rel="icon" type="image/png" sizes="32x32" href="./Logo.png" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Orbitron:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Existing bundles -->
+    <script src="./javascript/reload.js"></script>
+    <script src="./1986481368401444864/resource_5784810000.js"></script>
+    <link href="./1986481368401444864/all.min.css" rel="stylesheet" />
+    <link href="./1986481368401444864/tailwind.min.css" rel="stylesheet" />
+
+    <!-- Global styles -->
+    <link rel="stylesheet" href="assets/css/base.css" />
+
+    <!-- Page-local UI redesign: match Schedule Visualization page -->
+    <style>
+      /* ===== 整页背景：和 Schedule Visualization 一样 ===== */
+      .tcc-main {
+        position: relative;
+        /* 最底层是图片，上面叠三层深色渐变做统一色调 */
+        background:
+          radial-gradient(circle at top left, rgba(56, 189, 248, 0.13), transparent 58%),
+          radial-gradient(circle at bottom right, rgba(37, 99, 235, 0.12), transparent 60%),
+          linear-gradient(to bottom, rgba(2, 6, 23, 0.46), rgba(2, 6, 23, 0.48)),
+          url('https://getwallpapers.com/wallpaper/full/c/d/d/894333-vertical-abstract-desktop-background-1920x1080-for-full-hd.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed; /* 轻微视差，不喜欢可以删掉这一行 */
+      }
+
+      /* ===== HERO：抬一点层次感 ===== */
+      .tcc-page-hero {
+        padding-block: 3.25rem 2.4rem;
+        border-bottom: 1px solid rgba(15, 23, 42, 0.85);
+        position: relative;
+      }
+
+      .tcc-page-hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(circle at top right, rgba(125, 211, 252, 0.18), transparent 55%),
+          radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.18), transparent 55%);
+        opacity: 0.8;
+        pointer-events: none;
+      }
+
+      .tcc-page-hero-inner {
+        position: relative;
+        z-index: 1;
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+        gap: 2.4rem;
+        align-items: stretch;
+      }
+
+      .tcc-page-breadcrumb {
+        font-size: 0.8rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: #9ca3af;
+        margin-bottom: 0.8rem;
+      }
+
+      .tcc-page-title {
+        font-size: clamp(2rem, 2.6vw, 2.4rem);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        margin-bottom: 0.75rem;
+      }
+
+      .tcc-page-subtitle {
+        max-width: 40rem;
+        color: #d1d5db;
+      }
+
+      .tcc-page-hero-badges {
+        margin-top: 1.1rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .tcc-page-hero-visual {
+        display: flex;
+        align-items: stretch;
+        justify-content: flex-end;
+      }
+
+      .tcc-page-hero-card {
+        position: relative;
+        width: 100%;
+        border-radius: 1rem;
+        padding: 1.4rem 1.5rem 1.2rem;
+        background:
+          radial-gradient(circle at top left, rgba(59, 130, 246, 0.35), transparent 60%),
+          radial-gradient(circle at bottom right, rgba(8, 47, 73, 0.55), transparent 60%),
+          rgba(15, 23, 42, 0.54);
+        border: 1px solid rgba(148, 163, 184, 0.45);
+        box-shadow:
+          0 22px 45px rgba(15, 23, 42, 0.95),
+          0 0 0 1px rgba(15, 23, 42, 0.9) inset;
+        backdrop-filter: blur(14px);
+      }
+
+      .tcc-page-hero-card h3 {
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: #e5e7eb;
+        margin-bottom: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+
+      .tcc-page-hero-card h3::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(
+          to right,
+          rgba(59, 130, 246, 0.2),
+          rgba(56, 189, 248, 0.7)
+        );
+      }
+
+      .tcc-page-hero-card ul {
+        margin-left: 0;
+        padding-left: 1rem;
+        font-size: 0.9rem;
+        color: #cbd5f5;
+      }
+
+      .tcc-page-hero-card li + li {
+        margin-top: 0.4rem;
+      }
+
+      .tcc-page-hero-card .tcc-tag-row {
+        margin-top: 1rem;
+      }
+
+      /* ===== 主体双列区域：两张“玻璃卡片”并排 ===== */
+
+      .tcc-page-main {
+        padding: 2.4rem 1.75rem 3.25rem;
+        border-top: 1px solid rgba(15, 23, 42, 0.9);
+      }
+
+      .tcc-page-main-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+        gap: 2rem;
+        align-items: stretch;
+      }
+
+      .tcc-page-main-inner .tcc-panel {
+        position: relative;
+        min-height: 0;
+        max-height: 65vh; /* 高度限制到一屏内，内部滚动 */
+        padding: 1.6rem 1.7rem 1.5rem;
+        border-radius: 1rem;
+        border: 1px solid rgba(148, 163, 184, 0.42);
+        background:
+          radial-gradient(circle at top left, rgba(56, 189, 248, 0.25), transparent 62%),
+          radial-gradient(circle at bottom right, rgba(37, 99, 235, 0.28), transparent 60%),
+          rgba(15, 23, 42, 0.36);
+        box-shadow:
+          0 22px 48px rgba(15, 23, 42, 0.98),
+          0 0 0 1px rgba(15, 23, 42, 0.9) inset;
+        backdrop-filter: blur(18px);
+        overflow-y: auto;
+      }
+
+      .tcc-page-main-inner .tcc-panel::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: linear-gradient(
+          135deg,
+          rgba(96, 165, 250, 0.22),
+          transparent 55%
+        );
+        mix-blend-mode: soft-light;
+        opacity: 0.9;
+        pointer-events: none;
+      }
+
+      .tcc-page-main-inner .tcc-panel > * {
+        position: relative;
+        z-index: 1;
+      }
+
+      /* Panel 标题样式 */
+      .tcc-page-main-inner .tcc-panel h3 {
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: #e5e7eb;
+        margin-bottom: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+
+      .tcc-page-main-inner .tcc-panel h3::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: radial-gradient(circle, #38bdf8, #2563eb);
+        box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.25);
+      }
+
+      .tcc-page-main-inner .tcc-panel h3::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(
+          to right,
+          rgba(15, 23, 42, 0),
+          rgba(148, 163, 184, 0.8)
+        );
+      }
+
+      .tcc-page-main-inner .tcc-panel h4 {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: #e5e7eb;
+        margin: 1.1rem 0 0.35rem;
+      }
+
+      .tcc-page-main-inner .tcc-panel p {
+        font-size: 0.9rem;
+        color: #d1d5db;
+      }
+
+      /* 有序列表 / 无序列表统一一点间距和颜色 */
+      .tcc-page-main-inner .tcc-panel ol.list-decimal {
+        margin-top: 0.75rem;
+        padding-left: 1.1rem;
+      }
+
+      .tcc-page-main-inner .tcc-panel ol.list-decimal > li {
+        padding-top: 0.55rem;
+        margin-top: 0.2rem;
+        border-top: 1px dashed rgba(148, 163, 184, 0.25);
+      }
+
+      .tcc-page-main-inner .tcc-panel ol.list-decimal > li:first-child {
+        border-top: 0;
+      }
+
+      .tcc-page-main-inner .tcc-panel ol.list-decimal > li > div:first-child {
+        display: inline-block;
+        margin-left: 0.3rem;
+        font-weight: 600;
+        color: #e5e7eb;
+      }
+
+      .tcc-page-main-inner .tcc-panel ul.list-disc {
+        margin-top: 0.3rem;
+        padding-left: 1.1rem;
+        font-size: 0.9rem;
+        color: #cbd5f5;
+      }
+
+      .tcc-page-main-inner .tcc-panel ul.list-disc li + li {
+        margin-top: 0.25rem;
+      }
+
+      .tcc-page-main-inner .tcc-panel dl {
+        font-size: 0.88rem;
+        color: #d1d5db;
+      }
+
+      .tcc-page-main-inner .tcc-panel dl dt {
+        color: #e5e7eb;
+      }
+
+      .tcc-page-main-inner .tcc-panel dl dd {
+        color: #cbd5f5;
+      }
+
+      .tcc-page-main-inner .tcc-panel .tcc-tag-row {
+        margin-top: 0.6rem;
+      }
+
+      .tcc-page-main-inner .tcc-panel .tcc-tag {
+        border-radius: 9999px;
+        border: 1px solid rgba(148, 163, 184, 0.5);
+        background: rgba(15, 23, 42, 0.9);
+      }
+
+      /* Guide panel 页脚说明文字更浅一点 */
+      .tcc-page-main-inner .tcc-panel p[style*="font-size: 0.8rem"] {
+        color: #9ca3af !important;
+      }
+
+      /* 低存在感滚动条，仅限两个 panel */
+      .tcc-page-main-inner .tcc-panel {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(148, 163, 184, 0.45) transparent;
+      }
+
+      .tcc-page-main-inner .tcc-panel::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .tcc-page-main-inner .tcc-panel::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      .tcc-page-main-inner .tcc-panel::-webkit-scrollbar-thumb {
+        background: rgba(148, 163, 184, 0.45);
+        border-radius: 9999px;
+      }
+
+      .tcc-page-main-inner .tcc-panel::-webkit-scrollbar-thumb:hover {
+        background: rgba(148, 163, 184, 0.7);
+      }
+
+      /* ===== 自适应：小屏改为纵向排布，去掉高度限制 ===== */
+      @media (max-width: 900px) {
+        .tcc-page-hero {
+          padding-block: 2.4rem 1.9rem;
+        }
+
+        .tcc-page-hero-inner {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 1.9rem;
+        }
+
+        .tcc-page-main {
+          padding: 1.8rem 1.25rem 2.3rem;
+        }
+
+        .tcc-page-main-inner {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 1.6rem;
+        }
+
+        .tcc-page-main-inner .tcc-panel {
+          max-height: none;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="tcc-site">
+      <!-- ========== HEADER ========== -->
+      <header class="tcc-header">
+        <div class="tcc-nav-inner">
+          <a href="index.html" class="tcc-brand">
+            <img src="./Logo2.png" alt="TCC logo" style="height: 100px; width: 120px; object-fit: contain;" />
+            <div>
+              <div class="tcc-brand-text-main">Trench Canada Coils</div>
+              <div class="tcc-brand-text-sub">
+                A LEGACY OF INNOVATION
+              </div>
+            </div>
+          </a>
+
+          <nav class="tcc-nav-links">
+            <!-- HOME -->
+            <a href="index.html" class="tcc-nav-link">Home</a>
+
+            <!-- SYSTEMS 下拉菜单 -->
+            <div
+              class="tcc-nav-dropdown"
+              style="position: relative;"
+              onmouseleave="document.getElementById('tcc-systems-menu').style.display='none';"
+            >
+              <div
+                type="button"
+                class="tcc-nav-link"
+                aria-haspopup="true"
+                aria-expanded="false"
+                onmouseover="document.getElementById('tcc-systems-menu').style.display='flex';"
+                onfocus="document.getElementById('tcc-systems-menu').style.display='flex';"
+                onclick="const m=document.getElementById('tcc-systems-menu'); m.style.display = (m.style.display==='flex'?'none':'flex');"
+              >
+                Systems
+                <i
+                  class="fas fa-chevron-down"
+                  style="margin-left: 0.25rem; font-size: 0.7em;"
+                ></i>
+              </div>
+
+              <!-- 下拉列表：五个 systems -->
+              <div
+                id="tcc-systems-menu"
+                style="
+                  display: none;
+                  position: absolute;
+                  top: 100%;
+                  right: 0;
+                  padding: 0.4rem 0;
+                  background: rgba(15, 23, 42, 0.98);
+                  border-radius: 0.5rem;
+                  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.8);
+                  min-width: 220px;
+                  z-index: 50;
+                  flex-direction: column;
+                "
+              >
+                <a
+                  href="systems-portal.html"
+                  target="_blank"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Systems Portal
+                </a>
+                <a
+                  href="prodorder-status.html"
+                  target="_blank"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Production Order Status
+                </a>
+                <a
+                  href="schedule-visualization.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Schedule Visualization
+                </a>
+                <a
+                  href="backend-status.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Backend Status System
+                </a>
+                <a
+                  href="frontend-status.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Frontend Status System
+                </a>
+                <a
+                  href="machine-load-recalculation-studio.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Machine Load Recalculation Studio
+                </a>
+                <a
+                  href="load-vs-capacity.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Load vs Capacity
+                </a>
+                <a
+                  href="andon-board.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Production Andon Board
+                </a>
+                <a
+                  href="enhanced-oms.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Enhanced OMS
+                </a>
+              </div>
+            </div>
+
+            <!-- NOTES & UPDATES -->
+            <a href="notes-updates.html" class="tcc-nav-link">
+              Notes &amp; Updates
+            </a>
+
+            <!-- AI ASSISTANT -->
+            <a
+              href="../../demo-apps/ai-assistant-demo.html"
+              class="tcc-nav-link"
+              data-ai-assistant-link="1"
+            >
+              AI ASSISTANT
+            </a>
+          </nav>
+
+          <button class="tcc-nav-toggle" aria-label="Toggle navigation">
+            <span></span>
+          </button>
+        </div>
+      </header>
+
+      <main class="tcc-main">
+        <!-- HERO -->
+        <section class="tcc-page-hero tcc-fade-in-on-load">
+          <div class="tcc-page-hero-inner">
+            <div class="reveal-on-scroll">
+              <div class="tcc-page-breadcrumb">
+                Scheduling Systems · Production Order Schedules
+              </div>
+
+              <h1 class="tcc-page-title">
+                Production Order Schedules & Status System
+              </h1>
+
+              <p class="tcc-page-subtitle">
+                Live SAP based production order schedules on an interactive
+                Gantt chart, with a simulation view (playground integrated) and a source data
+                table plus simple revenue calendar, built to support daily
+                scheduling for key work centers.
+              </p>
+
+              <div class="tcc-page-hero-badges">
+                <span class="tcc-badge">
+                  <i class="fas fa-stream"></i>
+                  SAP schedule Gantt
+                </span>
+                <span class="tcc-badge">
+                  <i class="fas fa-project-diagram"></i>
+                  Simulation &amp; data table
+                </span>
+              </div>
+            </div>
+
+            <div class="tcc-page-hero-visual reveal-on-scroll">
+              <div class="tcc-page-hero-card">
+                <h3>How to use this system</h3>
+                <ul>
+                  <li>
+                    Choose the view at the top of the app to select functions.
+                  </li>
+                  <li>
+                    It may take 1-5 mins to load the data. Please wait.
+                  </li>
+                  <li>
+                    Use the
+                    <strong>Workcenter</strong> and
+                    <strong>weeks</strong> to filter.
+                  </li>
+                  <li>
+                    Refer to the Guide Manual for more information.
+                  </li>
+                  <li>
+                    Data refreshes
+                    automatically at 0AM, 6AM, 12PM and 6PM.
+                  </li>
+                  <li>
+                    The app is designed for all devices, including mobiles.
+                  </li>
+                </ul>
+
+                <div class="tcc-tag-row">
+                  <span class="tcc-tag">Schedules</span>
+                  <span class="tcc-tag">Simulations</span>
+                  <span class="tcc-tag">Source Data table</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- MAIN CONTENT -->
+        <section class="tcc-page-main">
+          <div class="tcc-page-main-inner">
+            <!-- Left: Guide Manual -->
+            <article class="tcc-panel reveal-on-scroll">
+              <h3>Guide Manual</h3>
+              <p>
+                The Production Order Schedules system shows the live SAP
+                production order schedule on an interactive Gantt chart, plus an
+                editable simulation view and a source data table with a simple
+                revenue calendar. All views use the same merged dataset from the
+                SAP production order schedule, sales backlog and backlog
+                comments extracts.
+              </p>
+
+              <ol class="list-decimal list-inside space-y-3">
+                <!-- 1. PURPOSE -->
+                <li>
+                  <div><strong>Purpose &amp; when to use</strong></div>
+                  <p>
+                    Use this system when you need a clear picture of which
+                    production orders are sitting on each work center in the
+                    coming weeks, with basic revenue and production line
+                    context.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      Use it in daily or weekly scheduling meetings to walk
+                      through the queue by machine and by week.
+                    </li>
+                    <li>
+                      Use it when you need to re-slot orders, check gaps or
+                      understand whether a proposed change will clash with
+                      existing work.
+                    </li>
+                    <li>
+                      Use the NETWR_EURX and OmPeriod fields to support
+                      conversations with Sales and Management about priorities
+                      and timing.
+                    </li>
+                  </ul>
+                </li>
+
+                <!-- 2. FILTERS & VIEWS -->
+                <li>
+                  <div><strong>Top filters &amp; views</strong></div>
+                  <p>
+                    The top bar lets you switch views and control what is shown
+                    in both the Gantt and the data table.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      <strong>Workcenter:</strong> choose a single work center
+                      (CNC, WELD, SETUP, WIND, ROVE, etc.). All rows and Gantt
+                      bars are filtered to that center.
+                    </li>
+                    <li>
+                      <strong>Weeks selector:</strong> in Schedule and
+                      Simulation views, use the week “chips” to focus the Gantt
+                      on selected weeks. By default, the app picks roughly four
+                      weeks around “today” based on the schedule data.
+                    </li>
+                    <li>
+                      <strong>View selector:</strong> the three buttons at the
+                      very top switch between
+                      <strong>Schedule Gantt</strong>,
+                      <strong>Simulation</strong> and
+                      <strong>Source Data Table</strong>, all sharing the same
+                      dataset.
+                    </li>
+                    <li>
+                      <strong>Refresh behaviour:</strong> the Schedule view
+                      automatically reloads from
+                      <code>/api/prodorderschedule</code> around 00:00, 06:00,
+                      12:00 and 18:00 so the view stays close to the latest SAP
+                      data without manual refresh.
+                    </li>
+                  </ul>
+                </li>
+
+                <!-- 3. READING THE GANTT -->
+                <li>
+                  <div><strong>Reading the Schedule Gantt</strong></div>
+                  <p>
+                    The Schedule view shows one row per “unit” of a production
+                    order, pinned information on the left and an interactive
+                    time axis on the right.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      The pinned columns include
+                      <em>Sales Order</em>, <em>Item</em>,
+                      <em>Production Order</em>, <em>Material</em>,
+                      <em>Package text</em>, <em>Rem hrs</em>,
+                      <em>Std hrs</em>, <em>Total Qty</em> and
+                      <em>Unit</em>, all read directly from the merged SAP
+                      data.
+                    </li>
+                    <li>
+                      Each bar on the right runs from Start date/time to End
+                      date/time. Orders with quantity &gt; 1 are split into
+                      several units so it is easier to see where capacity is
+                      consumed across the week.
+                    </li>
+                    <li>
+                      Completed or “done” work is rendered with a softer grey
+                      bar, while open work uses a blue gradient. Hover a bar to
+                      see a tooltip with order number, dates and hours.
+                    </li>
+                    <li>
+                      Scroll horizontally to move through days. Use the week
+                      selector chips to keep the timeline focussed on the
+                      relevant 1–4 week window instead of the entire horizon.
+                    </li>
+                  </ul>
+                </li>
+
+                <!-- 4. SIMULATION VIEW -->
+                <li>
+                  <div><strong>Simulation view &amp; no-buffer mode</strong></div>
+                  <p>
+                    The Simulation view reuses the same split layout but with
+                    fully editable rows that live only in your browser, so you
+                    can test different scenarios without touching SAP.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      Upload an Excel file in either the existing simulation
+                      format or the schedule-style format; the app
+                      auto-detects the template and normalizes it to the same
+                      structure used by the Schedule view.
+                    </li>
+                    <li>
+                      The “See schedule without buffers” option loads live data
+                      from <code>/api/prodorderschedule</code> and recalculates
+                      each bar length from <em>Rem hrs</em> while skipping
+                      weekends, so you can visualise a “no buffer” scenario.
+                    </li>
+                    <li>
+                      You can adjust start / end times, edit the
+                      <em>Production Order</em> field, drag and drop rows, and
+                      insert or delete rows. The Gantt on the right updates in
+                      real time as you edit.
+                    </li>
+                    <li>
+                      Use the <strong>Download Gantt as PDF</strong> button to
+                      export the current simulation view for review in meetings
+                      or email.
+                    </li>
+                  </ul>
+                </li>
+
+                <!-- 5. DATA TABLE & CALENDAR -->
+                <li>
+                  <div><strong>Source data table &amp; revenue calendar</strong></div>
+                  <p>
+                    The Source Data Table view exposes the same dataset in a
+                    sortable table, plus a simple day-based calendar that
+                    highlights revenue by date.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      The table shows one row per production order item, with
+                      Sales Order, Item, Order, Material, Short text, Act hrs,
+                      Rem hrs, Std hrs, Total Qty, Workcenter, Production Line,
+                      NETWR_EURX and OmPeriod fields.
+                    </li>
+                    <li>
+                      Use the <strong>Workcenter</strong> selector and
+                      <strong>Production Line</strong> filter to focus on a
+                      specific cell or line when exploring orders or exporting
+                      data.
+                    </li>
+                    <li>
+                      The revenue calendar groups rows by start date and sums
+                      NETWR_EURX so you can see which days carry more scheduled
+                      value for the current filters.
+                    </li>
+                    <li>
+                      Selecting dates in the calendar filters the table to the
+                      matching rows. From there you can copy the filtered rows
+                      into Excel or use them as the basis for further analysis.
+                    </li>
+                  </ul>
+                </li>
+              </ol>
+
+              <p style="margin-top: 0.75rem; font-size: 0.8rem;">
+                General suggestion: use the <strong>Schedule</strong> view for
+                day-to-day visibility, the <strong>Simulation</strong> view to
+                test what-if scenarios, and the <strong>Source Data Table +
+                revenue calendar</strong> view when you need to slice, filter
+                or export the underlying schedule data.
+              </p>
+            </article>
+
+            <!-- Right: System link + API guide -->
+            <article class="tcc-panel reveal-on-scroll">
+              <h3>System Link &amp; API guide</h3>
+              <p>
+                Open the Production Order Schedules system from inside the
+                internal network. After logging in you can switch between the
+                <strong>Schedule Gantt</strong>, <strong>Simulation</strong>
+                and <strong>Source Data Table</strong> views from the top of
+                the app.
+              </p>
+
+              <p style="margin-top: 0.75rem">
+                <a
+                  href="../../demo-apps/prodorder-status-demo.html"
+                  target="_blank"
+                  class="tcc-link-inline"
+                  style="font-size: 0.95rem"
+                >
+                  <i class="fas fa-external-link-alt"></i>
+                  Open Production Order Schedules System
+                </a>
+              </p>
+
+              <div class="tcc-tag-row">
+                <span class="tcc-tag">URL: Demo preview</span>
+                <span class="tcc-tag">Status: Normal</span>
+              </div>
+
+              <hr
+                style="margin: 1.2rem 0; border-color: rgba(148,163,184,0.45)"
+              />
+
+              <h4>1. Core data endpoint</h4>
+              <dl>
+                <dt>GET /api/prodorderschedule</dt>
+                <dd>
+                  Main endpoint used by all three views. The backend loads three
+                  SAP ODC sources defined by
+                  <code>ODBC_ODC_PATH_PRODORDERSCHEDULE</code>,
+                  <code>ODBC_ODC_PATH_BACKLOG</code> and
+                  <code>ODBC_ODC_PATH_BACKLOG_COMMENT</code>, then joins them
+                  by Sales Order and Item. Each row includes the original
+                  schedule fields plus <code>NETWR_EURX</code>,
+                  <code>OmPeriod</code> and <code>ProductionLine</code>. The
+                  JSON shape is <code>{ ok, rowCount, rows }</code>.
+                </dd>
+              </dl>
+
+              <h4>2. Data sources used by this system</h4>
+              <ul class="list-disc list-inside">
+                <li>
+                  <code>ODBC_ODC_PATH_PRODORDERSCHEDULE</code> &mdash; SAP
+                  Production Order Schedules ODC. Provides core timing and
+                  order fields such as Startdate, Enddate, Starttime, Endtime,
+                  Acthrs, Rem hrs, Stdhrs, Totalqty, Workcenter, Salesorder,
+                  Item, Order, Material and Short text.
+                </li>
+                <li>
+                  <code>ODBC_ODC_PATH_BACKLOG</code> &mdash; Sales backlog ODC.
+                  Supplies NETWR_EURX (estimated net value per order item) and,
+                  where available, Production Line information keyed by Sales
+                  Doc and Item.
+                </li>
+                <li>
+                  <code>ODBC_ODC_PATH_BACKLOG_COMMENT</code> &mdash; Backlog
+                  comments ODC. Supplies OmPeriod and related comments, again
+                  keyed by Sales Doc and Item, used mainly in the data table
+                  and filters.
+                </li>
+              </ul>
+
+              <h4>3. Simulation &amp; uploads (client-side)</h4>
+              <dl>
+                <dt>Excel uploads</dt>
+                <dd>
+                  The Simulation view reads Excel files directly in the browser
+                  using <code>XLSX</code>. No additional API endpoint is used:
+                  the uploaded file is parsed client-side and normalized into
+                  the same structure as the schedule rows before being rendered
+                  in the editable table and Gantt.
+                </dd>
+              </dl>
+
+              <h4>4. Additional fields from backend</h4>
+              <dl>
+                <dt>NETWR_EURX</dt>
+                <dd>
+                  Estimated net value for each order item, imported from the
+                  backlog source so the Source Data Table and revenue calendar
+                  can show simple value totals.
+                </dd>
+                <dt>OmPeriod</dt>
+                <dd>
+                  Period / remark field from the backlog comments source (for
+                  example financial year period or business comments), shown in
+                  the table and available for filtering.
+                </dd>
+                <dt>ProductionLine / productionLine</dt>
+                <dd>
+                  Production line label inferred from backlog data and returned
+                  in both Pascal- and camel-case. Used by the Production Line
+                  filter in the data table and for grouping in external
+                  reporting.
+                </dd>
+              </dl>
+
+              <h4>5. Responses &amp; error handling</h4>
+              <p style="margin: 0 0 0.25rem 0;">
+                <strong>All endpoints return JSON.</strong> On success,
+                <code>/api/prodorderschedule</code> returns an
+                <strong>ok</strong> flag, a <strong>rowCount</strong> and a
+                <strong>rows</strong> array. On failure it returns HTTP
+                <strong>4xx/5xx</strong> codes with an <strong>error</strong>
+                message, for example when one of the ODBC paths is missing or
+                an import fails. If something does not load as expected in the
+                UI, check the browser Network tab for the failing request and
+                server error text.
+              </p>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <footer class="tcc-footer">
+        <div class="tcc-footer-inner">
+          <span>© 2025 Trench Canada · Scheduling Team</span>
+          <span>Production Order Schedules System · Version 1.0</span>
+        </div>
+      </footer>
+    </div>
+
+    <!-- full-screen marquee border overlay -->
+    <div id="tcc-marquee-border" aria-hidden="true"></div>
+
+    <!-- main UI script -->
+    <script src="assets/js/main.js"></script>
+
+    <!-- AI ASSISTANT hover -> glow + click -> jump -->
+    <script>
+      (function () {
+        const AI_URL = "../../demo-apps/ai-assistant-demo.html";
+
+        function glowOn() {
+          document.body.classList.add("tcc-marquee-on");
+        }
+
+        function glowOff() {
+          document.body.classList.remove("tcc-marquee-on");
+        }
+
+        function goAiAssistant(e) {
+          if (e) e.preventDefault();
+          glowOn(); // 点击时也顺便亮一下（不影响：马上跳转页面）
+          setTimeout(() => {
+            window.location.href = AI_URL;
+          }, 380);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+          const nodes = document.querySelectorAll("[data-ai-assistant-link='1']");
+          nodes.forEach((el) => {
+            // ✅ 鼠标移上去就生效
+            el.addEventListener("mouseenter", glowOn);
+            el.addEventListener("mouseleave", glowOff);
+
+            // ✅ 键盘 tab 聚焦也生效（更完整）
+            el.addEventListener("focus", glowOn);
+            el.addEventListener("blur", glowOff);
+
+            // ✅ 点击仍然跳转
+            el.addEventListener("click", goAiAssistant);
+          });
+        });
+      })();
+    </script>
+
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>

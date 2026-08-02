@@ -1,0 +1,793 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>TCC Scheduling Major Board</title>
+
+    <link rel="icon" type="image/png" sizes="32x32" href="./Logo.png" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Orbitron:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Existing bundles -->
+    <script src="./javascript/reload.js"></script>
+    <script src="./1986481368401444864/resource_5784810000.js"></script>
+    <link href="./1986481368401444864/all.min.css" rel="stylesheet" />
+    <link href="./1986481368401444864/tailwind.min.css" rel="stylesheet" />
+
+    <!-- Global styles -->
+    <link rel="stylesheet" href="assets/css/base.css" />
+
+    <!-- Page-local UI: copy from Backend Status page -->
+    <style>
+      .tcc-main {
+        position: relative;
+        background:
+          radial-gradient(circle at top left, rgba(56, 189, 248, 0.13), transparent 58%),
+          radial-gradient(circle at bottom right, rgba(37, 99, 235, 0.12), transparent 60%),
+          linear-gradient(to bottom, rgba(2, 6, 23, 0.06), rgba(2, 6, 23, 0.08)),
+          url('https://getwallpapers.com/wallpaper/full/b/a/4/368718.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+      }
+
+      .tcc-page-hero {
+        padding-block: 3.25rem 2.4rem;
+        border-bottom: 1px solid rgba(15, 23, 42, 0.85);
+        position: relative;
+      }
+
+      .tcc-page-hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(circle at top right, rgba(125, 211, 252, 0.18), transparent 55%),
+          radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.18), transparent 55%);
+        opacity: 0.8;
+        pointer-events: none;
+      }
+
+      .tcc-page-hero-inner {
+        position: relative;
+        z-index: 1;
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+        gap: 2.4rem;
+        align-items: stretch;
+      }
+
+      .tcc-page-breadcrumb {
+        font-size: 0.8rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: #9ca3af;
+        margin-bottom: 0.8rem;
+      }
+
+      .tcc-page-title {
+        font-size: clamp(2rem, 2.6vw, 2.4rem);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        margin-bottom: 0.75rem;
+      }
+
+      .tcc-page-subtitle {
+        max-width: 40rem;
+        color: #d1d5db;
+      }
+
+      .tcc-page-hero-badges {
+        margin-top: 1.1rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .tcc-page-hero-visual {
+        display: flex;
+        align-items: stretch;
+        justify-content: flex-end;
+      }
+
+      .tcc-page-hero-card {
+        position: relative;
+        width: 100%;
+        border-radius: 1rem;
+        padding: 1.4rem 1.5rem 1.2rem;
+        background:
+          radial-gradient(circle at top left, rgba(59, 130, 246, 0.35), transparent 60%),
+          radial-gradient(circle at bottom right, rgba(8, 47, 73, 0.55), transparent 60%),
+          rgba(15, 23, 42, 0.54);
+        border: 1px solid rgba(148, 163, 184, 0.45);
+        box-shadow:
+          0 22px 45px rgba(15, 23, 42, 0.95),
+          0 0 0 1px rgba(15, 23, 42, 0.9) inset;
+        backdrop-filter: blur(14px);
+      }
+
+      .tcc-page-hero-card h3 {
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: #e5e7eb;
+        margin-bottom: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+
+      .tcc-page-hero-card h3::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(
+          to right,
+          rgba(59, 130, 246, 0.2),
+          rgba(56, 189, 248, 0.7)
+        );
+      }
+
+      .tcc-page-hero-card ul {
+        margin-left: 0;
+        padding-left: 1rem;
+        font-size: 0.9rem;
+        color: #cbd5f5;
+      }
+
+      .tcc-page-hero-card li + li {
+        margin-top: 0.4rem;
+      }
+
+      .tcc-page-hero-card .tcc-tag-row {
+        margin-top: 1rem;
+      }
+
+      .tcc-page-main {
+        padding: 2.4rem 1.75rem 3.25rem;
+        border-top: 1px solid rgba(15, 23, 42, 0.9);
+      }
+
+      .tcc-page-main-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+        gap: 2rem;
+        align-items: stretch;
+      }
+
+      .tcc-page-main-inner .tcc-panel {
+        position: relative;
+        min-height: 0;
+        max-height: 65vh;
+        padding: 1.6rem 1.7rem 1.5rem;
+        border-radius: 1rem;
+        border: 1px solid rgba(148, 163, 184, 0.42);
+        background:
+          radial-gradient(circle at top left, rgba(56, 189, 248, 0.25), transparent 62%),
+          radial-gradient(circle at bottom right, rgba(37, 99, 235, 0.28), transparent 60%),
+          rgba(15, 23, 42, 0.36);
+        box-shadow:
+          0 22px 48px rgba(15, 23, 42, 0.98),
+          0 0 0 1px rgba(15, 23, 42, 0.9) inset;
+        backdrop-filter: blur(18px);
+        overflow-y: auto;
+      }
+
+      .tcc-page-main-inner .tcc-panel::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: linear-gradient(
+          135deg,
+          rgba(96, 165, 250, 0.22),
+          transparent 55%
+        );
+        mix-blend-mode: soft-light;
+        opacity: 0.9;
+        pointer-events: none;
+      }
+
+      .tcc-page-main-inner .tcc-panel > * {
+        position: relative;
+        z-index: 1;
+      }
+
+      .tcc-page-main-inner .tcc-panel h3 {
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: #e5e7eb;
+        margin-bottom: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+
+      .tcc-page-main-inner .tcc-panel h3::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: radial-gradient(circle, #38bdf8, #2563eb);
+        box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.25);
+      }
+
+      .tcc-page-main-inner .tcc-panel h3::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(
+          to right,
+          rgba(15, 23, 42, 0),
+          rgba(148, 163, 184, 0.8)
+        );
+      }
+
+      .tcc-page-main-inner .tcc-panel h4 {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: #e5e7eb;
+        margin: 1.1rem 0 0.35rem;
+      }
+
+      .tcc-page-main-inner .tcc-panel p {
+        font-size: 0.9rem;
+        color: #d1d5db;
+      }
+
+      .tcc-page-main-inner .tcc-panel ul {
+        margin-top: 0.5rem;
+        padding-left: 1.1rem;
+        font-size: 0.9rem;
+        color: #cbd5f5;
+      }
+
+      .tcc-page-main-inner .tcc-panel ul li + li {
+        margin-top: 0.25rem;
+      }
+
+      .tcc-page-main-inner .tcc-panel dl {
+        font-size: 0.88rem;
+        color: #d1d5db;
+      }
+
+      .tcc-page-main-inner .tcc-panel dl dt {
+        color: #e5e7eb;
+      }
+
+      .tcc-page-main-inner .tcc-panel dl dd {
+        color: #cbd5f5;
+      }
+
+      .tcc-page-main-inner .tcc-panel .tcc-tag-row {
+        margin-top: 0.6rem;
+      }
+
+      .tcc-page-main-inner .tcc-panel .tcc-tag {
+        border-radius: 9999px;
+        border: 1px solid rgba(148, 163, 184, 0.5);
+        background: rgba(15, 23, 42, 0.9);
+      }
+
+      .tcc-page-main-inner .tcc-panel p[style*="font-size: 0.8rem"] {
+        color: #9ca3af !important;
+      }
+
+      .tcc-page-main-inner .tcc-panel {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(148, 163, 184, 0.45) transparent;
+      }
+
+      .tcc-page-main-inner .tcc-panel::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .tcc-page-main-inner .tcc-panel::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      .tcc-page-main-inner .tcc-panel::-webkit-scrollbar-thumb {
+        background: rgba(148, 163, 184, 0.45);
+        border-radius: 9999px;
+      }
+
+      .tcc-page-main-inner .tcc-panel::-webkit-scrollbar-thumb:hover {
+        background: rgba(148, 163, 184, 0.7);
+      }
+
+      .tcc-page-main-inner .tcc-panel ol.list-decimal {
+        margin-top: 0.75rem;
+        padding-left: 1.1rem;
+      }
+
+      .tcc-page-main-inner .tcc-panel ol.list-decimal > li {
+        padding-top: 0.55rem;
+        margin-top: 0.2rem;
+        border-top: 1px dashed rgba(148, 163, 184, 0.25);
+      }
+
+      .tcc-page-main-inner .tcc-panel ol.list-decimal > li:first-child {
+        border-top: 0;
+      }
+
+      .tcc-page-main-inner .tcc-panel ol.list-decimal > li > div:first-child {
+        display: inline-block;
+        margin-left: 0.3rem;
+        font-weight: 600;
+        color: #e5e7eb;
+      }
+
+      .tcc-page-main-inner .tcc-panel ul.list-disc {
+        margin-top: 0.3rem;
+        padding-left: 1.1rem;
+        font-size: 0.9rem;
+        color: #cbd5f5;
+      }
+
+      .tcc-page-main-inner .tcc-panel ul.list-disc li + li {
+        margin-top: 0.25rem;
+      }
+
+      @media (max-width: 900px) {
+        .tcc-page-hero {
+          padding-block: 2.4rem 1.9rem;
+        }
+
+        .tcc-page-hero-inner {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 1.9rem;
+        }
+
+        .tcc-page-main {
+          padding: 1.8rem 1.25rem 2.3rem;
+        }
+
+        .tcc-page-main-inner {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 1.6rem;
+        }
+
+        .tcc-page-main-inner .tcc-panel {
+          max-height: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="tcc-site">
+      <!-- ========== HEADER ========== -->
+      <header class="tcc-header">
+        <div class="tcc-nav-inner">
+          <a href="index.html" class="tcc-brand">
+            <img src="./Logo2.png" alt="TCC logo" style="height: 100px; width: 120px; object-fit: contain;" />
+            <div>
+              <div class="tcc-brand-text-main">Trench Canada Coils</div>
+              <div class="tcc-brand-text-sub">
+                A LEGACY OF INNOVATION
+              </div>
+            </div>
+          </a>
+
+          <nav class="tcc-nav-links">
+            <!-- HOME -->
+            <a href="index.html" class="tcc-nav-link">Home</a>
+
+            <!-- SYSTEMS 下拉菜单 -->
+            <div
+              class="tcc-nav-dropdown"
+              style="position: relative;"
+              onmouseleave="document.getElementById('tcc-systems-menu').style.display='none';"
+            >
+              <div
+                type="button"
+                class="tcc-nav-link"
+                aria-haspopup="true"
+                aria-expanded="false"
+                onmouseover="document.getElementById('tcc-systems-menu').style.display='flex';"
+                onfocus="document.getElementById('tcc-systems-menu').style.display='flex';"
+                onclick="const m=document.getElementById('tcc-systems-menu'); m.style.display = (m.style.display==='flex'?'none':'flex');"
+              >
+                Systems
+                <i
+                  class="fas fa-chevron-down"
+                  style="margin-left: 0.25rem; font-size: 0.7em;"
+                ></i>
+              </div>
+
+              <div
+                id="tcc-systems-menu"
+                style="
+                  display: none;
+                  position: absolute;
+                  top: 100%;
+                  right: 0;
+                  padding: 0.4rem 0;
+                  background: rgba(15, 23, 42, 0.98);
+                  border-radius: 0.5rem;
+                  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.8);
+                  min-width: 240px;
+                  z-index: 50;
+                  flex-direction: column;
+                "
+              >
+                <a
+                  href="systems-portal.html"
+                  target="_blank"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Systems Portal
+                </a>
+                <a
+                  href="prodorder-status.html"
+                  target="_blank"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Production Order Status
+                </a>
+                <a
+                  href="schedule-visualization.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Schedule Visualization
+                </a>
+                <a
+                  href="backend-status.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Backend Status System
+                </a>
+                <a
+                  href="frontend-status.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Frontend Status System
+                </a>
+                <a
+                  href="machine-load-recalculation-studio.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Machine Load Recalculation Studio
+                </a>
+                <a
+                  href="load-vs-capacity.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Load vs Capacity
+                </a>
+                <a
+                  href="andon-board.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Production Andon Board
+                </a>
+                <a
+                  href="enhanced-oms.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Enhanced OMS
+                </a>
+              </div>
+            </div>
+
+            <!-- NOTES & UPDATES -->
+            <a href="notes-updates.html" class="tcc-nav-link">
+              Notes &amp; Updates
+            </a>
+
+            <!-- AI ASSISTANT -->
+            <a
+              href="../../demo-apps/ai-assistant-demo.html"
+              class="tcc-nav-link"
+              data-ai-assistant-link="1"
+            >
+              AI ASSISTANT
+            </a>
+          </nav>
+
+          <button class="tcc-nav-toggle" aria-label="Toggle navigation">
+            <span></span>
+          </button>
+        </div>
+      </header>
+
+      <main class="tcc-main">
+        <!-- HERO -->
+        <section class="tcc-page-hero tcc-fade-in-on-load">
+          <div class="tcc-page-hero-inner">
+            <div class="reveal-on-scroll">
+              <div class="tcc-page-breadcrumb">
+                Scheduling Systems · Frontend Status
+              </div>
+              <h1 class="tcc-page-title">Frontend Status System</h1>
+              <p class="tcc-page-subtitle">
+                Planner-facing, read-oriented view of order status across all
+                workcenters. Shares the same backlog and OM Period data model
+                as the Backend Status System, simplified for quick review
+                rather than shop-floor editing.
+              </p>
+              <div class="tcc-page-hero-badges">
+                <span class="tcc-badge">
+                  <i class="fas fa-database"></i>
+                  Backlog / OM Period logic
+                </span>
+                <span class="tcc-badge">
+                  <i class="fas fa-eye"></i>
+                  Planner-facing view
+                </span>
+              </div>
+            </div>
+
+            <div class="tcc-page-hero-visual reveal-on-scroll">
+              <div class="tcc-page-hero-card">
+                <h3>How to use this System</h3>
+                <ul>
+                  <li>
+                    Use your assigned credentials to log into the system
+                  </li>
+                  <li>
+                    Filter by workcenter or search by Sales Doc, Material or
+                    Customer
+                  </li>
+                  <li>
+                    Click a row to see routing history and linked comments
+                  </li>
+                  <li>
+                    Data auto updates from SAP every 30 mins
+                  </li>
+                  <li>
+                    This is a read-oriented view; use Backend Status System to
+                    edit Priority, Why notes or material checks
+                  </li>
+                </ul>
+                <div class="tcc-tag-row">
+                  <span class="tcc-tag">BacklogDatabase.json</span>
+                  <span class="tcc-tag">Shared with Backend Status</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- MAIN CONTENT -->
+        <section class="tcc-page-main">
+          <div class="tcc-page-main-inner">
+            <!-- Left: Guide Manual -->
+            <article class="tcc-panel reveal-on-scroll">
+              <h3>Guide Manual</h3>
+              <p>
+                This guide explains how to use the main pages inside the
+                <strong>Frontend Status System</strong>. It reads the same
+                fixed backlog file and derived JSON data as the Backend Status
+                System, but is organized around quick review rather than
+                center-by-center editing.
+              </p>
+
+              <ol class="list-decimal list-inside space-y-3">
+                <li>
+                  <div><strong>Overview dashboard</strong></div>
+                  <p>
+                    The landing page summarizes the whole backlog with four
+                    headline tiles — total orders, on-time %, at-risk and
+                    overdue — plus a six-month trend of how that mix has moved.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      Use this page for a fast, planner-level read of overall
+                      health before drilling into a specific workcenter.
+                    </li>
+                    <li>
+                      Watch the trend chart for a rising overdue share across
+                      consecutive months — an early signal worth escalating.
+                    </li>
+                  </ul>
+                </li>
+
+                <li>
+                  <div><strong>Workcenter filter &amp; search</strong></div>
+                  <p>
+                    Orders can be filtered to a single workcenter (STRIP,
+                    CRIMP, WELD2, BLAST, CLEAN, PAINT, TESTLAB, DETAIL, CRATE)
+                    or viewed across all centers, and narrowed further with a
+                    free-text search across Sales Doc, Material and Customer.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      Use this when a customer or account manager asks about a
+                      specific order or material without needing SAP access.
+                    </li>
+                  </ul>
+                </li>
+
+                <li>
+                  <div><strong>Order detail panel</strong></div>
+                  <p>
+                    Selecting a row expands a read-only detail panel with OM
+                    Period, routing/workcenter history, the latest linked
+                    comment from Backend Status, and a last-updated timestamp.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      This panel never edits data directly — Priority, Why
+                      notes and material checks are still owned by the Backend
+                      Status System.
+                    </li>
+                  </ul>
+                </li>
+
+                <li>
+                  <div><strong>Roles &amp; access</strong></div>
+                  <p>
+                    All roles (Planner, Account Manager, Viewer) see the same
+                    read-only data; there is no Admin edit mode in this
+                    frontend, by design.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      Use Backend Status System when a change to Priority,
+                      Why, or material-check status is actually needed.
+                    </li>
+                  </ul>
+                </li>
+              </ol>
+
+              <p style="margin-top: 0.75rem; font-size: 0.8rem; color: #9ca3af">
+                General Suggestion: use this system for quick lookups and
+                customer-facing status checks, and switch to the
+                <strong>Backend Status System</strong> whenever an order needs
+                its Priority, Why note or material check updated.
+              </p>
+            </article>
+
+            <!-- Right: System link + API guide -->
+            <article class="tcc-panel reveal-on-scroll">
+              <h3>System Link &amp; API guide for Data Source</h3>
+
+              <p>
+                Open the link from internal network. Use your assigned
+                credential to log in the system. Please be advised that the
+                system initial load will take about 1–2 minutes.
+              </p>
+
+              <p style="margin-top: 0.75rem">
+                <a
+                  href="../../demo-apps/frontend-status-demo.html"
+                  target="_blank"
+                  class="tcc-link-inline"
+                  style="font-size: 0.95rem"
+                >
+                  <i class="fas fa-external-link-alt"></i>
+                  Open Frontend Status System
+                </a>
+              </p>
+
+              <div class="tcc-tag-row">
+                <span class="tcc-tag">Demo preview</span>
+                <span class="tcc-tag">Status: Normal</span>
+              </div>
+
+              <hr style="margin: 1.2rem 0; border-color: rgba(148,163,184,0.45)" />
+
+              <h4>1. Core backlog &amp; OMS data</h4>
+              <dl style="margin: 0 0 0.6rem 0;">
+                <dt>GET /api/frontend/summary</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Return headline counts (total, on-time, at-risk, overdue)
+                  across the whole backlog for the overview dashboard.
+                </dd>
+
+                <dt>GET /api/frontend/orders</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  List orders with workcenter, OM Period, status and a short
+                  comment preview, filterable by workcenter and free-text
+                  search.
+                </dd>
+
+                <dt>GET /api/frontend/orders/:id</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Return the read-only detail record for a single order,
+                  including routing history and the latest linked comment.
+                </dd>
+              </dl>
+
+              <h4>2. Trend &amp; reporting</h4>
+              <dl style="margin: 0 0 0.6rem 0;">
+                <dt>GET /api/frontend/trend?months=6</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Return the on-time / at-risk / overdue split for each of the
+                  last N months, used by the trend mini-chart.
+                </dd>
+              </dl>
+
+              <h4>3. Responses &amp; errors</h4>
+              <p style="margin: 0 0 0.25rem 0.9rem; font-size: 0.9rem;">
+                <strong>All endpoints return JSON</strong> and are read-only —
+                this frontend never writes back to the shared backlog store.
+                On failure the server uses HTTP <strong>4xx/5xx</strong> codes
+                with <strong>ok:false</strong> and an <strong>error</strong>
+                message for troubleshooting in the browser Network tab.
+              </p>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <footer class="tcc-footer">
+        <div class="tcc-footer-inner">
+          <span>© 2026 Trench Canada · Scheduling Team</span>
+          <span>
+            Frontend Status System · Version 1.0 · Designed &amp; Maintained by
+            Yanbo Wang (FY2026)
+          </span>
+        </div>
+      </footer>
+    </div>
+
+    <!-- full-screen marquee border overlay -->
+    <div id="tcc-marquee-border" aria-hidden="true"></div>
+
+    <!-- main UI script -->
+    <script src="assets/js/main.js"></script>
+
+    <!-- AI ASSISTANT hover -> glow + click -> jump -->
+    <script>
+      (function () {
+        const AI_URL = "../../demo-apps/ai-assistant-demo.html";
+
+        function glowOn() {
+          document.body.classList.add("tcc-marquee-on");
+        }
+
+        function glowOff() {
+          document.body.classList.remove("tcc-marquee-on");
+        }
+
+        function goAiAssistant(e) {
+          if (e) e.preventDefault();
+          glowOn();
+          setTimeout(() => {
+            window.location.href = AI_URL;
+          }, 380);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+          const nodes = document.querySelectorAll("[data-ai-assistant-link='1']");
+          nodes.forEach((el) => {
+            el.addEventListener("mouseenter", glowOn);
+            el.addEventListener("mouseleave", glowOff);
+            el.addEventListener("focus", glowOn);
+            el.addEventListener("blur", glowOff);
+            el.addEventListener("click", goAiAssistant);
+          });
+        });
+      })();
+    </script>
+
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>

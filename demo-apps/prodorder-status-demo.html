@@ -1,0 +1,647 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Production Order Schedules — Demo Preview</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/font-awesome/css/all.min.css" />
+
+<style>
+  :root{
+    --bg:#020617; --panel:rgba(15,23,42,0.9); --border:rgba(148,163,184,0.5);
+    --text:#e5e7eb; --muted:#9ca3af; --muted2:#cbd5f5;
+    --ok:#22c55e; --warn:#f59e0b; --danger:#f87171; --info:#38bdf8;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'IBM Plex Sans', system-ui, sans-serif;
+    background:
+      radial-gradient(circle at 10% 0%, rgba(56,189,248,0.16), transparent 45%),
+      radial-gradient(circle at 90% 15%, rgba(37,99,235,0.18), transparent 50%),
+      radial-gradient(circle at 50% 100%, rgba(168,85,247,0.12), transparent 55%),
+      var(--bg);
+    color: var(--muted2);
+    min-height:100vh;
+  }
+  a{color:inherit;text-decoration:none;}
+
+  header.topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:1rem 1.75rem; border-bottom:1px solid rgba(148,163,184,0.25);
+    background:rgba(2,6,23,0.75); backdrop-filter:blur(10px);
+    position:sticky; top:0; z-index:40; flex-wrap:wrap; gap:0.75rem;
+  }
+  .brand{display:flex;align-items:center;gap:0.75rem;}
+  .brand-title{font-size:1.05rem;font-weight:600;color:var(--text);letter-spacing:0.02em;}
+  .brand-sub{font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.12em;}
+  .back-link{
+    font-size:0.85rem;color:var(--info);border:1px solid rgba(56,189,248,0.35);
+    padding:0.4rem 0.8rem;border-radius:0.5rem;background:rgba(56,189,248,0.08);
+    transition:background .15s ease;
+  }
+  .back-link:hover{background:rgba(56,189,248,0.18);}
+
+  .demo-pill{
+    display:inline-flex;align-items:center;gap:0.5rem;
+    font-size:0.72rem;letter-spacing:0.06em;text-transform:uppercase;
+    color:#fbbf24;background:rgba(245,158,11,0.1);
+    border:1px solid rgba(245,158,11,0.4);border-radius:9999px;
+    padding:0.35rem 0.9rem;margin:1.1rem auto 0;width:fit-content;
+  }
+  .demo-pill i{color:#fbbf24;}
+
+  main{max-width:1400px;margin:0 auto;padding:0 1.5rem 3rem;}
+
+  .page-head{text-align:center;padding:1.4rem 0 0.4rem;}
+  .page-head h1{
+    font-size:clamp(1.5rem,2.4vw,2rem);color:var(--text);margin:0.6rem 0 0.4rem;
+    letter-spacing:0.02em;
+  }
+  .page-head p{max-width:52rem;margin:0 auto;color:var(--muted);font-size:0.92rem;}
+
+  .panel{
+    background:var(--panel); border:1px solid var(--border); border-radius:0.85rem;
+    box-shadow:0 20px 45px rgba(2,6,23,0.55); backdrop-filter:blur(14px);
+    padding:1.3rem 1.4rem; margin-top:1.5rem;
+  }
+  .panel h2{
+    font-size:0.85rem;text-transform:uppercase;letter-spacing:0.14em;
+    color:var(--text); margin:0 0 1rem; display:flex;align-items:center;gap:0.55rem;
+  }
+  .panel h2::before{
+    content:"";width:8px;height:8px;border-radius:999px;
+    background:radial-gradient(circle,#38bdf8,#2563eb);
+    box-shadow:0 0 0 4px rgba(56,189,248,0.22);
+  }
+  .panel h2::after{
+    content:"";flex:1;height:1px;
+    background:linear-gradient(to right, rgba(148,163,184,0.5), transparent);
+  }
+
+  /* toolbar */
+  .toolbar{display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap;margin-bottom:0.9rem;}
+  .toolbar label{font-size:0.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;}
+  select{
+    background:rgba(2,6,23,0.7); color:var(--text); border:1px solid var(--border);
+    border-radius:0.5rem; padding:0.4rem 0.7rem; font-size:0.85rem; font-family:inherit;
+  }
+  .legend{display:flex;gap:0.9rem;flex-wrap:wrap;margin-left:auto;font-size:0.75rem;color:var(--muted);}
+  .legend span{display:inline-flex;align-items:center;gap:0.35rem;}
+  .swatch{width:10px;height:10px;border-radius:3px;display:inline-block;}
+
+  /* gantt strip */
+  .gantt-wrap{overflow-x:auto;}
+  .gantt{min-width:820px;}
+  .gantt-row{display:grid;grid-template-columns:110px 1fr;align-items:center;gap:0.6rem;padding:0.35rem 0;}
+  .gantt-row + .gantt-row{border-top:1px dashed rgba(148,163,184,0.15);}
+  .gantt-wc-label{font-size:0.78rem;color:var(--text);font-weight:600;letter-spacing:0.03em;}
+  .gantt-track{
+    position:relative;height:26px;border-radius:0.4rem;
+    background:rgba(148,163,184,0.06);
+    border:1px solid rgba(148,163,184,0.12);
+  }
+  .gantt-seg{
+    position:absolute; top:2px; bottom:2px; border-radius:0.3rem;
+    font-size:0.68rem; color:#0b1120; font-weight:600;
+    display:flex;align-items:center;padding:0 0.4rem;overflow:hidden;white-space:nowrap;
+    cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,0.35); transition:transform .1s ease, filter .1s ease;
+  }
+  .gantt-seg:hover{transform:translateY(-1px);filter:brightness(1.12);}
+  .gantt-axis{display:grid;grid-template-columns:110px 1fr;margin-top:0.3rem;}
+  .gantt-axis-labels{display:flex;justify-content:space-between;font-size:0.68rem;color:var(--muted);padding:0 0.1rem;}
+
+  /* grid */
+  table.orders{width:100%;border-collapse:collapse;font-size:0.84rem;}
+  table.orders thead th{
+    text-align:left;padding:0.55rem 0.6rem;color:var(--muted);
+    text-transform:uppercase;font-size:0.7rem;letter-spacing:0.07em;
+    border-bottom:1px solid rgba(148,163,184,0.3);cursor:pointer;user-select:none;
+    white-space:nowrap;
+  }
+  table.orders thead th:hover{color:var(--text);}
+  table.orders thead th .sort-ind{font-size:0.65rem;margin-left:0.25rem;opacity:0.6;}
+  table.orders tbody td{padding:0.55rem 0.6rem;border-bottom:1px solid rgba(148,163,184,0.12);white-space:nowrap;}
+  table.orders tbody tr{cursor:pointer;transition:background .12s ease;}
+  table.orders tbody tr:hover{background:rgba(56,189,248,0.06);}
+  table.orders tbody tr.selected{background:rgba(56,189,248,0.14);}
+
+  .chip{
+    display:inline-flex;align-items:center;gap:0.3rem;padding:0.2rem 0.55rem;
+    border-radius:9999px;font-size:0.72rem;font-weight:600;letter-spacing:0.02em;
+  }
+  .chip.on-time{background:rgba(34,197,94,0.14);color:#4ade80;border:1px solid rgba(74,222,128,0.4);}
+  .chip.at-risk{background:rgba(245,158,11,0.14);color:#fbbf24;border:1px solid rgba(251,191,36,0.4);}
+  .chip.overdue{background:rgba(248,113,113,0.14);color:#f87171;border:1px solid rgba(248,113,113,0.4);}
+  .chip.done{background:rgba(148,163,184,0.14);color:#cbd5f5;border:1px solid rgba(148,163,184,0.4);}
+
+  .prio{font-size:0.75rem;font-weight:600;}
+  .prio.high{color:#f87171;}
+  .prio.med{color:#fbbf24;}
+  .prio.low{color:#38bdf8;}
+
+  .table-scroll{overflow-x:auto;}
+
+  /* layout with drawer */
+  .content-grid{display:grid;grid-template-columns:1fr;gap:1.5rem;}
+
+  /* drawer */
+  .drawer-overlay{
+    position:fixed;inset:0;background:rgba(2,6,23,0.55);
+    display:none;z-index:60;
+  }
+  .drawer-overlay.open{display:block;}
+  .drawer{
+    position:fixed;top:0;right:0;height:100%;width:min(420px,92vw);
+    background:rgba(10,16,32,0.98); border-left:1px solid var(--border);
+    box-shadow:-20px 0 50px rgba(2,6,23,0.7);
+    transform:translateX(100%); transition:transform .22s ease;
+    z-index:61; overflow-y:auto; padding:1.4rem 1.4rem 2rem;
+  }
+  .drawer.open{transform:translateX(0);}
+  .drawer-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;}
+  .drawer-head h3{color:var(--text);font-size:1.05rem;margin:0 0 0.2rem;}
+  .drawer-head .sub{font-size:0.78rem;color:var(--muted);}
+  .drawer-close{
+    background:none;border:1px solid var(--border);color:var(--muted2);
+    border-radius:0.4rem;width:2rem;height:2rem;cursor:pointer;font-size:0.9rem;
+  }
+  .drawer-close:hover{color:var(--text);border-color:var(--info);}
+  .kv-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.6rem 0.8rem;margin:0.9rem 0;}
+  .kv-grid .kv{background:rgba(148,163,184,0.06);border:1px solid rgba(148,163,184,0.15);border-radius:0.5rem;padding:0.5rem 0.6rem;}
+  .kv .k{font-size:0.66rem;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:0.2rem;}
+  .kv .v{font-size:0.86rem;color:var(--text);font-weight:500;}
+  .drawer h4{font-size:0.78rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin:1.2rem 0 0.5rem;}
+  .routing-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0.4rem;}
+  .routing-steps li{
+    display:flex;align-items:center;gap:0.6rem;font-size:0.82rem;
+    background:rgba(148,163,184,0.05);border:1px solid rgba(148,163,184,0.15);
+    border-radius:0.5rem;padding:0.45rem 0.6rem;
+  }
+  .routing-steps .step-dot{width:9px;height:9px;border-radius:999px;flex:none;}
+  .routing-steps .step-name{flex:1;color:var(--muted2);}
+  .routing-steps .step-hrs{color:var(--muted);font-size:0.75rem;}
+  .mini-gantt{position:relative;height:34px;border-radius:0.4rem;background:rgba(148,163,184,0.06);border:1px solid rgba(148,163,184,0.15);margin-top:0.4rem;}
+  .mini-gantt .bar{position:absolute;top:4px;bottom:4px;border-radius:0.3rem;}
+  .notes-box{
+    font-size:0.82rem;color:var(--muted2);background:rgba(148,163,184,0.05);
+    border:1px solid rgba(148,163,184,0.15);border-radius:0.5rem;padding:0.6rem 0.7rem;
+    margin-top:0.4rem;line-height:1.5;
+  }
+
+  /* about panel */
+  .about-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:1.5rem;}
+  .about-grid ul{margin:0.6rem 0 0;padding-left:1.1rem;font-size:0.86rem;color:var(--muted2);}
+  .about-grid ul li + li{margin-top:0.5rem;}
+  .about-grid p{font-size:0.88rem;color:var(--muted2);}
+  .tag-row{display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:1rem;}
+  .tag{
+    font-size:0.72rem;border:1px solid var(--border);border-radius:9999px;
+    padding:0.3rem 0.7rem;color:var(--muted2);background:rgba(15,23,42,0.6);
+  }
+
+  footer{
+    text-align:center;padding:1.6rem 1rem 2.2rem;color:var(--muted);
+    font-size:0.78rem;border-top:1px solid rgba(148,163,184,0.15);margin-top:1rem;
+  }
+
+  @media (max-width:900px){
+    .about-grid{grid-template-columns:1fr;}
+    .kv-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <img src="../Enhanced entrance for systems/Logo2.png" alt="Trench Canada Coils logo" style="height:45px;width:auto;object-fit:contain" />
+    <div>
+      <div class="brand-title">Production Order Schedules System</div>
+      <div class="brand-sub">Root schedule view · by workcenter</div>
+    </div>
+  </div>
+  <a class="back-link" href="../Enhanced entrance for systems/apple-style-portal.html">
+    <i class="fas fa-arrow-left"></i> Back to Systems Portal
+  </a>
+</header>
+
+<main>
+  <div class="page-head">
+    <div class="demo-pill"><i class="fas fa-flask"></i> Demo preview · sample data only, not connected to any live system</div>
+    <h1>Production Order Schedules</h1>
+    <p>Fabricated sample schedule illustrating the root production-order view used across the scheduling portfolio — orders plotted by workcenter, with a sortable grid and per-order detail drawer.</p>
+  </div>
+
+  <!-- Gantt strip -->
+  <section class="panel">
+    <h2>Workcenter Schedule Strip</h2>
+    <div class="toolbar">
+      <label for="wcFilter">Workcenter</label>
+      <select id="wcFilter"><option value="ALL">All workcenters</option></select>
+      <div class="legend">
+        <span><i class="swatch" style="background:#4ade80"></i> On time</span>
+        <span><i class="swatch" style="background:#fbbf24"></i> At risk</span>
+        <span><i class="swatch" style="background:#f87171"></i> Overdue</span>
+        <span><i class="swatch" style="background:#94a3b8"></i> Done</span>
+      </div>
+    </div>
+    <div class="gantt-wrap">
+      <div class="gantt" id="ganttBody"></div>
+      <div class="gantt-axis">
+        <div></div>
+        <div class="gantt-axis-labels" id="axisLabels"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Grid -->
+  <section class="panel">
+    <h2>Production Order Grid</h2>
+    <div class="table-scroll">
+      <table class="orders" id="ordersTable">
+        <thead>
+          <tr>
+            <th data-key="order">Order # <span class="sort-ind"></span></th>
+            <th data-key="workcenter">Workcenter <span class="sort-ind"></span></th>
+            <th data-key="material">Material <span class="sort-ind"></span></th>
+            <th data-key="line">Line <span class="sort-ind"></span></th>
+            <th data-key="start">Start <span class="sort-ind"></span></th>
+            <th data-key="end">End <span class="sort-ind"></span></th>
+            <th data-key="status">Status <span class="sort-ind"></span></th>
+            <th data-key="priority">Priority <span class="sort-ind"></span></th>
+          </tr>
+        </thead>
+        <tbody id="ordersBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section class="panel">
+    <h2>About This System</h2>
+    <div class="about-grid">
+      <div>
+        <p>
+          The Production Order Schedules System is the <strong>root schedule source</strong> in the
+          scheduling portfolio: it reads live SAP-based production order data and renders it as an
+          interactive Gantt-style view organized by workcenter. Other tools in the portfolio — the
+          Andon Board, Backend Status, and Schedule Visualization systems — all reference production
+          orders that originate from this view, so it is the single place schedulers and supervisors
+          go to see "what is planned, where, and when" across the shop.
+        </p>
+      </div>
+      <div>
+        <ul>
+          <li>Root Gantt-by-workcenter view feeding Andon Board, Backend Status and Schedule Visualization.</li>
+          <li>Live SAP-based production order schedule with start/end windows per routing step and workcenter.</li>
+          <li>Sortable source data grid with per-order drill-down: routing steps, remaining hours, linked sales order.</li>
+          <li>Workcenter and status filters to focus scheduling conversations on a single line or cell.</li>
+          <li>Simulation-style what-if view (in the real system) for testing re-slots without touching SAP.</li>
+        </ul>
+        <div class="tag-row">
+          <span class="tag">Root schedule source</span>
+          <span class="tag">SAP-based</span>
+          <span class="tag">Gantt by workcenter</span>
+          <span class="tag">Feeds 3+ downstream systems</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>© 2026 Trench Canada · Scheduling Team — Demo preview, sample data only.</footer>
+
+<!-- Drawer -->
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <div>
+      <h3 id="drawerTitle">Order Details</h3>
+      <div class="sub" id="drawerSub"></div>
+    </div>
+    <button class="drawer-close" id="drawerClose"><i class="fas fa-times"></i></button>
+  </div>
+
+  <div class="kv-grid" id="drawerKv"></div>
+
+  <h4>Mini Timeline</h4>
+  <div class="mini-gantt" id="drawerMiniGantt"></div>
+
+  <h4>Routing Steps</h4>
+  <ul class="routing-steps" id="drawerRouting"></ul>
+
+  <h4>Notes</h4>
+  <div class="notes-box" id="drawerNotes"></div>
+</aside>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- Fabricated sample data ----------
+  const WORKCENTERS = ["STRIP","CRIMP","WELD2","BLAST","CLEAN","PAINT","TESTLAB","DETAIL","CRATE"];
+  const WC_COLOR = {
+    STRIP:"#38bdf8", CRIMP:"#2dd4bf", WELD2:"#a78bfa", BLAST:"#fb923c",
+    CLEAN:"#60a5fa", PAINT:"#f472b6", TESTLAB:"#facc15", DETAIL:"#4ade80", CRATE:"#94a3b8"
+  };
+  const STATUS_META = {
+    "on-time": {label:"On Time", cls:"on-time"},
+    "at-risk": {label:"At Risk", cls:"at-risk"},
+    "overdue": {label:"Overdue", cls:"overdue"},
+    "done":    {label:"Done", cls:"done"}
+  };
+  const PRIORITY_META = { high:{label:"High",cls:"high"}, med:{label:"Medium",cls:"med"}, low:{label:"Low",cls:"low"} };
+
+  // Horizon: today .. +7 days, expressed as fractional day offsets for the strip
+  const HORIZON_START = new Date(2026,7,2,6,0);   // Aug 2, 2026 06:00 (fabricated)
+  const HORIZON_DAYS = 8;
+
+  function d(dayOffset, hour){
+    const dt = new Date(HORIZON_START.getTime());
+    dt.setDate(dt.getDate() + Math.floor(dayOffset));
+    dt.setHours(hour,0,0,0);
+    return dt;
+  }
+  function fmt(dt){
+    return dt.toLocaleString("en-CA",{month:"short",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false});
+  }
+
+  const MATERIALS = [
+    "CT-4400 Core Assy","LV Bushing 24kV","HV Winding Coil A2","Tap Changer Bracket",
+    "Terminal Block TX-9","Radiator Fin Pack","Tank Gasket Kit","Bushing Flange 138kV",
+    "Core Clamp Set","CT-2200 Secondary","Insulation Barrier B","OLTC Drive Shaft"
+  ];
+  const LINES = ["Line 1","Line 2","Line 3","Line A","Line B"];
+  const SALES_ORDERS = ["SO-88213","SO-88240","SO-88267","SO-88301","SO-88322","SO-88355","SO-88390","SO-88412"];
+
+  function rnd(seed){ // simple deterministic PRNG for stable demo data
+    let s = seed;
+    return function(){ s = (s*9301+49297)%233280; return s/233280; };
+  }
+  const rand = rnd(42);
+  function pick(arr){ return arr[Math.floor(rand()*arr.length)]; }
+
+  const orders = [];
+  let orderNo = 500120;
+  WORKCENTERS.forEach((wc, wcIdx) => {
+    const count = 3 + Math.floor(rand()*2); // 3-4 orders per workcenter
+    for (let i=0;i<count;i++){
+      const startDay = Math.floor(rand()*(HORIZON_DAYS-2));
+      const startHour = 6 + Math.floor(rand()*10);
+      const durHours = 6 + Math.floor(rand()*20);
+      const start = d(startDay, startHour);
+      const end = new Date(start.getTime() + durHours*3600*1000);
+
+      let status;
+      const r = rand();
+      if (end < d(1,6)) status = "done";
+      else if (r < 0.15) status = "overdue";
+      else if (r < 0.4) status = "at-risk";
+      else status = "on-time";
+
+      const priority = rand() < 0.2 ? "high" : (rand() < 0.55 ? "med" : "low");
+      const stdHrs = durHours;
+      const remHrs = status === "done" ? 0 : Math.round(stdHrs * (0.2 + rand()*0.7));
+
+      orders.push({
+        order: "PO-" + (orderNo++),
+        workcenter: wc,
+        material: pick(MATERIALS),
+        line: pick(LINES),
+        start, end,
+        status, priority,
+        stdHrs, remHrs,
+        totalQty: 1 + Math.floor(rand()*6),
+        salesOrder: pick(SALES_ORDERS),
+        item: "00" + (10 + Math.floor(rand()*80)),
+        netValue: Math.round((8000 + rand()*42000)),
+        omPeriod: "FY26-P" + (1 + Math.floor(rand()*12)),
+        notes: pick([
+          "Awaiting material release from receiving dock.",
+          "Customer requested expedite — confirm with sales before re-slot.",
+          "Tooling change required prior to setup; coordinate with maintenance.",
+          "Running per plan, no exceptions noted.",
+          "Quality hold from prior lot cleared; resumed on schedule.",
+          "Operator shortage on second shift may push completion.",
+          "Rework from TESTLAB failure incorporated into this run."
+        ]),
+        routing: buildRouting(wc, stdHrs)
+      });
+    }
+  });
+
+  function buildRouting(currentWc, totalHrs){
+    const idx = WORKCENTERS.indexOf(currentWc);
+    const seq = WORKCENTERS.slice(Math.max(0,idx-2), idx+1);
+    const per = Math.max(1, Math.round(totalHrs / seq.length));
+    return seq.map((wc,i) => ({
+      wc,
+      hrs: per,
+      state: i === seq.length-1 ? "current" : "complete"
+    }));
+  }
+
+  // ---------- Workcenter filter ----------
+  const wcFilterEl = document.getElementById("wcFilter");
+  WORKCENTERS.forEach(wc => {
+    const opt = document.createElement("option");
+    opt.value = wc; opt.textContent = wc;
+    wcFilterEl.appendChild(opt);
+  });
+
+  let activeWc = "ALL";
+  let sortKey = "start";
+  let sortDir = 1;
+  let selectedOrder = null;
+
+  wcFilterEl.addEventListener("change", () => {
+    activeWc = wcFilterEl.value;
+    renderAll();
+  });
+
+  // ---------- Gantt strip ----------
+  function renderGantt(){
+    const ganttBody = document.getElementById("ganttBody");
+    const axisLabels = document.getElementById("axisLabels");
+    ganttBody.innerHTML = "";
+    axisLabels.innerHTML = "";
+
+    const totalMs = HORIZON_DAYS*24*3600*1000;
+    const horizonStartMs = HORIZON_START.getTime();
+
+    const rows = activeWc === "ALL" ? WORKCENTERS : [activeWc];
+    rows.forEach(wc => {
+      const row = document.createElement("div");
+      row.className = "gantt-row";
+
+      const label = document.createElement("div");
+      label.className = "gantt-wc-label";
+      label.textContent = wc;
+      row.appendChild(label);
+
+      const track = document.createElement("div");
+      track.className = "gantt-track";
+
+      orders.filter(o => o.workcenter === wc).forEach(o => {
+        const left = Math.max(0, (o.start.getTime()-horizonStartMs)/totalMs*100);
+        const width = Math.max(1.5, (o.end.getTime()-o.start.getTime())/totalMs*100);
+        const seg = document.createElement("div");
+        seg.className = "gantt-seg";
+        seg.style.left = left + "%";
+        seg.style.width = Math.min(width, 100-left) + "%";
+        seg.style.background = statusColor(o.status);
+        seg.textContent = o.order;
+        seg.title = o.order + " · " + o.material + " · " + STATUS_META[o.status].label;
+        seg.addEventListener("click", () => openDrawer(o));
+        track.appendChild(seg);
+      });
+
+      row.appendChild(track);
+      ganttBody.appendChild(row);
+    });
+
+    for (let i=0;i<=HORIZON_DAYS;i+=2){
+      const lab = document.createElement("span");
+      const dt = new Date(horizonStartMs + i*24*3600*1000);
+      lab.textContent = dt.toLocaleDateString("en-CA",{month:"short",day:"2-digit"});
+      axisLabels.appendChild(lab);
+    }
+  }
+
+  function statusColor(status){
+    switch(status){
+      case "done": return "#94a3b8";
+      case "overdue": return "#f87171";
+      case "at-risk": return "#fbbf24";
+      default: return "#4ade80";
+    }
+  }
+
+  // ---------- Grid ----------
+  function renderGrid(){
+    const body = document.getElementById("ordersBody");
+    body.innerHTML = "";
+
+    let list = orders.filter(o => activeWc === "ALL" || o.workcenter === activeWc);
+    list = list.slice().sort((a,b) => {
+      let av = a[sortKey], bv = b[sortKey];
+      if (sortKey === "start" || sortKey === "end"){ av = av.getTime(); bv = bv.getTime(); }
+      if (typeof av === "string") { av = av.toLowerCase(); bv = bv.toLowerCase(); }
+      if (av < bv) return -1*sortDir;
+      if (av > bv) return 1*sortDir;
+      return 0;
+    });
+
+    list.forEach(o => {
+      const tr = document.createElement("tr");
+      if (selectedOrder && selectedOrder.order === o.order) tr.classList.add("selected");
+      tr.innerHTML =
+        "<td>"+o.order+"</td>"+
+        "<td>"+o.workcenter+"</td>"+
+        "<td>"+o.material+"</td>"+
+        "<td>"+o.line+"</td>"+
+        "<td>"+fmt(o.start)+"</td>"+
+        "<td>"+fmt(o.end)+"</td>"+
+        "<td><span class=\"chip "+STATUS_META[o.status].cls+"\">"+STATUS_META[o.status].label+"</span></td>"+
+        "<td><span class=\"prio "+PRIORITY_META[o.priority].cls+"\">"+PRIORITY_META[o.priority].label+"</span></td>";
+      tr.addEventListener("click", () => openDrawer(o));
+      body.appendChild(tr);
+    });
+
+    // header sort indicators
+    document.querySelectorAll("#ordersTable thead th").forEach(th => {
+      const ind = th.querySelector(".sort-ind");
+      if (th.dataset.key === sortKey){
+        ind.textContent = sortDir === 1 ? "▲" : "▼";
+      } else {
+        ind.textContent = "";
+      }
+    });
+  }
+
+  document.querySelectorAll("#ordersTable thead th").forEach(th => {
+    th.addEventListener("click", () => {
+      const key = th.dataset.key;
+      if (sortKey === key) sortDir *= -1;
+      else { sortKey = key; sortDir = 1; }
+      renderGrid();
+    });
+  });
+
+  // ---------- Drawer ----------
+  const drawer = document.getElementById("drawer");
+  const drawerOverlay = document.getElementById("drawerOverlay");
+
+  function openDrawer(o){
+    selectedOrder = o;
+    renderGrid();
+
+    document.getElementById("drawerTitle").textContent = o.order + " — Order Details";
+    document.getElementById("drawerSub").textContent = o.workcenter + " · " + o.material;
+
+    const kv = document.getElementById("drawerKv");
+    kv.innerHTML = [
+      ["Workcenter", o.workcenter],
+      ["Production Line", o.line],
+      ["Start", fmt(o.start)],
+      ["End", fmt(o.end)],
+      ["Std Hrs", o.stdHrs + " h"],
+      ["Remaining Hrs", o.remHrs + " h"],
+      ["Total Qty", o.totalQty],
+      ["Sales Order", o.salesOrder + " / Item " + o.item],
+      ["Est. Net Value", "$" + o.netValue.toLocaleString("en-CA")],
+      ["OM Period", o.omPeriod]
+    ].map(([k,v]) => "<div class=\"kv\"><div class=\"k\">"+k+"</div><div class=\"v\">"+v+"</div></div>").join("");
+
+    // mini gantt: place this order's bar centered in a 24h-normalized window around it
+    const mg = document.getElementById("drawerMiniGantt");
+    mg.innerHTML = "";
+    const bar = document.createElement("div");
+    bar.className = "bar";
+    bar.style.left = "8%";
+    bar.style.width = "84%";
+    bar.style.background = statusColor(o.status);
+    bar.title = fmt(o.start) + " → " + fmt(o.end);
+    mg.appendChild(bar);
+
+    const routing = document.getElementById("drawerRouting");
+    routing.innerHTML = o.routing.map(step => {
+      const color = step.state === "current" ? statusColor(o.status) : "#4ade80";
+      const label = step.state === "current" ? "In progress" : "Complete";
+      return "<li><span class=\"step-dot\" style=\"background:"+color+"\"></span>"+
+        "<span class=\"step-name\">"+step.wc+" — "+label+"</span>"+
+        "<span class=\"step-hrs\">"+step.hrs+" h</span></li>";
+    }).join("");
+
+    document.getElementById("drawerNotes").textContent = o.notes;
+
+    drawer.classList.add("open");
+    drawerOverlay.classList.add("open");
+  }
+
+  function closeDrawer(){
+    drawer.classList.remove("open");
+    drawerOverlay.classList.remove("open");
+    selectedOrder = null;
+    renderGrid();
+  }
+
+  document.getElementById("drawerClose").addEventListener("click", closeDrawer);
+  drawerOverlay.addEventListener("click", closeDrawer);
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeDrawer(); });
+
+  function renderAll(){
+    renderGantt();
+    renderGrid();
+  }
+
+  renderAll();
+})();
+</script>
+</body>
+</html>

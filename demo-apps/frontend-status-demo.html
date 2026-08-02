@@ -1,0 +1,690 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TCC Frontend Order Status Platform — Demo Preview</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+<!-- Icons (local, vendored) -->
+<link rel="stylesheet" href="../assets/font-awesome/css/all.min.css" />
+
+<style>
+  :root {
+    --on-time: #4ade80;
+    --on-time-bg: rgba(74, 222, 128, 0.12);
+    --at-risk: #fbbf24;
+    --at-risk-bg: rgba(251, 191, 36, 0.12);
+    --overdue: #f87171;
+    --overdue-bg: rgba(248, 113, 113, 0.12);
+    --info: #38bdf8;
+    --purple: #a855f7;
+    --card-bg: rgba(15, 23, 42, 0.9);
+    --card-border: rgba(148, 163, 184, 0.5);
+    --text-heading: #e5e7eb;
+    --text-body: #cbd5f5;
+    --text-muted: #9ca3af;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    background-color: #020617;
+    color: var(--text-body);
+    font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  body {
+    background:
+      radial-gradient(circle at 8% 6%, rgba(56, 189, 248, 0.16), transparent 42%),
+      radial-gradient(circle at 94% 8%, rgba(168, 85, 247, 0.12), transparent 45%),
+      radial-gradient(circle at 50% 100%, rgba(37, 99, 235, 0.18), transparent 55%),
+      #020617;
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  .wrap {
+    max-width: 1360px;
+    margin: 0 auto;
+    padding: 1.75rem 1.75rem 3rem;
+  }
+
+  /* ---------- Header ---------- */
+  header.top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.2rem;
+  }
+
+  .brand { display: flex; align-items: center; gap: 0.9rem; }
+
+  .brand img {
+    height: 45px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.25));
+  }
+
+  .brand-text h1 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-heading);
+    letter-spacing: 0.02em;
+  }
+
+  .brand-text p {
+    margin: 0.15rem 0 0;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    padding: 0.5rem 0.9rem;
+    border: 1px solid var(--card-border);
+    border-radius: 0.6rem;
+    background: rgba(15, 23, 42, 0.6);
+    transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+  }
+
+  .back-link:hover {
+    color: var(--info);
+    border-color: rgba(56, 189, 248, 0.5);
+    background: rgba(56, 189, 248, 0.08);
+  }
+
+  .demo-pill-row { display: flex; justify-content: center; margin-bottom: 1.6rem; }
+
+  .demo-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+    padding: 0.45rem 1.1rem;
+    border-radius: 999px;
+    border: 1px solid rgba(168, 85, 247, 0.45);
+    background: rgba(168, 85, 247, 0.1);
+    color: #d8b4fe;
+    text-align: center;
+  }
+
+  .demo-pill i { color: var(--purple); }
+
+  /* ---------- Cards ---------- */
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 0.9rem;
+    box-shadow: 0 18px 40px rgba(2, 6, 23, 0.55);
+    backdrop-filter: blur(14px);
+  }
+
+  /* ---------- Stat strip ---------- */
+  .stat-strip {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.4rem;
+  }
+
+  .stat-tile { padding: 1.1rem 1.25rem; display: flex; align-items: center; gap: 0.9rem; }
+
+  .stat-tile .icon {
+    width: 44px; height: 44px; border-radius: 0.7rem;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.15rem; flex-shrink: 0;
+  }
+
+  .stat-tile .num { font-size: 1.65rem; font-weight: 600; color: var(--text-heading); line-height: 1.1; }
+  .stat-tile .label { font-size: 0.74rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+
+  .stat-tile.total .icon { background: rgba(56, 189, 248, 0.14); color: var(--info); }
+  .stat-tile.ontime .icon { background: var(--on-time-bg); color: var(--on-time); }
+  .stat-tile.atrisk .icon { background: var(--at-risk-bg); color: var(--at-risk); }
+  .stat-tile.overdue .icon { background: var(--overdue-bg); color: var(--overdue); }
+
+  @media (max-width: 900px) { .stat-strip { grid-template-columns: repeat(2, 1fr); } }
+
+  /* ---------- Filter bar ---------- */
+  .filter-bar {
+    padding: 1rem 1.3rem;
+    margin-bottom: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-bar .group { display: flex; align-items: center; gap: 0.55rem; }
+  .filter-bar label { font-size: 0.76rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+  .filter-bar select, .filter-bar input[type="search"] {
+    font-family: inherit;
+    font-size: 0.85rem;
+    color: var(--text-heading);
+    background: rgba(2, 6, 23, 0.55);
+    border: 1px solid var(--card-border);
+    border-radius: 0.55rem;
+    padding: 0.5rem 0.7rem;
+  }
+
+  .filter-bar select:focus, .filter-bar input[type="search"]:focus {
+    outline: none;
+    border-color: var(--info);
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+  }
+
+  .search-wrap { position: relative; flex: 1 1 260px; min-width: 220px; }
+  .search-wrap i { position: absolute; left: 0.7rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.8rem; }
+  .search-wrap input { width: 100%; padding-left: 2.1rem; }
+
+  .filter-result-count { margin-left: auto; font-size: 0.78rem; color: var(--text-muted); }
+  .filter-result-count b { color: var(--info); }
+
+  /* ---------- Main layout ---------- */
+  .main-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1.05fr);
+    gap: 1.4rem;
+    align-items: start;
+    margin-bottom: 1.4rem;
+  }
+
+  @media (max-width: 1080px) { .main-grid { grid-template-columns: 1fr; } }
+
+  .panel-head { padding: 1.05rem 1.3rem 0.85rem; border-bottom: 1px solid rgba(148, 163, 184, 0.18); }
+  .panel-head h2 { margin: 0 0 0.2rem; font-size: 1rem; color: var(--text-heading); display: flex; align-items: center; gap: 0.55rem; }
+  .panel-head h2 i { color: var(--info); }
+  .panel-head p { margin: 0; font-size: 0.78rem; color: var(--text-muted); }
+
+  /* ---------- Table ---------- */
+  .table-scroll { overflow-x: auto; padding: 0.9rem 1.3rem 1.3rem; }
+
+  table.orders { width: 100%; border-collapse: collapse; font-size: 0.82rem; min-width: 760px; }
+
+  table.orders thead th {
+    text-align: left;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    padding: 0.55rem 0.7rem;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+    white-space: nowrap;
+  }
+
+  table.orders tbody td { padding: 0.6rem 0.7rem; border-bottom: 1px solid rgba(148, 163, 184, 0.1); color: var(--text-body); vertical-align: middle; }
+  table.orders tbody tr.order-row { cursor: pointer; transition: background 0.12s ease; }
+  table.orders tbody tr.order-row:hover { background: rgba(56, 189, 248, 0.06); }
+  table.orders tbody tr.order-row.expanded { background: rgba(56, 189, 248, 0.08); }
+
+  table.orders td.mono { font-family: 'IBM Plex Mono', 'Courier New', monospace; color: var(--text-heading); }
+  table.orders td.wc-tag {
+    font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em;
+    color: var(--info); background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 0.4rem;
+    padding: 0.15rem 0.45rem; white-space: nowrap;
+  }
+
+  .chevron { color: var(--text-muted); font-size: 0.72rem; transition: transform 0.15s ease; display: inline-block; width: 0.9rem; }
+  tr.order-row.expanded .chevron { transform: rotate(90deg); color: var(--info); }
+
+  .badge {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    font-size: 0.72rem; font-weight: 600; padding: 0.2rem 0.55rem;
+    border-radius: 999px; white-space: nowrap;
+  }
+
+  .badge.on-time { background: var(--on-time-bg); color: var(--on-time); border: 1px solid rgba(74, 222, 128, 0.35); }
+  .badge.at-risk { background: var(--at-risk-bg); color: var(--at-risk); border: 1px solid rgba(251, 191, 36, 0.35); }
+  .badge.overdue { background: var(--overdue-bg); color: var(--overdue); border: 1px solid rgba(248, 113, 113, 0.35); }
+
+  td.note-cell { color: var(--text-muted); font-style: italic; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  td.note-cell i { margin-right: 0.35rem; opacity: 0.6; }
+
+  tr.detail-row td { padding: 0; border-bottom: 1px solid rgba(148, 163, 184, 0.18); background: rgba(2, 6, 23, 0.35); }
+  .detail-inner { padding: 1rem 1.4rem 1.3rem; display: grid; grid-template-columns: 1.3fr 1fr; gap: 1.4rem; }
+  @media (max-width: 780px) { .detail-inner { grid-template-columns: 1fr; } }
+
+  .detail-block h4 { margin: 0 0 0.6rem; font-size: 0.78rem; color: var(--text-heading); text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.4rem; }
+  .detail-block h4 i { color: var(--info); }
+
+  .routing-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.45rem; }
+  .routing-steps li { display: flex; align-items: center; gap: 0.6rem; font-size: 0.8rem; }
+  .routing-steps .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .routing-steps .dot.done { background: var(--on-time); box-shadow: 0 0 6px rgba(74,222,128,0.6); }
+  .routing-steps .dot.active { background: var(--info); box-shadow: 0 0 6px rgba(56,189,248,0.7); }
+  .routing-steps .dot.pending { background: rgba(148,163,184,0.35); }
+  .routing-steps .wc-name { width: 62px; font-weight: 600; color: var(--text-heading); font-size: 0.76rem; }
+  .routing-steps .step-date { margin-left: auto; color: var(--text-muted); font-size: 0.74rem; }
+  .routing-steps li.active .wc-name { color: var(--info); }
+
+  .backend-note {
+    font-size: 0.82rem; color: var(--text-body); line-height: 1.5;
+    background: rgba(168, 85, 247, 0.07); border: 1px solid rgba(168, 85, 247, 0.28);
+    border-radius: 0.6rem; padding: 0.7rem 0.85rem; margin: 0 0 0.9rem;
+  }
+  .backend-note b { color: #d8b4fe; }
+
+  .detail-meta { font-size: 0.78rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 0.3rem; }
+  .detail-meta span b { color: var(--text-heading); font-weight: 500; }
+
+  .empty-state { padding: 2.2rem 1rem; text-align: center; color: var(--text-muted); font-size: 0.85rem; }
+  .empty-state i { font-size: 1.6rem; display: block; margin-bottom: 0.6rem; color: rgba(148,163,184,0.5); }
+
+  /* ---------- About panel ---------- */
+  .about-panel { padding: 1.2rem 1.3rem 1.3rem; }
+  .about-panel h2 { margin: 0 0 0.7rem; font-size: 1rem; color: var(--text-heading); display: flex; align-items: center; gap: 0.55rem; }
+  .about-panel h2 i { color: var(--purple); }
+  .about-panel p.lead { font-size: 0.85rem; color: var(--text-body); line-height: 1.55; margin: 0 0 0.9rem; }
+  .about-panel ul { margin: 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 0.55rem; }
+  .about-panel ul li { font-size: 0.82rem; color: var(--text-muted); line-height: 1.45; display: flex; gap: 0.55rem; }
+  .about-panel ul li i { color: var(--info); margin-top: 0.2rem; flex-shrink: 0; }
+
+  /* ---------- Trend chart ---------- */
+  .trend-panel { padding: 1.1rem 1.3rem 1.2rem; margin-top: 1.4rem; }
+  .trend-legend { display: flex; gap: 1.1rem; flex-wrap: wrap; margin: 0.2rem 0 0.8rem; }
+  .trend-legend .item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.76rem; color: var(--text-muted); }
+  .trend-legend .swatch { width: 10px; height: 10px; border-radius: 2px; }
+  .trend-chart-wrap { overflow-x: auto; }
+  .trend-chart-wrap svg { display: block; }
+  .bar-group rect { transition: opacity 0.12s ease; }
+  .bar-group:hover rect { opacity: 0.85; }
+
+  /* ---------- Footer ---------- */
+  footer.site-footer {
+    margin-top: 2rem;
+    text-align: center;
+    font-size: 0.76rem;
+    color: var(--text-muted);
+    padding-top: 1.2rem;
+    border-top: 1px solid rgba(148, 163, 184, 0.15);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <img src="../Enhanced entrance for systems/Logo2.png" alt="Trench Canada Coils" />
+      <div class="brand-text">
+        <h1>Frontend Order Status Platform</h1>
+        <p>Planner &amp; account-manager order visibility · Trench Canada Coils</p>
+      </div>
+    </div>
+    <a class="back-link" href="../Enhanced entrance for systems/apple-style-portal.html">
+      <i class="fas fa-arrow-left"></i> Back to Systems Portal
+    </a>
+  </header>
+
+  <div class="demo-pill-row">
+    <span class="demo-pill"><i class="fas fa-flask"></i> DEMO PREVIEW · Sample data only, not connected to any live system</span>
+  </div>
+
+  <!-- Stat strip -->
+  <div class="stat-strip">
+    <div class="card stat-tile total">
+      <div class="icon"><i class="fas fa-layer-group"></i></div>
+      <div><div class="num" id="statTotal">0</div><div class="label">Total Orders</div></div>
+    </div>
+    <div class="card stat-tile ontime">
+      <div class="icon"><i class="fas fa-circle-check"></i></div>
+      <div><div class="num" id="statOnTimePct">0%</div><div class="label">On-Time</div></div>
+    </div>
+    <div class="card stat-tile atrisk">
+      <div class="icon"><i class="fas fa-triangle-exclamation"></i></div>
+      <div><div class="num" id="statAtRisk">0</div><div class="label">At Risk</div></div>
+    </div>
+    <div class="card stat-tile overdue">
+      <div class="icon"><i class="fas fa-circle-exclamation"></i></div>
+      <div><div class="num" id="statOverdue">0</div><div class="label">Overdue</div></div>
+    </div>
+  </div>
+
+  <!-- Filter bar -->
+  <div class="card filter-bar">
+    <div class="group">
+      <label for="wcFilter"><i class="fas fa-industry"></i> Workcenter</label>
+      <select id="wcFilter">
+        <option value="All">All</option>
+      </select>
+    </div>
+    <div class="search-wrap">
+      <i class="fas fa-magnifying-glass"></i>
+      <input type="search" id="searchBox" placeholder="Search Sales Doc, Material, or Customer…" />
+    </div>
+    <div class="filter-result-count">Showing <b id="resultCount">0</b> of <span id="resultTotal">0</span> orders</div>
+  </div>
+
+  <!-- Table -->
+  <div class="card" style="margin-bottom:1.4rem;">
+    <div class="panel-head">
+      <h2><i class="fas fa-table-list"></i> Backlog Order Status</h2>
+      <p>Click any row to view routing history, linked backend comment, and last-updated timestamp.</p>
+    </div>
+    <div class="table-scroll">
+      <table class="orders">
+        <thead>
+          <tr>
+            <th style="width:1.6rem;"></th>
+            <th>Sales Doc #</th>
+            <th>Material</th>
+            <th>Customer</th>
+            <th>OM Period</th>
+            <th>Workcenter</th>
+            <th>Status</th>
+            <th>Note</th>
+          </tr>
+        </thead>
+        <tbody id="ordersBody"></tbody>
+      </table>
+      <div class="empty-state" id="emptyState" style="display:none;">
+        <i class="fas fa-inbox"></i>
+        No orders match the current filter/search. Try clearing the search box or choosing "All" workcenters.
+      </div>
+    </div>
+  </div>
+
+  <div class="main-grid">
+    <!-- About panel -->
+    <div class="card about-panel">
+      <h2><i class="fas fa-circle-info"></i> About this system</h2>
+      <p class="lead">
+        The Frontend Order Status Platform is the simplified, read-oriented counterpart to the
+        Backend Status System. Where the backend tool is built for shop-floor and scheduling staff
+        to edit priorities, log material checks, and manage workcenter comments, this frontend view
+        is built for planners and account managers who need a fast, trustworthy answer to
+        "where does my order stand" &mdash; without the administrative surface area.
+      </p>
+      <ul>
+        <li><i class="fas fa-database"></i> Shares the same BacklogOrders / OM Period data model as the Backend Status System, so both tools always agree on order state.</li>
+        <li><i class="fas fa-eye"></i> Read-oriented by design: no priority overrides, no material-check entry, no bulk edit forms &mdash; that administrative work stays in the Backend Status System.</li>
+        <li><i class="fas fa-filter"></i> Filter by workcenter or search by Sales Doc, Material, or Customer to get a planner-friendly answer in seconds.</li>
+        <li><i class="fas fa-route"></i> Surfaces routing history and linked backend comments read-only, so planners have context without touching production data.</li>
+        <li><i class="fas fa-chart-line"></i> Summarizes on-time / at-risk / overdue trends over time so account managers can spot patterns before customers ask.</li>
+      </ul>
+    </div>
+
+    <!-- Trend chart -->
+    <div class="card trend-panel">
+      <div class="panel-head" style="padding:0 0 0.8rem; border-bottom:none;">
+        <h2><i class="fas fa-chart-column"></i> 6-Month Status Trend</h2>
+        <p>Fabricated demo history &middot; order counts by status per month</p>
+      </div>
+      <div class="trend-legend">
+        <span class="item"><span class="swatch" style="background:var(--on-time);"></span> On-time</span>
+        <span class="item"><span class="swatch" style="background:var(--at-risk);"></span> At-risk</span>
+        <span class="item"><span class="swatch" style="background:var(--overdue);"></span> Overdue</span>
+      </div>
+      <div class="trend-chart-wrap">
+        <svg id="trendSvg" viewBox="0 0 520 210" width="100%" height="210" role="img" aria-label="Monthly order status trend chart"></svg>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    &copy; 2026 Trench Canada &middot; Scheduling Team &mdash; Demo preview, sample data only.
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var WORKCENTERS = ["STRIP", "CRIMP", "WELD2", "BLAST", "CLEAN", "PAINT", "TESTLAB", "DETAIL", "CRATE"];
+
+  var WC_SEQUENCE = ["STRIP", "CRIMP", "WELD2", "BLAST", "CLEAN", "PAINT", "TESTLAB", "DETAIL", "CRATE"];
+
+  function routingFor(currentWc, statusOverride) {
+    var idx = WC_SEQUENCE.indexOf(currentWc);
+    return WC_SEQUENCE.map(function (wc, i) {
+      var st;
+      if (i < idx) st = "done";
+      else if (i === idx) st = "active";
+      else st = "pending";
+      var date = "—";
+      if (st === "done") date = "2026-0" + (6 + (i % 2)) + "-" + (10 + i) ;
+      if (st === "active") date = "2026-08-0" + (1 + (idx % 8));
+      return { wc: wc, status: st, date: date };
+    });
+  }
+
+  // Fabricated demo backlog — sample data only, not connected to any live system.
+  var ORDERS = [
+    { doc: "4500118820", item: "10", material: "HV Coil Assembly – 138kV", customer: "Northern Grid Power", omPeriod: "2026-08", wc: "WELD2", status: "on-time", note: "Routine WIP, tracking to plan.", backend: "Material check confirmed by CRIMP lead — cleared to proceed.", updated: "2026-08-01 14:32" },
+    { doc: "4500118821", item: "20", material: "Distribution Xfmr Coil – 25kV", customer: "Prairie Electric Co-op", omPeriod: "2026-08", wc: "CRIMP", status: "at-risk", note: "Copper strip delivery running 2 days late.", backend: "Awaiting revised strip delivery date from supplier, escalated to buyer.", updated: "2026-08-01 09:15" },
+    { doc: "4500118822", item: "10", material: "Traction Coil – Type C", customer: "Meridian Rail Corp", omPeriod: "2026-07", wc: "TESTLAB", status: "overdue", note: "Failed dielectric test, retest scheduled.", backend: "Retest booked for Aug 4, QA has flagged for priority handling.", updated: "2026-07-31 16:48" },
+    { doc: "4500118823", item: "10", material: "Reactor Coil Winding – 69kV", customer: "Bluewater Energy", omPeriod: "2026-08", wc: "STRIP", status: "on-time", note: "On schedule, no open items.", backend: "No open comments.", updated: "2026-07-30 11:02" },
+    { doc: "4500118824", item: "30", material: "LV Coil Pack – 4kV", customer: "Lakeshore Utilities", omPeriod: "2026-08", wc: "PAINT", status: "on-time", note: "Paint booth slot confirmed for Aug 5.", backend: "No open comments.", updated: "2026-07-29 08:40" },
+    { doc: "4500118825", item: "10", material: "HV Coil Assembly – 230kV", customer: "Summit Transformer Ltd", omPeriod: "2026-08", wc: "BLAST", status: "at-risk", note: "Blast cabinet queue backed up.", backend: "Blast queue running 1.5 days behind due to cabinet #2 maintenance.", updated: "2026-08-01 07:55" },
+    { doc: "4500118826", item: "10", material: "Distribution Xfmr Coil – 12kV", customer: "Cascade Power Systems", omPeriod: "2026-09", wc: "CLEAN", status: "on-time", note: "Clean line on track.", backend: "No open comments.", updated: "2026-07-28 13:20" },
+    { doc: "4500118827", item: "20", material: "Reactor Coil Winding – 138kV", customer: "Harborview Industrial", omPeriod: "2026-07", wc: "DETAIL", status: "overdue", note: "Detail rework pending drawing revision.", backend: "Engineering issued revised drawing rev C, detail rework in progress.", updated: "2026-07-31 10:05" },
+    { doc: "4500118828", item: "10", material: "Traction Coil – Type B", customer: "Redstone Mining Co", omPeriod: "2026-08", wc: "CRATE", status: "on-time", note: "Ready for crate, shipment booked.", backend: "No open comments.", updated: "2026-07-30 15:11" },
+    { doc: "4500118829", item: "10", material: "HV Coil Assembly – 138kV", customer: "Fraser Valley Hydro", omPeriod: "2026-08", wc: "WELD2", status: "on-time", note: "Weld cell 2 on pace.", backend: "No open comments.", updated: "2026-07-29 09:47" },
+    { doc: "4500118830", item: "40", material: "LV Coil Pack – 4kV", customer: "Northern Grid Power", omPeriod: "2026-09", wc: "CRIMP", status: "on-time", note: "Crimp scheduled, materials on hand.", backend: "No open comments.", updated: "2026-07-27 12:33" },
+    { doc: "4500118831", item: "10", material: "Distribution Xfmr Coil – 25kV", customer: "Prairie Electric Co-op", omPeriod: "2026-07", wc: "TESTLAB", status: "at-risk", note: "Test slot moved to Aug 3.", backend: "Test lab capacity tight this week, order re-slotted, monitoring.", updated: "2026-08-01 11:29" },
+    { doc: "4500118832", item: "10", material: "Reactor Coil Winding – 69kV", customer: "Meridian Rail Corp", omPeriod: "2026-08", wc: "STRIP", status: "on-time", note: "Strip complete, moving to crimp.", backend: "No open comments.", updated: "2026-07-30 16:02" },
+    { doc: "4500118833", item: "20", material: "HV Coil Assembly – 230kV", customer: "Bluewater Energy", omPeriod: "2026-08", wc: "PAINT", status: "overdue", note: "Paint defect found, stripped for rework.", backend: "Rework in progress after inspection flagged surface defect, revised ETA pending.", updated: "2026-07-31 14:18" },
+    { doc: "4500118834", item: "10", material: "LV Coil Pack – 6kV", customer: "Lakeshore Utilities", omPeriod: "2026-09", wc: "BLAST", status: "on-time", note: "On track for blast Aug 6.", backend: "No open comments.", updated: "2026-07-28 10:56" },
+    { doc: "4500118835", item: "10", material: "Distribution Xfmr Coil – 12kV", customer: "Summit Transformer Ltd", omPeriod: "2026-08", wc: "CLEAN", status: "at-risk", note: "Clean line queue running long.", backend: "Clean line running behind due to upstream blast delay, watching closely.", updated: "2026-08-01 08:12" },
+    { doc: "4500118836", item: "10", material: "Traction Coil – Type C", customer: "Cascade Power Systems", omPeriod: "2026-08", wc: "DETAIL", status: "on-time", note: "Detail work proceeding on schedule.", backend: "No open comments.", updated: "2026-07-29 15:40" },
+    { doc: "4500118837", item: "10", material: "HV Coil Assembly – 138kV", customer: "Harborview Industrial", omPeriod: "2026-07", wc: "CRATE", status: "overdue", note: "Awaiting carrier pickup confirmation.", backend: "Carrier pickup rescheduled twice, logistics following up with freight partner.", updated: "2026-07-31 17:02" },
+    { doc: "4500118838", item: "10", material: "Reactor Coil Winding – 138kV", customer: "Redstone Mining Co", omPeriod: "2026-08", wc: "WELD2", status: "on-time", note: "No issues reported.", backend: "No open comments.", updated: "2026-07-30 09:23" },
+    { doc: "4500118839", item: "30", material: "LV Coil Pack – 4kV", customer: "Fraser Valley Hydro", omPeriod: "2026-09", wc: "CRIMP", status: "on-time", note: "Materials staged, ready to start.", backend: "No open comments.", updated: "2026-07-27 14:07" },
+    { doc: "4500118840", item: "10", material: "Distribution Xfmr Coil – 25kV", customer: "Northern Grid Power", omPeriod: "2026-08", wc: "TESTLAB", status: "on-time", note: "Passed initial dielectric test.", backend: "No open comments.", updated: "2026-07-29 13:51" },
+    { doc: "4500118841", item: "10", material: "HV Coil Assembly – 230kV", customer: "Prairie Electric Co-op", omPeriod: "2026-08", wc: "STRIP", status: "at-risk", note: "Strip line changeover delayed start.", backend: "Line changeover took longer than planned, order pushed to next shift.", updated: "2026-08-01 06:48" },
+    { doc: "4500118842", item: "10", material: "Traction Coil – Type B", customer: "Meridian Rail Corp", omPeriod: "2026-08", wc: "PAINT", status: "on-time", note: "Paint booth confirmed.", backend: "No open comments.", updated: "2026-07-30 12:14" },
+    { doc: "4500118843", item: "10", material: "Reactor Coil Winding – 69kV", customer: "Bluewater Energy", omPeriod: "2026-09", wc: "BLAST", status: "on-time", note: "On track.", backend: "No open comments.", updated: "2026-07-28 16:29" },
+    { doc: "4500118844", item: "20", material: "LV Coil Pack – 6kV", customer: "Lakeshore Utilities", omPeriod: "2026-07", wc: "CLEAN", status: "overdue", note: "Clean line down for unplanned maintenance.", backend: "Clean line maintenance extended by 2 days, order re-sequenced, monitoring closely.", updated: "2026-07-31 11:37" },
+    { doc: "4500118845", item: "10", material: "Distribution Xfmr Coil – 12kV", customer: "Summit Transformer Ltd", omPeriod: "2026-08", wc: "DETAIL", status: "on-time", note: "On schedule.", backend: "No open comments.", updated: "2026-07-29 10:18" },
+    { doc: "4500118846", item: "10", material: "HV Coil Assembly – 138kV", customer: "Cascade Power Systems", omPeriod: "2026-08", wc: "CRATE", status: "on-time", note: "Crate and ship this week.", backend: "No open comments.", updated: "2026-07-30 14:52" }
+  ].map(function (o) {
+    return Object.assign({}, o, { routing: routingFor(o.wc) });
+  });
+
+  // ---------- Populate workcenter filter ----------
+  var wcFilter = document.getElementById("wcFilter");
+  WORKCENTERS.forEach(function (wc) {
+    var opt = document.createElement("option");
+    opt.value = wc;
+    opt.textContent = wc;
+    wcFilter.appendChild(opt);
+  });
+
+  var searchBox = document.getElementById("searchBox");
+  var ordersBody = document.getElementById("ordersBody");
+  var emptyState = document.getElementById("emptyState");
+  var expandedDoc = null;
+
+  function statusLabel(s) {
+    if (s === "on-time") return "On-time";
+    if (s === "at-risk") return "At-risk";
+    return "Overdue";
+  }
+
+  function statusIcon(s) {
+    if (s === "on-time") return "fa-circle-check";
+    if (s === "at-risk") return "fa-triangle-exclamation";
+    return "fa-circle-exclamation";
+  }
+
+  function renderDetailRow(order) {
+    var routingHtml = order.routing.map(function (step) {
+      var dotClass = step.status === "done" ? "done" : (step.status === "active" ? "active" : "pending");
+      return '<li class="' + (step.status === "active" ? "active" : "") + '">' +
+        '<span class="dot ' + dotClass + '"></span>' +
+        '<span class="wc-name">' + step.wc + '</span>' +
+        '<span style="color:var(--text-muted); font-size:0.74rem; text-transform:capitalize;">' + step.status + '</span>' +
+        '<span class="step-date">' + step.date + '</span>' +
+        '</li>';
+    }).join("");
+
+    return '' +
+      '<tr class="detail-row"><td colspan="8"><div class="detail-inner">' +
+        '<div class="detail-block">' +
+          '<h4><i class="fas fa-route"></i> Routing / Workcenter History</h4>' +
+          '<ul class="routing-steps">' + routingHtml + '</ul>' +
+        '</div>' +
+        '<div class="detail-block">' +
+          '<h4><i class="fas fa-comment-dots"></i> Linked Backend Comment</h4>' +
+          '<div class="backend-note"><b>Backend Status System:</b> ' + order.backend + '</div>' +
+          '<h4 style="margin-top:0.9rem;"><i class="fas fa-clock"></i> Record Info</h4>' +
+          '<div class="detail-meta">' +
+            '<span>Sales Doc / Item: <b>' + order.doc + ' / ' + order.item + '</b></span>' +
+            '<span>OM Period: <b>' + order.omPeriod + '</b></span>' +
+            '<span>Current Workcenter: <b>' + order.wc + '</b></span>' +
+            '<span>Last updated: <b>' + order.updated + '</b></span>' +
+          '</div>' +
+        '</div>' +
+      '</div></td></tr>';
+  }
+
+  function render() {
+    var wc = wcFilter.value;
+    var q = searchBox.value.trim().toLowerCase();
+
+    var filtered = ORDERS.filter(function (o) {
+      var wcMatch = (wc === "All") || (o.wc === wc);
+      if (!wcMatch) return false;
+      if (!q) return true;
+      return (
+        o.doc.toLowerCase().indexOf(q) !== -1 ||
+        o.material.toLowerCase().indexOf(q) !== -1 ||
+        o.customer.toLowerCase().indexOf(q) !== -1
+      );
+    });
+
+    document.getElementById("resultCount").textContent = filtered.length;
+    document.getElementById("resultTotal").textContent = ORDERS.length;
+    emptyState.style.display = filtered.length ? "none" : "block";
+
+    var rowsHtml = filtered.map(function (o) {
+      var isExpanded = expandedDoc === o.doc;
+      var row = '<tr class="order-row' + (isExpanded ? ' expanded' : '') + '" data-doc="' + o.doc + '">' +
+        '<td><i class="fas fa-chevron-right chevron"></i></td>' +
+        '<td class="mono">' + o.doc + '</td>' +
+        '<td>' + o.material + '</td>' +
+        '<td>' + o.customer + '</td>' +
+        '<td>' + o.omPeriod + '</td>' +
+        '<td><span class="wc-tag">' + o.wc + '</span></td>' +
+        '<td><span class="badge ' + o.status + '"><i class="fas ' + statusIcon(o.status) + '"></i>' + statusLabel(o.status) + '</span></td>' +
+        '<td class="note-cell"><i class="fas fa-comment-dots"></i>' + o.note + '</td>' +
+        '</tr>';
+      if (isExpanded) row += renderDetailRow(o);
+      return row;
+    }).join("");
+
+    ordersBody.innerHTML = rowsHtml;
+
+    // stats always reflect the FULL backlog, not the filtered view
+    var total = ORDERS.length;
+    var onTime = ORDERS.filter(function (o) { return o.status === "on-time"; }).length;
+    var atRisk = ORDERS.filter(function (o) { return o.status === "at-risk"; }).length;
+    var overdue = ORDERS.filter(function (o) { return o.status === "overdue"; }).length;
+
+    document.getElementById("statTotal").textContent = total;
+    document.getElementById("statOnTimePct").textContent = Math.round((onTime / total) * 100) + "%";
+    document.getElementById("statAtRisk").textContent = atRisk;
+    document.getElementById("statOverdue").textContent = overdue;
+  }
+
+  ordersBody.addEventListener("click", function (e) {
+    var row = e.target.closest("tr.order-row");
+    if (!row) return;
+    var doc = row.getAttribute("data-doc");
+    expandedDoc = (expandedDoc === doc) ? null : doc;
+    render();
+  });
+
+  wcFilter.addEventListener("change", render);
+  searchBox.addEventListener("input", render);
+
+  render();
+
+  // ---------- Trend mini-chart (inline SVG) ----------
+  var TREND = [
+    { m: "Mar", onTime: 18, atRisk: 5, overdue: 3 },
+    { m: "Apr", onTime: 20, atRisk: 4, overdue: 4 },
+    { m: "May", onTime: 17, atRisk: 6, overdue: 5 },
+    { m: "Jun", onTime: 19, atRisk: 5, overdue: 4 },
+    { m: "Jul", onTime: 16, atRisk: 7, overdue: 6 },
+    { m: "Aug", onTime: 16, atRisk: 6, overdue: 5 }
+  ];
+
+  (function drawTrend() {
+    var svg = document.getElementById("trendSvg");
+    var W = 520, H = 210;
+    var padL = 28, padB = 26, padT = 10, padR = 10;
+    var chartW = W - padL - padR;
+    var chartH = H - padT - padB;
+    var groupW = chartW / TREND.length;
+    var maxVal = Math.max.apply(null, TREND.map(function (d) { return d.onTime + d.atRisk + d.overdue; }));
+    var scale = chartH / (maxVal * 1.05);
+
+    var svgns = "http://www.w3.org/2000/svg";
+    var parts = [];
+
+    // baseline
+    parts.push('<line x1="' + padL + '" y1="' + (H - padB) + '" x2="' + (W - padR) + '" y2="' + (H - padB) + '" stroke="rgba(148,163,184,0.25)" stroke-width="1" />');
+
+    var barW = groupW * 0.16;
+    var gap = 3;
+
+    TREND.forEach(function (d, i) {
+      var cx = padL + groupW * i + groupW / 2;
+      var series = [
+        { val: d.onTime, color: "var(--on-time)", label: "On-time" },
+        { val: d.atRisk, color: "var(--at-risk)", label: "At-risk" },
+        { val: d.overdue, color: "var(--overdue)", label: "Overdue" }
+      ];
+      var totalW = series.length * barW + (series.length - 1) * gap;
+      var startX = cx - totalW / 2;
+
+      var groupParts = ['<g class="bar-group">'];
+      series.forEach(function (s, si) {
+        var barH = s.val * scale;
+        var x = startX + si * (barW + gap);
+        var y = H - padB - barH;
+        groupParts.push(
+          '<rect x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + barW.toFixed(1) + '" height="' + barH.toFixed(1) + '" rx="2" fill="' + s.color + '">' +
+          '<title>' + d.m + ' 2026 — ' + s.label + ': ' + s.val + ' orders</title>' +
+          '</rect>'
+        );
+      });
+      groupParts.push('</g>');
+      parts.push(groupParts.join(""));
+
+      parts.push('<text x="' + cx.toFixed(1) + '" y="' + (H - padB + 16) + '" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="IBM Plex Sans, sans-serif">' + d.m + '</text>');
+    });
+
+    // y-axis max label
+    parts.push('<text x="' + (padL - 6) + '" y="' + (padT + 4) + '" text-anchor="end" font-size="9" fill="#9ca3af" font-family="IBM Plex Sans, sans-serif">' + Math.ceil(maxVal * 1.05) + '</text>');
+    parts.push('<text x="' + (padL - 6) + '" y="' + (H - padB) + '" text-anchor="end" font-size="9" fill="#9ca3af" font-family="IBM Plex Sans, sans-serif">0</text>');
+
+    svg.innerHTML = parts.join("");
+  })();
+})();
+</script>
+</body>
+</html>

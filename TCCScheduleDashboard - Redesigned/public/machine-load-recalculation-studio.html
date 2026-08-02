@@ -1,0 +1,722 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Machine Load Recalculation Studio</title>
+
+    <link rel="icon" type="image/png" sizes="32x32" href="./Logo.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Orbitron:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script src="./javascript/reload.js"></script>
+    <script src="./1986481368401444864/resource_5784810000.js"></script>
+    <link href="./1986481368401444864/all.min.css" rel="stylesheet" />
+    <link href="./1986481368401444864/tailwind.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/css/base.css" />
+
+    <style>
+      .tcc-main {
+        position: relative;
+        background:
+          radial-gradient(circle at top left, rgba(56, 189, 248, 0.13), transparent 58%),
+          radial-gradient(circle at bottom right, rgba(37, 99, 235, 0.12), transparent 60%),
+          linear-gradient(to bottom, rgba(2, 6, 23, 0.06), rgba(2, 6, 23, 0.08)),
+          url('https://wallpaperaccess.com/full/494094.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+      }
+
+      .tcc-page-hero {
+        padding-block: 3.25rem 2.4rem;
+        border-bottom: 1px solid rgba(15, 23, 42, 0.85);
+        position: relative;
+      }
+
+      .tcc-page-hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(circle at top right, rgba(125, 211, 252, 0.18), transparent 55%),
+          radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.18), transparent 55%);
+        opacity: 0.8;
+        pointer-events: none;
+      }
+
+      .tcc-page-hero-inner {
+        position: relative;
+        z-index: 1;
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+        gap: 2.4rem;
+        align-items: stretch;
+      }
+
+      .tcc-page-breadcrumb {
+        font-size: 0.8rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: #9ca3af;
+        margin-bottom: 0.8rem;
+      }
+
+      .tcc-page-title {
+        font-size: clamp(2rem, 2.6vw, 2.4rem);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        margin-bottom: 0.75rem;
+      }
+
+      .tcc-page-subtitle {
+        max-width: 42rem;
+        color: #d1d5db;
+      }
+
+      .tcc-page-hero-badges {
+        margin-top: 1.1rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .tcc-page-hero-visual {
+        display: flex;
+        align-items: stretch;
+        justify-content: flex-end;
+      }
+
+      .tcc-page-hero-card {
+        position: relative;
+        width: 100%;
+        border-radius: 1rem;
+        padding: 1.4rem 1.5rem 1.2rem;
+        background:
+          radial-gradient(circle at top left, rgba(59, 130, 246, 0.35), transparent 60%),
+          radial-gradient(circle at bottom right, rgba(8, 47, 73, 0.55), transparent 60%),
+          rgba(15, 23, 42, 0.54);
+        border: 1px solid rgba(148, 163, 184, 0.45);
+        box-shadow:
+          0 22px 45px rgba(15, 23, 42, 0.95),
+          0 0 0 1px rgba(15, 23, 42, 0.9) inset;
+        backdrop-filter: blur(14px);
+      }
+
+      .tcc-page-hero-card h3 {
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: #e5e7eb;
+        margin-bottom: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+
+      .tcc-page-hero-card h3::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(to right, rgba(59, 130, 246, 0.2), rgba(56, 189, 248, 0.7));
+      }
+
+      .tcc-page-hero-card ul {
+        margin-left: 0;
+        padding-left: 1rem;
+        font-size: 0.9rem;
+        color: #cbd5f5;
+      }
+
+      .tcc-page-hero-card li + li {
+        margin-top: 0.4rem;
+      }
+
+      .tcc-page-hero-card .tcc-tag-row {
+        margin-top: 1rem;
+      }
+
+      .tcc-page-main {
+        padding: 2.4rem 1.75rem 3.25rem;
+        border-top: 1px solid rgba(15, 23, 42, 0.9);
+      }
+
+      .tcc-page-main-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+        gap: 2rem;
+        align-items: stretch;
+      }
+
+      .tcc-page-main-inner .tcc-panel {
+        position: relative;
+        min-height: 0;
+        max-height: 68vh;
+        padding: 1.6rem 1.7rem 1.5rem;
+        border-radius: 1rem;
+        border: 1px solid rgba(148, 163, 184, 0.42);
+        background:
+          radial-gradient(circle at top left, rgba(56, 189, 248, 0.25), transparent 62%),
+          radial-gradient(circle at bottom right, rgba(37, 99, 235, 0.28), transparent 60%),
+          rgba(15, 23, 42, 0.36);
+        box-shadow:
+          0 22px 48px rgba(15, 23, 42, 0.98),
+          0 0 0 1px rgba(15, 23, 42, 0.9) inset;
+        backdrop-filter: blur(18px);
+        overflow-y: auto;
+      }
+
+      .tcc-page-main-inner .tcc-panel::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: linear-gradient(135deg, rgba(96, 165, 250, 0.22), transparent 55%);
+        mix-blend-mode: soft-light;
+        opacity: 0.9;
+        pointer-events: none;
+      }
+
+      .tcc-page-main-inner .tcc-panel > * {
+        position: relative;
+        z-index: 1;
+      }
+
+      .tcc-page-main-inner .tcc-panel h3 {
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: #e5e7eb;
+        margin-bottom: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+
+      .tcc-page-main-inner .tcc-panel h3::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: radial-gradient(circle, #38bdf8, #2563eb);
+        box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.25);
+      }
+
+      .tcc-page-main-inner .tcc-panel h3::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(to right, rgba(15, 23, 42, 0), rgba(148, 163, 184, 0.8));
+      }
+
+      .tcc-page-main-inner .tcc-panel h4 {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: #e5e7eb;
+        margin: 1.1rem 0 0.35rem;
+      }
+
+      .tcc-page-main-inner .tcc-panel p {
+        font-size: 0.9rem;
+        color: #d1d5db;
+      }
+
+      .tcc-page-main-inner .tcc-panel ul {
+        margin-top: 0.5rem;
+        padding-left: 1.1rem;
+        font-size: 0.9rem;
+        color: #cbd5f5;
+      }
+
+      .tcc-page-main-inner .tcc-panel ul li + li {
+        margin-top: 0.25rem;
+      }
+
+      .tcc-page-main-inner .tcc-panel dl {
+        font-size: 0.88rem;
+        color: #d1d5db;
+      }
+
+      .tcc-page-main-inner .tcc-panel dl dt {
+        color: #e5e7eb;
+      }
+
+      .tcc-page-main-inner .tcc-panel dl dd {
+        color: #cbd5f5;
+      }
+
+      .tcc-page-main-inner .tcc-panel .tcc-tag-row {
+        margin-top: 0.6rem;
+      }
+
+      .tcc-page-main-inner .tcc-panel .tcc-tag {
+        border-radius: 9999px;
+        border: 1px solid rgba(148, 163, 184, 0.5);
+        background: rgba(15, 23, 42, 0.9);
+      }
+
+      .tcc-page-main-inner .tcc-panel p[style*="font-size: 0.8rem"] {
+        color: #9ca3af !important;
+      }
+
+      .tcc-page-main-inner .tcc-panel {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(148, 163, 184, 0.45) transparent;
+      }
+
+      .tcc-page-main-inner .tcc-panel::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .tcc-page-main-inner .tcc-panel::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      .tcc-page-main-inner .tcc-panel::-webkit-scrollbar-thumb {
+        background: rgba(148, 163, 184, 0.45);
+        border-radius: 9999px;
+      }
+
+      .tcc-page-main-inner .tcc-panel::-webkit-scrollbar-thumb:hover {
+        background: rgba(148, 163, 184, 0.7);
+      }
+
+      .tcc-page-main-inner .tcc-panel ol.list-decimal {
+        margin-top: 0.75rem;
+        padding-left: 1.1rem;
+      }
+
+      .tcc-page-main-inner .tcc-panel ol.list-decimal > li {
+        padding-top: 0.55rem;
+        margin-top: 0.2rem;
+        border-top: 1px dashed rgba(148, 163, 184, 0.25);
+      }
+
+      .tcc-page-main-inner .tcc-panel ol.list-decimal > li:first-child {
+        border-top: 0;
+      }
+
+      .tcc-page-main-inner .tcc-panel ol.list-decimal > li > div:first-child {
+        display: inline-block;
+        margin-left: 0.3rem;
+        font-weight: 600;
+        color: #e5e7eb;
+      }
+
+      .tcc-page-main-inner .tcc-panel ul.list-disc {
+        margin-top: 0.3rem;
+        padding-left: 1.1rem;
+        font-size: 0.9rem;
+        color: #cbd5f5;
+      }
+
+      .tcc-page-main-inner .tcc-panel ul.list-disc li + li {
+        margin-top: 0.25rem;
+      }
+
+      @media (max-width: 900px) {
+        .tcc-page-hero {
+          padding-block: 2.4rem 1.9rem;
+        }
+
+        .tcc-page-hero-inner {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 1.9rem;
+        }
+
+        .tcc-page-main {
+          padding: 1.8rem 1.25rem 2.3rem;
+        }
+
+        .tcc-page-main-inner {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 1.6rem;
+        }
+
+        .tcc-page-main-inner .tcc-panel {
+          max-height: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="tcc-site">
+      <header class="tcc-header">
+        <div class="tcc-nav-inner">
+          <a href="index.html" class="tcc-brand">
+            <img src="./Logo2.png" alt="TCC logo" style="height: 100px; width: 120px; object-fit: contain;" />
+            <div>
+              <div class="tcc-brand-text-main">Trench Canada Coils</div>
+              <div class="tcc-brand-text-sub">A LEGACY OF INNOVATION</div>
+            </div>
+          </a>
+
+          <nav class="tcc-nav-links">
+            <a href="index.html" class="tcc-nav-link">Home</a>
+
+            <div
+              class="tcc-nav-dropdown"
+              style="position: relative;"
+              onmouseleave="document.getElementById('tcc-systems-menu').style.display='none';"
+            >
+              <div
+                type="button"
+                class="tcc-nav-link"
+                aria-haspopup="true"
+                aria-expanded="false"
+                onmouseover="document.getElementById('tcc-systems-menu').style.display='flex';"
+                onfocus="document.getElementById('tcc-systems-menu').style.display='flex';"
+                onclick="const m=document.getElementById('tcc-systems-menu'); m.style.display = (m.style.display==='flex'?'none':'flex');"
+              >
+                Systems
+                <i class="fas fa-chevron-down" style="margin-left: 0.25rem; font-size: 0.7em;"></i>
+              </div>
+
+              <div
+                id="tcc-systems-menu"
+                style="
+                  display: none;
+                  position: absolute;
+                  top: 100%;
+                  right: 0;
+                  padding: 0.4rem 0;
+                  background: rgba(15, 23, 42, 0.98);
+                  border-radius: 0.5rem;
+                  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.8);
+                  min-width: 240px;
+                  z-index: 50;
+                  flex-direction: column;
+                "
+              >
+                <a href="systems-portal.html" target="_blank" class="tcc-nav-link" style="display:block; padding:0.4rem 1rem; white-space:nowrap;">Systems Portal</a>
+                <a href="prodorder-status.html" target="_blank" class="tcc-nav-link" style="display:block; padding:0.4rem 1rem; white-space:nowrap;">Production Order Status</a>
+                <a href="schedule-visualization.html" class="tcc-nav-link" style="display:block; padding:0.4rem 1rem; white-space:nowrap;">Schedule Visualization</a>
+                <a href="backend-status.html" class="tcc-nav-link" style="display:block; padding:0.4rem 1rem; white-space:nowrap;">Backend Status System</a>
+                <a href="frontend-status.html" class="tcc-nav-link" style="display:block; padding:0.4rem 1rem; white-space:nowrap;">Frontend Status System</a>
+                <a href="machine-load-recalculation-studio.html" class="tcc-nav-link" style="display:block; padding:0.4rem 1rem; white-space:nowrap;">Machine Load Recalculation Studio</a>
+                <a href="load-vs-capacity.html" class="tcc-nav-link" style="display:block; padding:0.4rem 1rem; white-space:nowrap;">Load vs Capacity</a>
+                <a href="andon-board.html" class="tcc-nav-link" style="display:block; padding:0.4rem 1rem; white-space:nowrap;">Production Andon Board</a>
+                <a href="enhanced-oms.html" class="tcc-nav-link" style="display:block; padding:0.4rem 1rem; white-space:nowrap;">Enhanced OMS</a>
+              </div>
+            </div>
+
+            <a href="notes-updates.html" class="tcc-nav-link">Notes &amp; Updates</a>
+
+            <a href="../../demo-apps/ai-assistant-demo.html" class="tcc-nav-link" data-ai-assistant-link="1">
+              AI ASSISTANT
+            </a>
+          </nav>
+
+          <button class="tcc-nav-toggle" aria-label="Toggle navigation">
+            <span></span>
+          </button>
+        </div>
+      </header>
+
+      <main class="tcc-main">
+        <section class="tcc-page-hero tcc-fade-in-on-load">
+          <div class="tcc-page-hero-inner">
+            <div class="reveal-on-scroll">
+              <div class="tcc-page-breadcrumb">Scheduling Systems · Recalculation Studio</div>
+              <h1 class="tcc-page-title">Machine Load Recalculation Studio</h1>
+              <p class="tcc-page-subtitle">
+                Dual-mode scheduling system for SAP-based winding schedule recalculation,
+                manual sequence editing, machine-load Gantt visualization, and AI-assisted
+                balancing with downloadable output workbooks.
+              </p>
+              <div class="tcc-page-hero-badges">
+                <span class="tcc-badge"><i class="fas fa-project-diagram"></i> AI mode &amp; Manual mode</span>
+                <span class="tcc-badge"><i class="fas fa-file-excel"></i> SAP bundle + workbook export</span>
+                <span class="tcc-badge"><i class="fas fa-chart-gantt"></i> Gantt &amp; table views</span>
+              </div>
+            </div>
+
+            <div class="tcc-page-hero-visual reveal-on-scroll">
+              <div class="tcc-page-hero-card">
+                <h3>How to use this System</h3>
+                <ul>
+                  <li>Log in first, then choose either <strong>AI Mode</strong> or <strong>Manual Mode</strong>.</li>
+                  <li>AI Mode provides <strong>Gantt Visualization</strong>, <strong>Table Source</strong> and <strong>AI Workspace</strong>.</li>
+                  <li>Manual Mode provides <strong>Gantt Visualization</strong> and <strong>Table Source</strong>.</li>
+                  <li>Default SAP files can be loaded from the server, or local workbooks can be uploaded from device.</li>
+                  <li>All recalculation and optimization results can be downloaded as output workbooks after a successful run.</li>
+                </ul>
+                <div class="tcc-tag-row">
+                  <span class="tcc-tag">Port 5009 · Frontend</span>
+                  <span class="tcc-tag">Port 8888 · API</span>
+                  <span class="tcc-tag">WR_Schedule.xlsx</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="tcc-page-main">
+          <div class="tcc-page-main-inner">
+            <article class="tcc-panel reveal-on-scroll">
+              <h3>Guide Manual</h3>
+              <p>
+                This guide explains how to use the main pages inside the
+                <strong>Machine Load Recalculation Studio</strong>. The frontend provides a login
+                page, mode selection, machine-load Gantt boards, editable source tables, AI balancing,
+                and manual recalculation workflows.
+              </p>
+
+              <ol class="list-decimal list-inside space-y-3">
+                <li>
+                  <div><strong>Login page &amp; mode selection</strong></div>
+                  <p>
+                    The system opens with a login page and allows the user to enter either
+                    <strong>AI Mode</strong> or <strong>Manual Mode</strong>. After a successful login,
+                    the page switches into the selected workspace shell.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>Use AI Mode when you need SAP-driven recalculation and AI balancing.</li>
+                    <li>Use Manual Mode when you want to upload a schedule file, edit sequence directly, and run a lighter recalculation path.</li>
+                  </ul>
+                </li>
+
+                <li>
+                  <div><strong>AI Mode · Gantt Visualization</strong></div>
+                  <p>
+                    The AI-mode Gantt page is the high-level machine-load view. It shows current machine
+                    allocation and the latest schedule state after SAP import or recalculation.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>Use this page to understand machine occupancy and compare the effect of optimization rounds.</li>
+                    <li>It is the fastest page for spotting overloaded machines or abnormal schedule clustering.</li>
+                  </ul>
+                </li>
+
+                <li>
+                  <div><strong>AI Mode · Table Source</strong></div>
+                  <p>
+                    The AI-mode table shows the editable machine-load schedule source table.
+                    It displays the current schedule rows and attribute columns, and supports direct source review
+                    before entering the AI workspace.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>Use this page when you want to review the current schedule row-by-row before optimization.</li>
+                    <li>It pairs naturally with the Gantt page: table for detail, Gantt for pattern recognition.</li>
+                  </ul>
+                </li>
+
+                <li>
+                  <div><strong>AI Mode · AI Workspace</strong></div>
+                  <p>
+                    The AI Workspace is the main control center for SAP bundle upload, schedule source selection,
+                    unsupervised balancing, recalculation results, machine load status, and result download.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>Choose whether the AI should use the current in-system schedule or an imported local sheet as its source.</li>
+                    <li>Upload or auto-load the required SAP files, then run recalculation or AI optimization.</li>
+                    <li>After completion, download the generated workbook directly from the output section.</li>
+                  </ul>
+                </li>
+
+                <li>
+                  <div><strong>Manual Mode · Table Source</strong></div>
+                  <p>
+                    The Manual Mode Table Source page supports schedule-file upload, dense table editing,
+                    pick / move operations, and manual recalculation without entering the AI workflow.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>Upload a local <strong>.xlsx / .xls / .xlsm</strong> schedule file from device.</li>
+                    <li>Edit row position and source values directly in the table, then run recalculation.</li>
+                    <li>When the response returns successfully, the page switches to the Manual Gantt tab automatically.</li>
+                  </ul>
+                </li>
+
+                <li>
+                  <div><strong>Manual Mode · Gantt Visualization</strong></div>
+                  <p>
+                    This page visualizes the recalculated manual schedule using the manual machine list and current output rows.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>Use it immediately after manual recalculation to verify whether the row move or sequence edit produced the intended result.</li>
+                    <li>Download the recalculated workbook when the visual result is acceptable.</li>
+                  </ul>
+                </li>
+
+                <li>
+                  <div><strong>Download outputs &amp; troubleshooting</strong></div>
+                  <p>
+                    Both AI and Manual workflows produce downloadable result workbooks. When calculation fails,
+                    the frontend surfaces the returned error message from the API.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>Use the generated download links after recalculation, manual recalculation, or AI optimization.</li>
+                    <li>When an endpoint fails, open the browser Network tab to inspect returned <code>ok:false</code> and error text.</li>
+                  </ul>
+                </li>
+              </ol>
+
+              <p style="margin-top: 0.75rem; font-size: 0.8rem; color: #9ca3af">
+                General Suggestion: use <strong>Gantt Visualization</strong> for pattern-level review,
+                <strong>Table Source</strong> for row-level inspection and direct edits, and the
+                <strong>AI Workspace</strong> when you need full SAP-driven recalculation and balancing.
+              </p>
+            </article>
+
+            <article class="tcc-panel reveal-on-scroll">
+              <h3>System Link &amp; API guide for Data Source</h3>
+
+              <p>
+                Open the frontend from internal network, then use your assigned credential to log in.
+                The frontend is designed for desktop usage and connects to a dedicated API service for
+                default SAP loading, recalculation, AI optimization and output download.
+              </p>
+
+              <p style="margin-top: 0.75rem">
+                <a href="../../demo-apps/machine-load-studio-demo.html" target="_blank" class="tcc-link-inline" style="font-size: 0.95rem">
+                  <i class="fas fa-external-link-alt"></i>
+                  Open Machine Load Recalculation Studio
+                </a>
+              </p>
+
+              <div class="tcc-tag-row">
+                <span class="tcc-tag">Demo preview</span>
+                <span class="tcc-tag">Demo preview - API</span>
+                <span class="tcc-tag">Status: Internal</span>
+              </div>
+
+              <hr style="margin: 1.2rem 0; border-color: rgba(148,163,184,0.45)" />
+
+              <h4>1. Health &amp; default SAP loading</h4>
+              <dl style="margin: 0 0 0.6rem 0;">
+                <dt>GET /api/health</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Returns a simple health payload for the recalculation service.
+                </dd>
+
+                <dt>GET /api/default-sap-files</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Load the server-side default SAP bundle and calendar file metadata, including file preview and base64 payload.
+                </dd>
+              </dl>
+
+              <h4>2. Manual workflow endpoints</h4>
+              <dl style="margin: 0 0 0.6rem 0;">
+                <dt>POST /api/manual-recalculate</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Run manual recalculation using uploaded schedule rows plus calendar data. Accepts schedule rows,
+                  schedule columns and config such as machine list, shift pattern and manual sequence preservation.
+                </dd>
+
+                <dt>GET /api/download-manual/:id</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Download the generated workbook from a successful manual recalculation run.
+                </dd>
+              </dl>
+
+              <h4>3. AI / SAP bundle recalculation</h4>
+              <dl style="margin: 0 0 0.6rem 0;">
+                <dt>POST /api/recalculate-bundle</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Run the standard SAP-bundle recalculation path using required uploads such as chars, hours,
+                  lead orders, prod orders, sales orders and calendar, with optional materials, lock and imported schedule sheet.
+                </dd>
+
+                <dt>GET /api/download/:id</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Download the result workbook from a successful standard recalculation run.
+                </dd>
+              </dl>
+
+              <h4>4. AI optimization workflow</h4>
+              <dl style="margin: 0 0 0.6rem 0;">
+                <dt>POST /api/ai/optimize-recalculate-bundle</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Run AI optimization plus recalculation using the same SAP bundle, AI machine rules, and optimization scoring logic.
+                </dd>
+
+                <dt>GET /api/download-ai/:id</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Download the AI-optimized workbook after the service returns a successful result.
+                </dd>
+              </dl>
+
+              <h4>5. Core file assumptions</h4>
+              <dl style="margin: 0 0 0.6rem 0;">
+                <dt>Required SAP keys</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  chars, hours, leadOrders, prodOrders, salesOrders and calendar are required for the standard SAP-bundle flow.
+                </dd>
+
+                <dt>Default server-side file map</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Default SAP loading expects Calendar.xlsx, Chars.xls, Hours.xls, Lead Orders.xls, Prod Orders.xls,
+                  Sales Orders.xls and Lock.xlsx in the configured server-side SAP data directory.
+                </dd>
+              </dl>
+
+              <h4>6. Responses &amp; errors</h4>
+              <p style="margin: 0 0 0.25rem 0.9rem; font-size: 0.9rem;">
+                <strong>All endpoints return JSON.</strong> Success payloads include result rows and optional
+                download information. On failure, the API returns HTTP <strong>4xx / 5xx</strong> codes together with
+                <strong>ok:false</strong> or an <strong>error</strong> message for troubleshooting in the browser Network tab.
+              </p>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <footer class="tcc-footer">
+        <div class="tcc-footer-inner">
+          <span>© 2026 Trench Canada · Scheduling Team</span>
+          <span>Machine Load Recalculation Studio · Version 1.0 · Designed &amp; Maintained by Yanbo Wang (FY2026)</span>
+        </div>
+      </footer>
+    </div>
+
+    <div id="tcc-marquee-border" aria-hidden="true"></div>
+
+    <script src="assets/js/main.js"></script>
+
+    <script>
+      (function () {
+        const AI_URL = "../../demo-apps/ai-assistant-demo.html";
+
+        function glowOn() {
+          document.body.classList.add("tcc-marquee-on");
+        }
+
+        function glowOff() {
+          document.body.classList.remove("tcc-marquee-on");
+        }
+
+        function goAiAssistant(e) {
+          if (e) e.preventDefault();
+          glowOn();
+          setTimeout(() => {
+            window.location.href = AI_URL;
+          }, 380);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+          const nodes = document.querySelectorAll("[data-ai-assistant-link='1']");
+          nodes.forEach((el) => {
+            el.addEventListener("mouseenter", glowOn);
+            el.addEventListener("mouseleave", glowOff);
+            el.addEventListener("focus", glowOn);
+            el.addEventListener("blur", glowOff);
+            el.addEventListener("click", goAiAssistant);
+          });
+        });
+      })();
+    </script>
+
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>

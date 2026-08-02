@@ -1,0 +1,861 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TCC Backlog &amp; OM Status Board — Demo Preview</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+<!-- Icons (local, vendored) -->
+<link rel="stylesheet" href="../assets/font-awesome/css/all.min.css" />
+
+<style>
+  :root {
+    --on-time: #4ade80;
+    --on-time-bg: rgba(74, 222, 128, 0.12);
+    --at-risk: #fbbf24;
+    --at-risk-bg: rgba(251, 191, 36, 0.12);
+    --overdue: #f87171;
+    --overdue-bg: rgba(248, 113, 113, 0.12);
+    --info: #38bdf8;
+    --purple: #a855f7;
+    --card-bg: rgba(15, 23, 42, 0.9);
+    --card-border: rgba(148, 163, 184, 0.5);
+    --text-heading: #e5e7eb;
+    --text-body: #cbd5f5;
+    --text-muted: #9ca3af;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    background-color: #020617;
+    color: var(--text-body);
+    font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  body {
+    background:
+      radial-gradient(circle at 8% 8%, rgba(56, 189, 248, 0.16), transparent 42%),
+      radial-gradient(circle at 92% 4%, rgba(168, 85, 247, 0.14), transparent 45%),
+      radial-gradient(circle at 50% 100%, rgba(37, 99, 235, 0.18), transparent 55%),
+      #020617;
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  .wrap {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1.75rem 1.75rem 3rem;
+  }
+
+  /* ---------- Header ---------- */
+  header.top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.4rem;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+  }
+
+  .brand img {
+    height: 45px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.25));
+  }
+
+  .brand-text h1 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-heading);
+    letter-spacing: 0.02em;
+  }
+
+  .brand-text p {
+    margin: 0.15rem 0 0;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    padding: 0.5rem 0.9rem;
+    border: 1px solid var(--card-border);
+    border-radius: 0.6rem;
+    background: rgba(15, 23, 42, 0.6);
+    transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+  }
+
+  .back-link:hover {
+    color: var(--info);
+    border-color: rgba(56, 189, 248, 0.5);
+    background: rgba(56, 189, 248, 0.08);
+  }
+
+  .demo-pill-row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.6rem;
+  }
+
+  .demo-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    padding: 0.45rem 1.1rem;
+    border-radius: 999px;
+    border: 1px solid rgba(168, 85, 247, 0.45);
+    background: rgba(168, 85, 247, 0.1);
+    color: #d8b4fe;
+  }
+
+  .demo-pill i { color: var(--purple); }
+
+  /* ---------- Cards ---------- */
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 0.9rem;
+    box-shadow: 0 18px 40px rgba(2, 6, 23, 0.55);
+    backdrop-filter: blur(14px);
+  }
+
+  /* ---------- Stat strip ---------- */
+  .stat-strip {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.4rem;
+  }
+
+  .stat-tile {
+    padding: 1rem 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+  }
+
+  .stat-tile .icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 0.7rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  .stat-tile .num {
+    font-size: 1.55rem;
+    font-weight: 600;
+    color: var(--text-heading);
+    line-height: 1.1;
+  }
+
+  .stat-tile .label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .stat-tile.total .icon { background: rgba(56, 189, 248, 0.14); color: var(--info); }
+  .stat-tile.ontime .icon { background: var(--on-time-bg); color: var(--on-time); }
+  .stat-tile.atrisk .icon { background: var(--at-risk-bg); color: var(--at-risk); }
+  .stat-tile.overdue .icon { background: var(--overdue-bg); color: var(--overdue); }
+
+  /* ---------- Main layout ---------- */
+  .main-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 2.15fr) minmax(0, 1fr);
+    gap: 1.4rem;
+    align-items: start;
+    margin-bottom: 1.4rem;
+  }
+
+  @media (max-width: 980px) {
+    .main-grid { grid-template-columns: 1fr; }
+    .stat-strip { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* ---------- Tabs ---------- */
+  .panel-head {
+    padding: 1.1rem 1.3rem 0.9rem;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+  }
+
+  .panel-head h2 {
+    margin: 0 0 0.2rem;
+    font-size: 1rem;
+    color: var(--text-heading);
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+  }
+
+  .panel-head h2 i { color: var(--info); }
+
+  .panel-head p {
+    margin: 0;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+
+  .tab-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding: 0.9rem 1.3rem 0;
+  }
+
+  .tab-btn {
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--text-muted);
+    background: rgba(148, 163, 184, 0.08);
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    border-radius: 0.55rem 0.55rem 0 0;
+    padding: 0.5rem 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+  }
+
+  .tab-btn .count {
+    font-size: 0.68rem;
+    padding: 0.05rem 0.4rem;
+    border-radius: 999px;
+    background: rgba(148, 163, 184, 0.2);
+    color: var(--text-muted);
+  }
+
+  .tab-btn:hover {
+    color: var(--text-heading);
+    background: rgba(56, 189, 248, 0.1);
+  }
+
+  .tab-btn.active {
+    color: #020617;
+    background: var(--info);
+    border-color: var(--info);
+    font-weight: 600;
+  }
+
+  .tab-btn.active .count {
+    background: rgba(2, 6, 23, 0.25);
+    color: #020617;
+  }
+
+  /* ---------- Table ---------- */
+  .table-scroll {
+    overflow-x: auto;
+    padding: 0.9rem 1.3rem 1.3rem;
+  }
+
+  table.orders {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    min-width: 760px;
+  }
+
+  table.orders thead th {
+    text-align: left;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    padding: 0.55rem 0.7rem;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+    cursor: pointer;
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  table.orders thead th:hover { color: var(--info); }
+
+  table.orders thead th .sort-icon {
+    margin-left: 0.35rem;
+    opacity: 0.5;
+    font-size: 0.68rem;
+  }
+
+  table.orders thead th.sorted .sort-icon { opacity: 1; color: var(--info); }
+
+  table.orders tbody td {
+    padding: 0.55rem 0.7rem;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+    color: var(--text-body);
+    vertical-align: middle;
+  }
+
+  table.orders tbody tr:hover { background: rgba(56, 189, 248, 0.05); }
+
+  table.orders td.mono { font-family: 'IBM Plex Mono', 'Courier New', monospace; color: var(--text-heading); }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  .badge.on-time { background: var(--on-time-bg); color: var(--on-time); border: 1px solid rgba(74, 222, 128, 0.35); }
+  .badge.at-risk { background: var(--at-risk-bg); color: var(--at-risk); border: 1px solid rgba(251, 191, 36, 0.35); }
+  .badge.overdue { background: var(--overdue-bg); color: var(--overdue); border: 1px solid rgba(248, 113, 113, 0.35); }
+
+  .priority-High { color: #fca5a5; font-weight: 600; }
+  .priority-Medium { color: #fcd34d; font-weight: 500; }
+  .priority-Low { color: #9ca3af; font-weight: 400; }
+
+  td.why-cell {
+    cursor: pointer;
+    color: var(--text-muted);
+    font-style: italic;
+    max-width: 220px;
+  }
+
+  td.why-cell:hover { color: var(--info); }
+  td.why-cell i.fa-comment-dots { margin-right: 0.35rem; opacity: 0.6; }
+
+  td.why-cell input {
+    width: 100%;
+    font-family: inherit;
+    font-size: 0.8rem;
+    background: rgba(2, 6, 23, 0.6);
+    border: 1px solid var(--info);
+    border-radius: 0.35rem;
+    color: var(--text-heading);
+    padding: 0.3rem 0.45rem;
+  }
+
+  .why-hint {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    padding: 0 1.3rem 0.9rem;
+    margin-top: -0.4rem;
+  }
+
+  /* ---------- Live ticker panel ---------- */
+  .live-panel { display: flex; flex-direction: column; max-height: 640px; }
+
+  .live-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--on-time);
+    box-shadow: 0 0 8px var(--on-time);
+    animation: pulse 1.6s infinite ease-in-out;
+    margin-right: 0.5rem;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+  }
+
+  .ticker-list {
+    list-style: none;
+    margin: 0;
+    padding: 0.7rem 1.3rem 1.2rem;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 220px;
+    max-height: 560px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+
+  .ticker-list li {
+    font-size: 0.76rem;
+    line-height: 1.4;
+    padding: 0.5rem 0.65rem;
+    border-radius: 0.5rem;
+    background: rgba(148, 163, 184, 0.06);
+    border-left: 2px solid var(--info);
+    color: var(--text-body);
+    animation: fadeIn 0.4s ease;
+  }
+
+  .ticker-list li .ts { color: var(--text-muted); margin-right: 0.4rem; }
+  .ticker-list li .wc-tag {
+    color: var(--info);
+    font-weight: 600;
+    margin-right: 0.3rem;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ---------- About panel ---------- */
+  .about-panel { padding: 1.4rem 1.6rem 1.6rem; margin-bottom: 1.4rem; }
+
+  .about-panel h2 {
+    margin: 0 0 0.7rem;
+    font-size: 1.05rem;
+    color: var(--text-heading);
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+  }
+
+  .about-panel h2 i { color: var(--purple); }
+
+  .about-panel p { font-size: 0.88rem; color: var(--text-body); margin: 0 0 0.9rem; max-width: 70rem; }
+
+  .about-panel ul {
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 0.7rem 1.2rem;
+  }
+
+  .about-panel li {
+    font-size: 0.82rem;
+    color: var(--text-body);
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+  }
+
+  .about-panel li i {
+    color: var(--info);
+    margin-top: 0.2rem;
+    flex-shrink: 0;
+  }
+
+  footer.page-footer {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    padding-top: 0.6rem;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <img src="../Enhanced entrance for systems/Logo2.png" alt="Trench Canada Coils" />
+      <div class="brand-text">
+        <h1>Backlog &amp; OM Period Status Board</h1>
+        <p>Workcenter Pending Orders — Scheduling &amp; Planning</p>
+      </div>
+    </div>
+    <a class="back-link" href="../Enhanced entrance for systems/apple-style-portal.html">
+      <i class="fas fa-arrow-left"></i> Back to Systems Portal
+    </a>
+  </header>
+
+  <div class="demo-pill-row">
+    <span class="demo-pill"><i class="fas fa-flask"></i> DEMO PREVIEW · Sample data only, not connected to any live system</span>
+  </div>
+
+  <section class="stat-strip" id="statStrip">
+    <div class="card stat-tile total">
+      <div class="icon"><i class="fas fa-layer-group"></i></div>
+      <div><div class="num" id="statTotal">0</div><div class="label">Pending in tab</div></div>
+    </div>
+    <div class="card stat-tile ontime">
+      <div class="icon"><i class="fas fa-check-circle"></i></div>
+      <div><div class="num" id="statOnTime">0</div><div class="label">On-time</div></div>
+    </div>
+    <div class="card stat-tile atrisk">
+      <div class="icon"><i class="fas fa-triangle-exclamation"></i></div>
+      <div><div class="num" id="statAtRisk">0</div><div class="label">At-risk</div></div>
+    </div>
+    <div class="card stat-tile overdue">
+      <div class="icon"><i class="fas fa-circle-exclamation"></i></div>
+      <div><div class="num" id="statOverdue">0</div><div class="label">Overdue</div></div>
+    </div>
+  </section>
+
+  <div class="main-grid">
+    <section class="card">
+      <div class="panel-head">
+        <h2><i class="fas fa-industry"></i> Pending Orders by Workcenter</h2>
+        <p>Click a workcenter tab to view its pending queue. Click a column header to sort. Double-click a "Why" note to edit it.</p>
+      </div>
+      <div class="tab-bar" id="tabBar"></div>
+      <div class="table-scroll">
+        <table class="orders">
+          <thead>
+            <tr id="tableHeadRow">
+              <th data-key="so">Sales Order # <i class="fas fa-sort sort-icon"></i></th>
+              <th data-key="material">Material <i class="fas fa-sort sort-icon"></i></th>
+              <th data-key="period">OM Period <i class="fas fa-sort sort-icon"></i></th>
+              <th data-key="pmad">PMAD Date <i class="fas fa-sort sort-icon"></i></th>
+              <th data-key="priority">Priority <i class="fas fa-sort sort-icon"></i></th>
+              <th data-key="status">Status <i class="fas fa-sort sort-icon"></i></th>
+              <th data-key="why">Why / Notes <i class="fas fa-sort sort-icon"></i></th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+      <div class="why-hint"><i class="fas fa-circle-info"></i> Tip: double-click any "Why / Notes" cell to add or edit a comment (kept in-memory for this demo only).</div>
+    </section>
+
+    <aside class="card live-panel">
+      <div class="panel-head">
+        <h2><span class="live-dot"></span> Live Workcenter Confirmations</h2>
+        <p>Fabricated shop-floor confirmation feed (simulated, refreshes every few seconds).</p>
+      </div>
+      <ul class="ticker-list" id="tickerList"></ul>
+    </aside>
+  </div>
+
+  <section class="card about-panel">
+    <h2><i class="fas fa-circle-info"></i> About this system</h2>
+    <p>
+      This demo previews the core screen of Trench Canada Coils' internal <strong>Backlog &amp; OM Period Status Board</strong> —
+      a scheduling tool used on the shop floor and by planning staff to track open sales orders as they move through each
+      manufacturing workcenter. All data on this page is fabricated sample content for demonstration purposes only; the
+      real application connects to live production and MES systems and is not reachable from this page.
+    </p>
+    <ul>
+      <li><i class="fas fa-table-cells"></i> Per-workcenter "Pending" tables for STRIP, CRIMP, WELD2, BLAST, CLEAN, PAINT, TESTLAB, DETAIL and CRATE, each showing open sales orders queued at that station.</li>
+      <li><i class="fas fa-tower-broadcast"></i> A live shop-floor order confirmation feed that refreshes roughly every 30 seconds as operators confirm completed operations.</li>
+      <li><i class="fas fa-boxes-stacked"></i> A Material Check table cross-referenced against pending orders, flagging shortages that could delay a workcenter.</li>
+      <li><i class="fas fa-dolly"></i> A CRATED tab listing orders that are packed and ready to ship, plus a History tab for orders already shipped.</li>
+      <li><i class="fas fa-user-shield"></i> An admin-only Overdue Orders tab, and a "Why" notes/comments feature so planners can annotate the reason behind a delay on any order.</li>
+    </ul>
+  </section>
+
+  <footer class="page-footer">© 2026 Trench Canada · Scheduling Team — Demo preview, sample data only.</footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ============================================================
+     Fabricated sample dataset
+     ============================================================ */
+  var WORKCENTERS = ["STRIP", "CRIMP", "WELD2", "BLAST", "CLEAN", "PAINT", "TESTLAB", "DETAIL", "CRATE"];
+
+  // status pattern per workcenter tells the story: WELD2 and TESTLAB run behind,
+  // CRATE / STRIP mostly on-time.
+  var STATUS_PATTERNS = {
+    STRIP:   ["on-time","on-time","at-risk","on-time","on-time","overdue","on-time","at-risk","on-time"],
+    CRIMP:   ["on-time","at-risk","on-time","on-time","overdue","on-time","on-time","at-risk","on-time","on-time"],
+    WELD2:   ["at-risk","overdue","on-time","at-risk","overdue","on-time","at-risk","on-time","overdue","on-time"],
+    BLAST:   ["on-time","on-time","at-risk","on-time","on-time","on-time","overdue","on-time"],
+    CLEAN:   ["on-time","on-time","on-time","at-risk","on-time","on-time"],
+    PAINT:   ["on-time","at-risk","on-time","overdue","on-time","at-risk","on-time","on-time"],
+    TESTLAB: ["overdue","at-risk","overdue","on-time","at-risk","overdue","on-time","at-risk"],
+    DETAIL:  ["on-time","on-time","at-risk","on-time","on-time","on-time","on-time"],
+    CRATE:   ["on-time","on-time","on-time","on-time","at-risk","on-time","on-time","on-time","on-time"]
+  };
+
+  var MATERIALS = [
+    "HV Coil Winding - Primary",
+    "LV Coil Winding - Secondary",
+    "Core Lamination Stack",
+    "Epoxy Cast Resin Coil",
+    "CT Ring Core Assembly",
+    "Terminal Block Assy",
+    "Tank Weldment - Std",
+    "Radiator Fin Pack",
+    "Bushing Insulator Kit",
+    "Test Tap Assembly",
+    "Dry-Type Reactor Core",
+    "Instrument Xfmr Coil"
+  ];
+
+  var PRIORITIES = ["High", "Medium", "Low"];
+
+  var WHY_BANK = [
+    "Awaiting copper stock",
+    "Rework after QC hold",
+    "Waiting on core delivery",
+    "Behind due to tooling changeover",
+    "On schedule",
+    "Expedite requested by customer",
+    "Material substitution approved",
+    "Test equipment calibration pending",
+    "Crew reassigned to rush order",
+    "Waiting on epoxy cure cycle",
+    "Held for engineering change",
+    ""
+  ];
+
+  var OPERATORS = ["J. Nguyen", "R. Patel", "M. Boudreau", "K. Singh", "A. Leclerc", "D. Osei", "T. Fortin", "S. Whitmore"];
+
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
+
+  function dateStr(offsetDays) {
+    var base = new Date(2026, 7, 2); // 2026-08-02, "today" in this demo
+    base.setDate(base.getDate() + offsetDays);
+    return base.getFullYear() + "-" + pad(base.getMonth() + 1) + "-" + pad(base.getDate());
+  }
+
+  function buildRows(wc, seed) {
+    var pattern = STATUS_PATTERNS[wc];
+    var rows = [];
+    for (var i = 0; i < pattern.length; i++) {
+      var status = pattern[i];
+      var offset = status === "overdue" ? -(1 + (i % 4)) :
+                   status === "at-risk" ? (i % 3) :
+                   4 + (i % 10);
+      var periodNum = 7 + ((seed + i) % 3);
+      rows.push({
+        so: "SO-" + (48000 + seed * 137 + i * 3),
+        material: MATERIALS[(seed + i) % MATERIALS.length],
+        period: "2026-P0" + periodNum,
+        pmad: dateStr(offset),
+        priority: PRIORITIES[(i + seed) % 3],
+        status: status,
+        why: WHY_BANK[(seed * 7 + i) % WHY_BANK.length]
+      });
+    }
+    return rows;
+  }
+
+  var DATA = {};
+  WORKCENTERS.forEach(function (wc, idx) {
+    DATA[wc] = buildRows(wc, idx);
+  });
+
+  /* ============================================================
+     State
+     ============================================================ */
+  var state = {
+    activeWC: "STRIP",
+    sortKey: null,
+    sortDir: 1
+  };
+
+  /* ============================================================
+     Tabs
+     ============================================================ */
+  var tabBar = document.getElementById("tabBar");
+
+  function renderTabs() {
+    tabBar.innerHTML = "";
+    WORKCENTERS.forEach(function (wc) {
+      var btn = document.createElement("button");
+      btn.className = "tab-btn" + (wc === state.activeWC ? " active" : "");
+      btn.innerHTML = wc + ' <span class="count">' + DATA[wc].length + "</span>";
+      btn.addEventListener("click", function () {
+        state.activeWC = wc;
+        state.sortKey = null;
+        renderTabs();
+        renderTable();
+        renderStats();
+      });
+      tabBar.appendChild(btn);
+    });
+  }
+
+  /* ============================================================
+     Stats
+     ============================================================ */
+  function renderStats() {
+    var rows = DATA[state.activeWC];
+    var onTime = rows.filter(function (r) { return r.status === "on-time"; }).length;
+    var atRisk = rows.filter(function (r) { return r.status === "at-risk"; }).length;
+    var overdue = rows.filter(function (r) { return r.status === "overdue"; }).length;
+    document.getElementById("statTotal").textContent = rows.length;
+    document.getElementById("statOnTime").textContent = onTime;
+    document.getElementById("statAtRisk").textContent = atRisk;
+    document.getElementById("statOverdue").textContent = overdue;
+  }
+
+  /* ============================================================
+     Table
+     ============================================================ */
+  var tableBody = document.getElementById("tableBody");
+  var headRow = document.getElementById("tableHeadRow");
+
+  function statusBadge(status) {
+    var icon = status === "on-time" ? "fa-check" : status === "at-risk" ? "fa-triangle-exclamation" : "fa-circle-exclamation";
+    var label = status === "on-time" ? "On-time" : status === "at-risk" ? "At-risk" : "Overdue";
+    return '<span class="badge ' + status + '"><i class="fas ' + icon + '"></i> ' + label + "</span>";
+  }
+
+  function sortedRows() {
+    var rows = DATA[state.activeWC].slice();
+    if (!state.sortKey) return rows;
+    var key = state.sortKey;
+    var dir = state.sortDir;
+    rows.sort(function (a, b) {
+      var va = a[key], vb = b[key];
+      if (va < vb) return -1 * dir;
+      if (va > vb) return 1 * dir;
+      return 0;
+    });
+    return rows;
+  }
+
+  function renderTable() {
+    var rows = sortedRows();
+    tableBody.innerHTML = "";
+
+    rows.forEach(function (row) {
+      var tr = document.createElement("tr");
+      tr.dataset.so = row.so;
+
+      tr.innerHTML =
+        '<td class="mono">' + row.so + "</td>" +
+        "<td>" + row.material + "</td>" +
+        "<td>" + row.period + "</td>" +
+        "<td>" + row.pmad + "</td>" +
+        '<td class="priority-' + row.priority + '">' + row.priority + "</td>" +
+        "<td>" + statusBadge(row.status) + "</td>" +
+        '<td class="why-cell" title="Double-click to edit"><i class="fas fa-comment-dots"></i>' +
+          (row.why ? row.why : '<em style="opacity:.5">— add note —</em>') + "</td>";
+
+      tableBody.appendChild(tr);
+    });
+
+    // header sort indicator state
+    Array.prototype.forEach.call(headRow.querySelectorAll("th"), function (th) {
+      var key = th.getAttribute("data-key");
+      var icon = th.querySelector(".sort-icon");
+      if (key === state.sortKey) {
+        th.classList.add("sorted");
+        icon.className = "fas sort-icon " + (state.sortDir === 1 ? "fa-sort-up" : "fa-sort-down");
+      } else {
+        th.classList.remove("sorted");
+        icon.className = "fas fa-sort sort-icon";
+      }
+    });
+  }
+
+  headRow.addEventListener("click", function (e) {
+    var th = e.target.closest("th");
+    if (!th) return;
+    var key = th.getAttribute("data-key");
+    if (state.sortKey === key) {
+      state.sortDir *= -1;
+    } else {
+      state.sortKey = key;
+      state.sortDir = 1;
+    }
+    renderTable();
+  });
+
+  // double-click "Why" cell -> inline editor
+  tableBody.addEventListener("dblclick", function (e) {
+    var td = e.target.closest("td.why-cell");
+    if (!td) return;
+    var tr = td.closest("tr");
+    var so = tr.dataset.so;
+    var row = DATA[state.activeWC].find(function (r) { return r.so === so; });
+    if (!row) return;
+
+    var input = document.createElement("input");
+    input.type = "text";
+    input.value = row.why || "";
+    input.maxLength = 80;
+
+    td.innerHTML = "";
+    td.appendChild(input);
+    input.focus();
+    input.select();
+
+    function commit() {
+      row.why = input.value.trim();
+      renderTable();
+    }
+
+    input.addEventListener("keydown", function (ev) {
+      if (ev.key === "Enter") commit();
+      if (ev.key === "Escape") renderTable();
+    });
+    input.addEventListener("blur", commit);
+  });
+
+  /* ============================================================
+     Live confirmations ticker
+     ============================================================ */
+  var tickerList = document.getElementById("tickerList");
+  var MAX_TICKER_LINES = 30;
+
+  function nowTs() {
+    var d = new Date();
+    return pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds());
+  }
+
+  function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+  function pick(arr) { return arr[randInt(0, arr.length - 1)]; }
+
+  function addTickerLine() {
+    var wc = pick(WORKCENTERS);
+    var rows = DATA[wc];
+    var row = rows.length ? pick(rows) : null;
+    var qty = randInt(1, 24);
+    var op = pick(OPERATORS);
+    var so = row ? row.so : "SO-" + randInt(48000, 49000);
+
+    var li = document.createElement("li");
+    li.innerHTML =
+      '<span class="ts">[' + nowTs() + "]</span>" +
+      '<span class="wc-tag">' + wc + "</span>" +
+      "confirmed " + so + " &mdash; qty " + qty + " &mdash; " + op;
+
+    tickerList.insertBefore(li, tickerList.firstChild);
+    while (tickerList.children.length > MAX_TICKER_LINES) {
+      tickerList.removeChild(tickerList.lastChild);
+    }
+  }
+
+  function seedTicker() {
+    for (var i = 0; i < 6; i++) addTickerLine();
+  }
+
+  /* ============================================================
+     Init
+     ============================================================ */
+  renderTabs();
+  renderTable();
+  renderStats();
+  seedTicker();
+  setInterval(addTickerLine, 4500);
+})();
+</script>
+</body>
+</html>

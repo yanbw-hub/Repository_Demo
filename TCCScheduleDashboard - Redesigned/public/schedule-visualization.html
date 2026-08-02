@@ -1,0 +1,1100 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>TCC Scheduling Major Board</title>
+
+    <link rel="icon" type="image/png" sizes="32x32" href="./Logo.png" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Orbitron:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Existing bundles -->
+    <script src="./javascript/reload.js"></script>
+    <script src="./1986481368401444864/resource_5784810000.js"></script>
+    <link href="./1986481368401444864/all.min.css" rel="stylesheet" />
+    <link href="./1986481368401444864/tailwind.min.css" rel="stylesheet" />
+
+    <!-- Global styles -->
+    <link rel="stylesheet" href="assets/css/base.css" />
+
+    <!-- Page-local UI redesign (仅样式，内容不动) -->
+    <style>
+      /* ===== 整页背景：和首页风格统一一点 ===== */
+      .tcc-main {
+        position: relative;
+        /* 最底层是图片，上面叠三层深色渐变做统一色调 */
+        background:
+          radial-gradient(circle at top left, rgba(56, 189, 248, 0.13), transparent 58%),
+          radial-gradient(circle at bottom right, rgba(37, 99, 235, 0.12), transparent 60%),
+          linear-gradient(to bottom, rgba(2, 6, 23, 0.36), rgba(2, 6, 23, 0.38)),
+          url('https://getwallpapers.com/wallpaper/full/2/3/1/378634.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed; /* 轻微视差，不喜欢可以删掉这一行 */
+      }
+
+      /* ===== HERO：抬一点层次感 ===== */
+      .tcc-page-hero {
+        padding-block: 3.25rem 2.4rem;
+        border-bottom: 1px solid rgba(15, 23, 42, 0.85);
+        position: relative;
+      }
+
+      .tcc-page-hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(circle at top right, rgba(125, 211, 252, 0.18), transparent 55%),
+          radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.18), transparent 55%);
+        opacity: 0.8;
+        pointer-events: none;
+      }
+
+      .tcc-page-hero-inner {
+        position: relative;
+        z-index: 1;
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+        gap: 2.4rem;
+        align-items: stretch;
+      }
+
+      .tcc-page-breadcrumb {
+        font-size: 0.8rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: #9ca3af;
+        margin-bottom: 0.8rem;
+      }
+
+      .tcc-page-title {
+        font-size: clamp(2rem, 2.6vw, 2.4rem);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        margin-bottom: 0.75rem;
+      }
+
+      .tcc-page-subtitle {
+        max-width: 40rem;
+        color: #d1d5db;
+      }
+
+      .tcc-page-hero-badges {
+        margin-top: 1.1rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .tcc-page-hero-visual {
+        display: flex;
+        align-items: stretch;
+        justify-content: flex-end;
+      }
+
+      .tcc-page-hero-card {
+        position: relative;
+        width: 100%;
+        border-radius: 1rem;
+        padding: 1.4rem 1.5rem 1.2rem;
+        background:
+          radial-gradient(circle at top left, rgba(59, 130, 246, 0.35), transparent 60%),
+          radial-gradient(circle at bottom right, rgba(8, 47, 73, 0.55), transparent 60%),
+          rgba(15, 23, 42, 0.54);
+        border: 1px solid rgba(148, 163, 184, 0.45);
+        box-shadow:
+          0 22px 45px rgba(15, 23, 42, 0.95),
+          0 0 0 1px rgba(15, 23, 42, 0.9) inset;
+        backdrop-filter: blur(14px);
+      }
+
+      .tcc-page-hero-card h3 {
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: #e5e7eb;
+        margin-bottom: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+
+      .tcc-page-hero-card h3::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(
+          to right,
+          rgba(59, 130, 246, 0.2),
+          rgba(56, 189, 248, 0.7)
+        );
+      }
+
+      .tcc-page-hero-card ul {
+        margin-left: 0;
+        padding-left: 1rem;
+        font-size: 0.9rem;
+        color: #cbd5f5;
+      }
+
+      .tcc-page-hero-card li + li {
+        margin-top: 0.4rem;
+      }
+
+      .tcc-page-hero-card .tcc-tag-row {
+        margin-top: 1rem;
+      }
+
+      /* ===== 主体双列区域：两张“玻璃卡片”并排 ===== */
+      .tcc-page-main {
+        padding: 2.4rem 1.75rem 3.25rem;
+        border-top: 1px solid rgba(15, 23, 42, 0.9);
+      }
+
+      .tcc-page-main-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+        gap: 2rem;
+        align-items: stretch;
+      }
+
+      .tcc-page-main-inner .tcc-panel {
+        position: relative;
+        min-height: 0;
+        max-height: 65vh; /* 高度限制到一屏内，内部滚动 */
+        padding: 1.6rem 1.7rem 1.5rem;
+        border-radius: 1rem;
+        border: 1px solid rgba(148, 163, 184, 0.42);
+        background:
+          radial-gradient(circle at top left, rgba(56, 189, 248, 0.25), transparent 62%),
+          radial-gradient(circle at bottom right, rgba(37, 99, 235, 0.28), transparent 60%),
+          rgba(15, 23, 42, 0.36);
+        box-shadow:
+          0 22px 48px rgba(15, 23, 42, 0.98),
+          0 0 0 1px rgba(15, 23, 42, 0.9) inset;
+        backdrop-filter: blur(18px);
+        overflow-y: auto;
+      }
+
+      .tcc-page-main-inner .tcc-panel::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: linear-gradient(
+          135deg,
+          rgba(96, 165, 250, 0.22),
+          transparent 55%
+        );
+        mix-blend-mode: soft-light;
+        opacity: 0.9;
+        pointer-events: none;
+      }
+
+      .tcc-page-main-inner .tcc-panel > * {
+        position: relative;
+        z-index: 1;
+      }
+
+      /* Panel 标题样式 */
+      .tcc-page-main-inner .tcc-panel h3 {
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: #e5e7eb;
+        margin-bottom: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+
+      .tcc-page-main-inner .tcc-panel h3::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: radial-gradient(circle, #38bdf8, #2563eb);
+        box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.25);
+      }
+
+      .tcc-page-main-inner .tcc-panel h3::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(
+          to right,
+          rgba(15, 23, 42, 0),
+          rgba(148, 163, 184, 0.8)
+        );
+      }
+
+      .tcc-page-main-inner .tcc-panel h4 {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: #e5e7eb;
+        margin: 1.1rem 0 0.35rem;
+      }
+
+      .tcc-page-main-inner .tcc-panel p {
+        font-size: 0.9rem;
+        color: #d1d5db;
+      }
+
+      /* Guide manual 里的有序列表美化 */
+      .tcc-page-main-inner .tcc-panel ol.list-decimal {
+        margin-top: 0.75rem;
+        padding-left: 1.1rem;
+      }
+
+      .tcc-page-main-inner .tcc-panel ol.list-decimal > li {
+        padding-top: 0.55rem;
+        margin-top: 0.2rem;
+        border-top: 1px dashed rgba(148, 163, 184, 0.25);
+      }
+
+      .tcc-page-main-inner .tcc-panel ol.list-decimal > li:first-child {
+        border-top: 0;
+      }
+
+      /* 让数字和标题在同一行：1. Dashboard */
+      .tcc-page-main-inner .tcc-panel ol.list-decimal > li > div:first-child {
+        display: inline-block;
+        margin-left: 0.3rem;
+        font-weight: 600;
+        color: #e5e7eb;
+      }
+
+      .tcc-page-main-inner .tcc-panel ul.list-disc {
+        margin-top: 0.3rem;
+        padding-left: 1.1rem;
+        font-size: 0.9rem;
+        color: #cbd5f5;
+      }
+
+      .tcc-page-main-inner .tcc-panel ul.list-disc li + li {
+        margin-top: 0.25rem;
+      }
+
+      .tcc-page-main-inner .tcc-panel dl {
+        font-size: 0.88rem;
+        color: #d1d5db;
+      }
+
+      .tcc-page-main-inner .tcc-panel dl dt {
+        color: #e5e7eb;
+      }
+
+      .tcc-page-main-inner .tcc-panel dl dd {
+        color: #cbd5f5;
+      }
+
+      .tcc-page-main-inner .tcc-panel .tcc-tag-row {
+        margin-top: 0.6rem;
+      }
+
+      .tcc-page-main-inner .tcc-panel .tcc-tag {
+        border-radius: 9999px;
+        border: 1px solid rgba(148, 163, 184, 0.5);
+        background: rgba(15, 23, 42, 0.9);
+      }
+
+      /* Guide panel 页脚说明文字更浅一点 */
+      .tcc-page-main-inner .tcc-panel p[style*="font-size: 0.8rem"] {
+        color: #9ca3af !important;
+      }
+
+      /* 低存在感滚动条，仅限两个 panel */
+      .tcc-page-main-inner .tcc-panel {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(148, 163, 184, 0.45) transparent;
+      }
+
+      .tcc-page-main-inner .tcc-panel::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .tcc-page-main-inner .tcc-panel::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      .tcc-page-main-inner .tcc-panel::-webkit-scrollbar-thumb {
+        background: rgba(148, 163, 184, 0.45);
+        border-radius: 9999px;
+      }
+
+      .tcc-page-main-inner .tcc-panel::-webkit-scrollbar-thumb:hover {
+        background: rgba(148, 163, 184, 0.7);
+      }
+
+      /* ===== 自适应：小屏改为纵向排布，去掉高度限制 ===== */
+      @media (max-width: 900px) {
+        .tcc-page-hero {
+          padding-block: 2.4rem 1.9rem;
+        }
+
+        .tcc-page-hero-inner {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 1.9rem;
+        }
+
+        .tcc-page-main {
+          padding: 1.8rem 1.25rem 2.3rem;
+        }
+
+        .tcc-page-main-inner {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 1.6rem;
+        }
+
+        .tcc-page-main-inner .tcc-panel {
+          max-height: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="tcc-site">
+      <!-- ========== HEADER ========== -->
+      <header class="tcc-header">
+        <div class="tcc-nav-inner">
+          <a href="index.html" class="tcc-brand">
+            <img src="./Logo2.png" alt="TCC logo" style="height: 100px; width: 120px; object-fit: contain;" />
+            <div>
+              <div class="tcc-brand-text-main">Trench Canada Coils</div>
+              <div class="tcc-brand-text-sub">
+                A LEGACY OF INNOVATION
+              </div>
+            </div>
+          </a>
+
+          <nav class="tcc-nav-links">
+            <!-- HOME -->
+            <a href="index.html" class="tcc-nav-link">Home</a>
+
+            <!-- SYSTEMS 下拉菜单 -->
+            <div
+              class="tcc-nav-dropdown"
+              style="position: relative;"
+              onmouseleave="document.getElementById('tcc-systems-menu').style.display='none';"
+            >
+              <div
+                type="button"
+                class="tcc-nav-link"
+                aria-haspopup="true"
+                aria-expanded="false"
+                onmouseover="document.getElementById('tcc-systems-menu').style.display='flex';"
+                onfocus="document.getElementById('tcc-systems-menu').style.display='flex';"
+                onclick="const m=document.getElementById('tcc-systems-menu'); m.style.display = (m.style.display==='flex'?'none':'flex');"
+              >
+                Systems
+                <i
+                  class="fas fa-chevron-down"
+                  style="margin-left: 0.25rem; font-size: 0.7em;"
+                ></i>
+              </div>
+
+              <!-- 下拉列表：五个 systems -->
+              <div
+                id="tcc-systems-menu"
+                style="
+                  display: none;
+                  position: absolute;
+                  top: 100%;
+                  right: 0;
+                  padding: 0.4rem 0;
+                  background: rgba(15, 23, 42, 0.98);
+                  border-radius: 0.5rem;
+                  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.8);
+                  min-width: 220px;
+                  z-index: 50;
+                  flex-direction: column;
+                "
+              >
+                <a
+                  href="systems-portal.html"
+                  target="_blank"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Systems Portal
+                </a>
+                <a
+                  href="prodorder-status.html"
+                  target="_blank"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Production Order Status
+                </a>
+                <a
+                  href="schedule-visualization.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Schedule Visualization
+                </a>
+                <a
+                  href="backend-status.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Backend Status System
+                </a>
+                <a
+                  href="frontend-status.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Frontend Status System
+                </a>
+                <a
+                  href="machine-load-recalculation-studio.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Machine Load Recalculation Studio
+                </a>
+                <a
+                  href="load-vs-capacity.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Load vs Capacity
+                </a>
+                <a
+                  href="andon-board.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Production Andon Board
+                </a>
+                <a
+                  href="enhanced-oms.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Enhanced OMS
+                </a>
+              </div>
+            </div>
+
+            <!-- NOTES & UPDATES -->
+            <a href="notes-updates.html" class="tcc-nav-link">
+              Notes &amp; Updates
+            </a>
+
+            <!-- AI ASSISTANT -->
+            <a
+              href="../../demo-apps/ai-assistant-demo.html"
+              class="tcc-nav-link"
+              data-ai-assistant-link="1"
+            >
+              AI ASSISTANT
+            </a>
+          </nav>
+
+          <button class="tcc-nav-toggle" aria-label="Toggle navigation">
+            <span></span>
+          </button>
+        </div>
+      </header>
+
+      <main class="tcc-main">
+        <!-- HERO -->
+        <section class="tcc-page-hero tcc-fade-in-on-load">
+          <div class="tcc-page-hero-inner">
+            <div class="reveal-on-scroll">
+              <div class="tcc-page-breadcrumb">
+                TCC Planning & Scheduling
+              </div>
+              <h1 class="tcc-page-title">
+                Schedule Visualization
+                Workspace System
+              </h1>
+              <p class="tcc-page-subtitle">
+                Interactive Gantt-style views for Winding &amp; Roving,
+                Workcenter-level summaries on important data,
+                and simulation playground for both online and local W&R Schedules
+              </p>
+              <div class="tcc-page-hero-badges">
+                <span class="tcc-badge">
+                  <i class="fas fa-stream"></i>
+                  Main Gantt for schedules
+                </span>
+                <span class="tcc-badge">
+                  <i class="fas fa-magic"></i>
+                  Summary &amp; Simulation
+                </span>
+              </div>
+            </div>
+
+            <div class="tcc-page-hero-visual reveal-on-scroll">
+              <div class="tcc-page-hero-card">
+                <h3>How to access this system</h3>
+                <ul>
+                  <li>
+                    Use your assigned credentials to log into the system
+                  </li>
+                  <li>
+                    Select pages and functionalities you want to access
+                  </li>
+                  <li>
+                    Details can be found in Guide Manual
+                  </li>
+                  <li>
+                    Data auto updates from SAP every 30 mins
+                  </li>
+                  <li>
+                    This system is not suitable for mobiles or small tablets
+                  </li>
+                </ul>
+                <div class="tcc-tag-row">
+                  <span class="tcc-tag">Winding &amp; Roving</span>
+                  <span class="tcc-tag">Gantt</span>
+                  <span class="tcc-tag">Simulation</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- MAIN CONTENT -->
+        <section class="tcc-page-main">
+          <div class="tcc-page-main-inner">
+            <!-- Left: Guide Manual -->
+            <article class="tcc-panel reveal-on-scroll">
+              <h3>Guide Manual</h3>
+              <p>
+                This guide explains how to use the main pages inside the
+                <strong>TCC Scheduling &amp; Visualization: Integrated Platform</strong>.
+                It follows the same structure as the actual system sidebar.
+              </p>
+
+              <ol class="list-decimal list-inside space-y-3">
+                <!-- 1. DASHBOARD -->
+                <li>
+                  <div><strong>Dashboard</strong></div>
+                  <p>
+                    The Dashboard is the home page of the
+                    <strong>TCC Scheduling &amp; Visualization: Integrated Platform</strong>.
+                    It summarizes backlog, load vs capacity, reworks and vacation status in one place
+                    so planners and managers can quickly see where to focus.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      Use this page at the start of the day to scan key metrics:
+                      open backlog, overdue share, upcoming capacity risk and reworks trends.
+                    </li>
+                    <li>
+                      When a metric looks off (for example, high overdue or high load ratio),
+                      click through to the related page (Backlog Summary, Load vs Capacity,
+                      Reworks, etc.) from the sidebar to investigate.
+                    </li>
+                    <li>
+                      Treat this page as a “control tower”: it does not change data itself,
+                      but points you to the right detailed view for action.
+                    </li>
+                  </ul>
+                </li>
+
+                <!-- 2. BACKLOG SUMMARY (SAP ORDERS) -->
+                <li>
+                  <div><strong>Backlog Summary (SAP Orders)</strong></div>
+                  <p>
+                    This page reads all preloaded SAP and joined tables and presents them
+                    as backlog summary views. It combines SAP orders, TCC backlog,
+                    vacation capacity and derived metrics (e.g., EURx) so that you can see
+                    backlog by period, line and PMAD month.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      In the <strong>table selector</strong>, pick which dataset you want to see
+                      (e.g. Winding &amp; Roving, TCC Backlog, Vacation tables).
+                      The grid below will refresh to show that table.
+                    </li>
+                    <li>
+                      Use the <strong>PMAD / forecast charts</strong> and stacked bars
+                      to see backlog volume by month and by line. Click on chart segments
+                      that are interactive to open “contributing orders” drilldowns.
+                    </li>
+                    <li>
+                      When the PMAD drop-box is expanded, review which orders are driving
+                      a specific bucket, and use the
+                      <strong>Download Contributing Orders</strong> button to export those rows
+                      to CSV for sharing or deeper analysis.
+                    </li>
+                    <li>
+                      Use this page when you want a clean, structured view of all SAP / backlog data
+                      and need to export or filter at order level.
+                    </li>
+                  </ul>
+                </li>
+
+                <!-- 3. PROD ORDERS SCHEDULE (SchedulesPage) -->
+                <li>
+                  <div><strong>Prod Orders Schedule</strong></div>
+                  <p>
+                    This is the main <strong>Gantt-style schedule</strong> for Winding &amp; Roving.
+                    It visualizes SAP schedules as bars on a time axis, grouped by
+                    work center / line, and overlays backlog and PMAD information where available.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      Use the <strong>schedule type</strong> selector to choose between
+                      L1, L2, and VPI schedules in SAP.
+                    </li>
+                    <li>
+                      Use the <strong>line filter</strong> (WIND1–WIND5 or ALL)
+                      to focus the view on one line or see all lines together.
+                    </li>
+                    <li>
+                      Adjust the <strong>date range</strong> (start and end)
+                      to define the planning horizon (for example, the next 4–6 weeks).
+                    </li>
+                    <li>
+                      Each bar represents an order on a machine. Hover to see order details
+                      (material, coils, dates, clean flag, etc.).
+                    </li>
+                    <li>
+                      Use this page when you want to visually check if the SAP schedule
+                      is realistic for each line, or to find slots where new orders
+                      might be inserted.
+                    </li>
+                  </ul>
+                </li>
+
+                <!-- 4. PROD ORDERS SIMULATION (Simulation) -->
+                <li>
+                  <div><strong>Prod Orders Simulation</strong></div>
+                  <p>
+                    This page runs a <strong>capacity-driven simulation</strong> of the backlog.
+                    It uses the same joined data and capacity tables, then simulates
+                    when orders would realistically finish under different assumptions
+                    (working days, capacity per day, and queue logic).
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      Set the <strong>simulation start date</strong> to tell the engine
+                      from which date to begin consuming capacity.
+                    </li>
+                    <li>
+                      Adjust options such as which orders are included
+                      (for example, open backlog only, by line or by PMAD window)
+                      and how to treat weekends or non-working days.
+                    </li>
+                    <li>
+                      Run the simulation to generate a table of
+                      <strong>simulated finish dates</strong> for each order.
+                      Compare simulated finish dates to PMAD to identify risk and needed actions.
+                    </li>
+                    <li>
+                      Use this when someone asks, “If we start from today with current capacity,
+                      when will these orders realistically be completed?”
+                    </li>
+                  </ul>
+                </li>
+
+                <!-- 5. MACHINE LOAD SIMULATION (MachineGanttPage) -->
+                <li>
+                  <div><strong>Machine Load Simulation</strong></div>
+                  <p>
+                    This page shows a <strong>machine-by-machine Gantt</strong> and allows
+                    interactive what-if planning. You can move orders between dates
+                    or adjust durations and store a simulated plan locally
+                    (and optionally on the server).
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      Set the <strong>date window</strong> (start and end)
+                      for the simulation horizon. The Gantt will show orders
+                      only inside this range.
+                    </li>
+                    <li>
+                      Use the <strong>line filter</strong> (ALL or specific lines)
+                      to reduce the number of machines on screen.
+                    </li>
+                    <li>
+                      Click a bar to open the <strong>edit drawer</strong>.
+                      Adjust fields such as PMAD, start date and duration
+                      to simulate moving or resizing that order.
+                    </li>
+                    <li>
+                      Save overrides to local storage (and, if configured, to the server)
+                      to create a “what-if” plan without changing SAP.
+                    </li>
+                    <li>
+                      Use this to visually confirm whether proposed changes
+                      (moving jobs, adding overtime days, etc.) can fit on the machines.
+                    </li>
+                  </ul>
+                </li>
+
+                <!-- 6. FINISH DATE SIMULATION (WindingVariance) -->
+                <li>
+                  <div><strong>Finish Date Simulation (Winding Variance)</strong></div>
+                  <p>
+                    This page compares
+                    <strong>SAP schedules, Excel capacity/backlog sheets, and TCC backlog</strong>
+                    to show where finish dates or capacities do not line up.
+                    It is designed to highlight differences between planning sources.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      Choose which line to focus on (where applicable)
+                      and whether to show <strong>tabs</strong> (SAP vs Excel)
+                      or a <strong>split view</strong>.
+                    </li>
+                    <li>
+                      Use the <strong>quick filters</strong> at the top of each grid
+                      (for SAP and Excel) to search by order, material, or other fields.
+                    </li>
+                    <li>
+                      Compare columns such as PMAD, planned dates and capacities
+                      across sources to understand why some orders look different
+                      in Excel vs SAP.
+                    </li>
+                    <li>
+                      Use this when a question comes up like
+                      “Why is our Excel plan saying something different from SAP?”
+                      or “Where exactly are the date / volume mismatches?”
+                    </li>
+                  </ul>
+                </li>
+
+                <!-- 7. REWORKS -->
+                <li>
+                  <div><strong>Reworks</strong></div>
+                  <p>
+                    The Reworks page tracks <strong>rework volume and patterns</strong> over time.
+                    It uses line charts and bar charts to show reworks by month,
+                    by failure mode and by department, plus underlying tables where needed.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      Use the <strong>Top N slider</strong> to control how many leading
+                      failure modes or departments are displayed in charts.
+                    </li>
+                    <li>
+                      Read the monthly trend line to see if reworks are getting better
+                      or worse, and which failure types are dominating.
+                    </li>
+                    <li>
+                      Use this page during weekly or monthly reviews to identify
+                      where quality issues are costing capacity and to prioritize improvements.
+                    </li>
+                  </ul>
+                </li>
+
+                <!-- 8. VACATION MANAGEMENT (VacationCapacities) -->
+                <li>
+                  <div><strong>Vacation Management</strong></div>
+                  <p>
+                    This page shows a <strong>vacation Gantt chart</strong>
+                    for key staff and work centers. It helps planners understand
+                    when capacity will be reduced due to people being away.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      Use the <strong>date range</strong> pickers to set the window
+                      (default is roughly the next 3 months).
+                    </li>
+                    <li>
+                      Filter by <strong>department</strong> (or “All”)
+                      and search by <strong>name</strong> to find specific
+                      employees or groups.
+                    </li>
+                    <li>
+                      Each bar represents an employee’s vacation.
+                      Scan horizontally to see when multiple people are away
+                      at the same time.
+                    </li>
+                    <li>
+                      When needed, use the <strong>refresh</strong> button to reload
+                      or rebuild the vacation Gantt from the latest source.
+                    </li>
+                    <li>
+                      Use this when planning overtime or redistributing work
+                      around large vacation blocks (e.g. summer or holidays).
+                    </li>
+                  </ul>
+                </li>
+
+                <!-- 9. WORKCENTER INFORMATION (CenterInfo) -->
+                <li>
+                  <div><strong>Workcenter Information</strong></div>
+                  <p>
+                    This page shows <strong>snapshot images</strong> of center-level
+                    information (e.g., center boards or local dashboards)
+                    for each line or area (LINE 1, LINE 2, VPI).
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      Select the desired view (LINE 1, LINE 2, or VPI).
+                      The snapshot for that area will load.
+                    </li>
+                    <li>
+                      Use the <strong>refresh</strong> action when you want to pull
+                      a new snapshot from the backend, for example after center staff
+                      update their local boards.
+                    </li>
+                    <li>
+                      This is read-only and intended to give planners visibility
+                      into local information without walking over to the physical boards.
+                    </li>
+                  </ul>
+                </li>
+
+                <!-- 10. SCHEDULED LOAD STATUS -->
+                <li>
+                  <div><strong>Scheduled Load Status</strong></div>
+                  <p>
+                    This page summarizes <strong>scheduled vs remaining load</strong>
+                    by work center and period. It is designed as a table-driven status view
+                    where you can sort, filter and scan which centers are overloaded
+                    or under-loaded.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      Use column filters or quick filters to focus on a specific line,
+                      machine or period.
+                    </li>
+                    <li>
+                      Sort by key metrics (for example, load ratio or remaining hours)
+                      to bring the most critical centers to the top.
+                    </li>
+                    <li>
+                      Use this when you need a compact, tabular answer to
+                      “Which centers are in trouble this week or next week?”
+                    </li>
+                  </ul>
+                </li>
+
+                <!-- 11. LOAD VS CAPACITY (3D CHART) -->
+                <li>
+                  <div><strong>Load vs Capacity</strong></div>
+                  <p>
+                    This page shows a <strong>bar chart</strong> of monthly load vs capacity,
+                    plus a load ratio line. It is meant for high-level capacity discussions
+                    with Production and Management.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      Use the filters (month range, line / work center selections,
+                      clean vs not clean treatment if applicable) to define what is included.
+                    </li>
+                    <li>
+                      Read each bar as <strong>blue = confirmed load</strong> and overlay
+                      segments as simulated or added load. The line above the bars shows
+                      the load ratio (Load / Capacity).
+                    </li>
+                    <li>
+                      Hover over bars to see exact numbers for load, capacity and ratio
+                      for that month.
+                    </li>
+                    <li>
+                      Use this when someone asks “Are we above or below capacity
+                      in the next few months?” or when validating scenarios created
+                      in the simulation pages.
+                    </li>
+                  </ul>
+                </li>
+              </ol>
+
+              <p style="font-size: 0.8rem; color: #9ca3af">
+                General suggestion: the sidebar pages are designed to work together.
+                Start on <strong>Dashboard</strong> to find issues, use
+                <strong>Backlog Summary</strong>, <strong>Prod Orders Schedule</strong>,
+                <strong>Simulation</strong> and <strong>Machine Load Simulation</strong>
+                to test solutions, and rely on <strong>Load vs Capacity</strong>
+                and <strong>Reworks</strong> to communicate the impact to Management.
+              </p>
+            </article>
+
+            <!-- Right: System link + API guide -->
+            <article class="tcc-panel reveal-on-scroll">
+              <h3>System Link &amp; API guide</h3>
+
+              <p>
+                Open the link below from the internal network.
+                Please Use your assigned credential to log in the system.
+                Please be advised that the system initial load will take about 1–2 minutes.
+              </p>
+
+              <p style="margin-top: 0.75rem">
+                <a
+                  href="../../demo-apps/schedule-visualization-demo.html"
+                  target="_blank"
+                  class="tcc-link-inline"
+                  style="font-size: 0.95rem"
+                >
+                  <i class="fas fa-external-link-alt"></i>
+                  Open Schedule Visual System
+                </a>
+              </p>
+
+              <div class="tcc-tag-row">
+                <span class="tcc-tag">URL: Demo preview</span>
+                <span class="tcc-tag">Status: Normal</span>
+              </div>
+
+              <hr style="margin: 1.2rem 0; border-color: #e5e7eb" />
+
+              <h4 style="font-weight: 600; margin-bottom: 0.35rem">
+                1. Core schedule &amp; backlog
+              </h4>
+              <dl style="margin: 0 0 0.6rem 0;">
+                <dt style="font-weight: 600;">GET /api/preload</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Joined SAP data (Winding &amp; Roving schedules, backlog, capacity, wait time).
+                  Base dataset for dashboard, simulations and load/capacity views.
+                </dd>
+
+                <dt style="font-weight: 600;">GET /api/schedules/:type/:line</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Online W&amp;R schedules by bucket (<code>L1..L8</code> / <code>VPI</code>)
+                  and line (<code>WIND1..WIND5</code>).
+                  Feeds the Schedule Visualization Gantt.
+                </dd>
+
+                <dt style="font-weight: 600;">GET /api/wr_schedule_local</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Reads <code>WR_Schedule.xlsx</code> as a local fallback / ad-hoc schedule view.
+                </dd>
+              </dl>
+
+              <h4 style="font-weight: 600; margin: 0.4rem 0 0.35rem">
+                2. Simulation &amp; Gantt overrides
+              </h4>
+              <dl style="margin: 0 0 0.6rem 0;">
+                <dt style="font-weight: 600;">GET /api/gantt_overrides</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Load saved machine-by-machine override plan
+                  for the Machine Load Simulation page.
+                </dd>
+
+                <dt style="font-weight: 600;">PUT /api/gantt_overrides</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Save the current simulated plan to the server
+                  (<code>{ plan, version }</code> payload).
+                </dd>
+
+                <dt style="font-weight: 600;">DELETE /api/gantt_overrides</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Clear stored overrides and revert back to SAP-only schedule data.
+                </dd>
+              </dl>
+
+              <h4 style="font-weight: 600; margin: 0.4rem 0 0.35rem">
+                3. Vacations &amp; center snapshots
+              </h4>
+              <dl style="margin: 0 0 0.6rem 0;">
+                <dt style="font-weight: 600;">GET /api/vacations/gantt</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Current vacation rows used by the Vacation Gantt.
+                </dd>
+
+                <dt style="font-weight: 600;">POST /api/vacations/refresh</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Refresh vacation data from Tableau and return the updated rows.
+                </dd>
+
+                <dt style="font-weight: 600;">GET /api/centerinfo/snapshot/info[...]</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Snapshot URL and last-updated time for each view
+                  (<code>line1</code>, <code>line2</code>, <code>vpi</code>).
+                </dd>
+
+                <dt style="font-weight: 600;">POST /api/centerinfo/snapshot/refresh[...]</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Trigger a new PNG export from Tableau and return updated snapshot metadata.
+                </dd>
+              </dl>
+
+              <h4 style="font-weight: 600; margin: 0.4rem 0 0.35rem">
+                4. Responses &amp; errors
+              </h4>
+              <p style="margin: 0 0 0.25rem 0.9rem;">
+                <strong>All endpoints return JSON.</strong>
+                On failure the server uses HTTP <strong>4xx/5xx</strong> with the following code:
+                <strong>ok: false, error:&quot;...&quot;</strong> or
+                <strong>error:&quot;...&quot;</strong> for easier debugging in the browser
+                Network tab.
+              </p>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <footer class="tcc-footer">
+        <div class="tcc-footer-inner">
+          <span>© 2025 Trench Canada · Scheduling Team</span>
+          <span>Schedule Visualization System · Version 2.2</span>
+        </div>
+      </footer>
+    </div>
+
+    <!-- full-screen marquee border overlay -->
+    <div id="tcc-marquee-border" aria-hidden="true"></div>
+
+    <!-- main UI script -->
+    <script src="assets/js/main.js"></script>
+
+    <!-- AI ASSISTANT hover -> glow + click -> jump -->
+    <script>
+      (function () {
+        const AI_URL = "../../demo-apps/ai-assistant-demo.html";
+
+        function glowOn() {
+          document.body.classList.add("tcc-marquee-on");
+        }
+
+        function glowOff() {
+          document.body.classList.remove("tcc-marquee-on");
+        }
+
+        function goAiAssistant(e) {
+          if (e) e.preventDefault();
+          glowOn(); // 点击时也顺便亮一下（不影响：马上跳转页面）
+          setTimeout(() => {
+            window.location.href = AI_URL;
+          }, 380);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+          const nodes = document.querySelectorAll("[data-ai-assistant-link='1']");
+          nodes.forEach((el) => {
+            // ✅ 鼠标移上去就生效
+            el.addEventListener("mouseenter", glowOn);
+            el.addEventListener("mouseleave", glowOff);
+
+            // ✅ 键盘 tab 聚焦也生效（更完整）
+            el.addEventListener("focus", glowOn);
+            el.addEventListener("blur", glowOff);
+
+            // ✅ 点击仍然跳转
+            el.addEventListener("click", goAiAssistant);
+          });
+        });
+      })();
+    </script>
+
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>

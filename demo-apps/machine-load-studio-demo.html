@@ -1,0 +1,718 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Machine Load Recalculation Studio (Demo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/font-awesome/css/all.min.css">
+<style>
+  :root{
+    --bg-0:#020617;
+    --bg-1:#0f172a;
+    --panel:rgba(15,23,42,0.9);
+    --border:rgba(148,163,184,0.5);
+    --heading:#e5e7eb;
+    --body:#cbd5f5;
+    --muted:#9ca3af;
+    --ok:#22c55e;
+    --ok-2:#4ade80;
+    --warn:#f59e0b;
+    --warn-2:#fbbf24;
+    --danger:#f87171;
+    --danger-2:#ef4444;
+    --info:#38bdf8;
+    --purple:#a855f7;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;min-height:100%;}
+  body{
+    font-family:'IBM Plex Sans', -apple-system, Segoe UI, sans-serif;
+    background:
+      radial-gradient(circle at 12% 8%, rgba(56,189,248,0.16), transparent 42%),
+      radial-gradient(circle at 88% 15%, rgba(37,99,235,0.20), transparent 45%),
+      radial-gradient(circle at 50% 95%, rgba(168,85,247,0.14), transparent 50%),
+      linear-gradient(180deg, var(--bg-0), var(--bg-1) 60%, var(--bg-0));
+    color:var(--body);
+    min-height:100vh;
+  }
+  a{color:inherit;}
+
+  .back-link{
+    position:fixed; top:10px; left:10px; z-index:200;
+    font-size:0.72rem; color:var(--muted); text-decoration:none;
+    background:rgba(2,6,23,0.55); border:1px solid rgba(148,163,184,0.3);
+    padding:5px 10px; border-radius:999px; backdrop-filter:blur(6px);
+    opacity:0.7; transition:opacity .2s ease, color .2s ease;
+  }
+  .back-link:hover{ opacity:1; color:var(--info); }
+
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:16px; padding:16px 28px 10px 28px; flex-wrap:wrap;
+  }
+  .brand{ display:flex; align-items:center; gap:14px; }
+  .brand img{ height:45px; width:auto; object-fit:contain; }
+  .brand-text h1{ margin:0; font-size:1.4rem; font-weight:700; color:var(--heading); letter-spacing:0.01em; }
+  .brand-text p{ margin:2px 0 0 0; font-size:0.85rem; color:var(--muted); }
+  .header-right{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .demo-pill{
+    display:inline-flex; align-items:center; gap:8px;
+    background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.45);
+    color:#7dd3fc; font-size:0.72rem; font-weight:600; letter-spacing:0.04em;
+    text-transform:uppercase; padding:6px 14px; border-radius:999px;
+  }
+  .demo-pill i{ color:var(--info); }
+
+  main{ padding:6px 28px 32px 28px; max-width:1400px; margin:0 auto; }
+
+  /* stat tiles */
+  .stats{ display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:14px; margin-bottom:18px; }
+  @media (max-width:900px){ .stats{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  .stat{
+    background:var(--panel); border:1px solid var(--border); border-radius:0.85rem;
+    padding:14px 18px; backdrop-filter:blur(10px); box-shadow:0 8px 24px rgba(0,0,0,0.3);
+  }
+  .stat .label{ font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); margin-bottom:6px; }
+  .stat .value{ font-size:1.6rem; font-weight:700; color:var(--heading); }
+  .stat .value.ok{ color:var(--ok-2); }
+  .stat .value.warn{ color:var(--warn-2); }
+  .stat .value.danger{ color:var(--danger); }
+
+  /* toolbar */
+  .toolbar{
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+    flex-wrap:wrap; margin-bottom:14px;
+  }
+  .toolbar h2{ margin:0; font-size:1.1rem; color:var(--heading); font-weight:700; display:flex; align-items:center; gap:10px; }
+  .toolbar h2 i{ color:var(--info); }
+  .toolbar-actions{ display:flex; gap:10px; flex-wrap:wrap; }
+  .btn{
+    display:inline-flex; align-items:center; gap:8px; font-family:inherit;
+    font-size:0.82rem; font-weight:600; padding:9px 16px; border-radius:0.6rem;
+    border:1px solid var(--border); background:rgba(30,41,59,0.65); color:var(--heading);
+    cursor:pointer; transition:all .15s ease;
+  }
+  .btn:hover{ border-color:rgba(56,189,248,0.55); box-shadow:0 4px 14px rgba(56,189,248,0.15); transform:translateY(-1px); }
+  .btn:disabled{ opacity:0.6; cursor:not-allowed; transform:none; box-shadow:none; }
+  .btn-primary{ background:linear-gradient(135deg, rgba(56,189,248,0.25), rgba(168,85,247,0.2)); border-color:rgba(56,189,248,0.5); color:#e0f2fe; }
+  .btn-ghost{ background:transparent; }
+  .btn i{ font-size:0.85rem; }
+
+  .legend{ display:flex; gap:16px; flex-wrap:wrap; font-size:0.76rem; color:var(--muted); margin-bottom:12px; }
+  .legend span{ display:inline-flex; align-items:center; gap:6px; }
+  .legend .dot{ width:10px; height:10px; border-radius:3px; }
+
+  /* gantt card */
+  .gantt-card{
+    background:var(--panel); border:1px solid var(--border); border-radius:0.9rem;
+    box-shadow:0 8px 30px rgba(0,0,0,0.35); backdrop-filter:blur(10px);
+    padding:18px 18px 20px 18px; position:relative; overflow:hidden;
+  }
+  .gantt-scroll{ overflow-x:auto; }
+  .gantt-inner{ min-width:980px; position:relative; }
+
+  .gantt-header{ display:flex; padding-bottom:8px; border-bottom:1px solid rgba(148,163,184,0.25); }
+  .row-label-spacer{ flex:0 0 130px; }
+  .day-cells{ flex:1; display:flex; position:relative; }
+  .day-cell{ flex:1; text-align:center; font-size:0.68rem; color:var(--muted); font-weight:600; padding:2px 0; }
+  .day-cell .dow{ display:block; font-size:0.62rem; color:rgba(148,163,184,0.7); font-weight:500; }
+  .day-cell.weekend{ color:#7dd3fc; }
+
+  .gantt-body{ position:relative; padding-top:6px; }
+  .weekend-overlay{ position:absolute; top:0; bottom:0; left:130px; right:0; pointer-events:none; z-index:0; }
+  .weekend-block{ position:absolute; top:0; bottom:0; background:rgba(148,163,184,0.055); }
+
+  .gantt-row{ display:flex; position:relative; z-index:1; border-bottom:1px dashed rgba(148,163,184,0.15); }
+  .row-label{ flex:0 0 130px; padding:10px 10px 10px 2px; display:flex; flex-direction:column; gap:5px; justify-content:center; }
+  .row-label .m-name{ font-weight:700; color:var(--heading); font-size:0.88rem; }
+  .row-label .m-load{
+    display:inline-flex; align-items:center; gap:5px; font-size:0.68rem; font-weight:700;
+    padding:2px 8px; border-radius:999px; width:fit-content;
+  }
+  .m-load.success{ background:rgba(34,197,94,0.15); color:var(--ok-2); border:1px solid rgba(34,197,94,0.4); }
+  .m-load.warning{ background:rgba(245,158,11,0.15); color:var(--warn-2); border:1px solid rgba(245,158,11,0.4); }
+  .m-load.danger{ background:rgba(248,113,113,0.15); color:var(--danger); border:1px solid rgba(248,113,113,0.5); }
+
+  .row-track{ flex:1; position:relative; padding:10px 0; }
+
+  .bar{
+    position:absolute; border-radius:6px; cursor:pointer; padding:3px 8px;
+    background:rgba(30,41,59,0.75); border:1px solid rgba(148,163,184,0.3);
+    border-left:4px solid var(--info); overflow:hidden; white-space:nowrap;
+    transition:transform .18s ease, box-shadow .18s ease, left .5s ease, width .5s ease, top .3s ease;
+    box-shadow:0 2px 8px rgba(0,0,0,0.25);
+  }
+  .bar:hover{ transform:translateY(-2px) scale(1.01); box-shadow:0 6px 16px rgba(56,189,248,0.25); z-index:5; }
+  .bar.success{ border-left-color:var(--ok-2); }
+  .bar.warning{ border-left-color:var(--warn-2); }
+  .bar.danger{ border-left-color:var(--danger); }
+  .bar .bar-no{ font-size:0.7rem; font-weight:700; color:var(--heading); }
+  .bar .bar-mat{ font-size:0.65rem; color:var(--muted); overflow:hidden; text-overflow:ellipsis; }
+  .bar.nudged{ animation:nudge-flash 1.1s ease; }
+  @keyframes nudge-flash{
+    0%{ box-shadow:0 0 0 0 rgba(56,189,248,0.6); }
+    40%{ box-shadow:0 0 0 6px rgba(56,189,248,0.25); }
+    100%{ box-shadow:0 2px 8px rgba(0,0,0,0.25); }
+  }
+
+  /* AI analyzing overlay */
+  .ai-overlay{
+    position:absolute; inset:0; background:rgba(2,6,23,0.72); backdrop-filter:blur(3px);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px;
+    z-index:20; opacity:0; pointer-events:none; transition:opacity .25s ease;
+  }
+  .ai-overlay.show{ opacity:1; pointer-events:all; }
+  .ai-overlay i{ font-size:2.2rem; color:var(--info); }
+  .ai-overlay .ai-text{ color:var(--heading); font-weight:600; font-size:1rem; }
+  .ai-overlay .ai-sub{ color:var(--muted); font-size:0.8rem; }
+
+  /* drawer */
+  .drawer-backdrop{
+    position:fixed; inset:0; background:rgba(2,6,23,0.55); z-index:90;
+    opacity:0; pointer-events:none; transition:opacity .25s ease;
+  }
+  .drawer-backdrop.open{ opacity:1; pointer-events:all; }
+  .drawer{
+    position:fixed; top:0; right:0; bottom:0; width:380px; max-width:92vw;
+    background:var(--panel); border-left:1px solid var(--border); backdrop-filter:blur(14px);
+    box-shadow:-10px 0 40px rgba(0,0,0,0.5); z-index:91;
+    transform:translateX(100%); transition:transform .3s ease; overflow-y:auto;
+    padding:20px 22px 30px 22px;
+  }
+  .drawer.open{ transform:translateX(0); }
+  .drawer-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; }
+  .drawer-head h3{ margin:0; font-size:1.05rem; color:var(--heading); font-weight:700; }
+  .drawer-close{ background:none; border:none; color:var(--muted); font-size:1.1rem; cursor:pointer; }
+  .drawer-close:hover{ color:var(--danger); }
+  .drawer-sub{ font-size:0.78rem; color:var(--muted); margin-bottom:18px; }
+  .field{ margin-bottom:16px; }
+  .field label{ display:block; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.04em; color:var(--muted); margin-bottom:6px; }
+  .field input, .field select{
+    width:100%; padding:9px 11px; border-radius:0.5rem; border:1px solid var(--border);
+    background:rgba(2,6,23,0.5); color:var(--heading); font-family:inherit; font-size:0.88rem;
+  }
+  .field input:focus, .field select:focus{ outline:none; border-color:var(--info); box-shadow:0 0 0 3px rgba(56,189,248,0.15); }
+  .field-row{ display:flex; gap:10px; }
+  .field-row .field{ flex:1; }
+  .risk-badge{ display:inline-flex; align-items:center; gap:6px; font-size:0.75rem; font-weight:700; padding:4px 10px; border-radius:999px; margin-bottom:16px; }
+  .drawer-actions{ display:flex; gap:10px; margin-top:6px; }
+  .drawer-actions .btn{ flex:1; justify-content:center; }
+
+  /* about panel */
+  .about-wrap{ margin-top:22px; }
+  details.about{ background:var(--panel); border:1px solid var(--border); border-radius:0.9rem; backdrop-filter:blur(10px); box-shadow:0 8px 24px rgba(0,0,0,0.3); }
+  details.about summary{ list-style:none; cursor:pointer; padding:16px 20px; display:flex; align-items:center; gap:10px; font-weight:600; color:var(--heading); font-size:1rem; }
+  details.about summary::-webkit-details-marker{ display:none; }
+  details.about summary i.chevron{ margin-left:auto; transition:transform .2s ease; color:var(--muted); }
+  details.about[open] summary i.chevron{ transform:rotate(180deg); }
+  .about-body{ padding:0 22px 20px 22px; color:var(--body); font-size:0.92rem; line-height:1.6; }
+  .about-body ul{ margin:10px 0 0 0; padding-left:1.2rem; }
+  .about-body li{ margin-bottom:6px; }
+
+  footer{ text-align:center; font-size:0.78rem; color:var(--muted); padding:26px 16px 30px 16px; }
+
+  /* toast */
+  .toast{
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:rgba(15,23,42,0.95); border:1px solid rgba(56,189,248,0.5); color:var(--heading);
+    padding:12px 20px; border-radius:0.7rem; font-size:0.85rem; display:flex; align-items:center; gap:10px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.4); z-index:150; opacity:0; pointer-events:none; transition:all .3s ease;
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+  .toast i{ color:var(--ok-2); }
+
+  ::-webkit-scrollbar{ width:8px; height:8px; }
+  ::-webkit-scrollbar-thumb{ background:rgba(148,163,184,0.35); border-radius:4px; }
+</style>
+</head>
+<body>
+
+<a class="back-link" href="../Enhanced entrance for systems/apple-style-portal.html">
+  <i class="fas fa-arrow-left"></i> Back to Systems Portal
+</a>
+
+<header>
+  <div class="brand">
+    <img src="../Enhanced entrance for systems/Logo2.png" alt="Trench Canada">
+    <div class="brand-text">
+      <h1>Machine Load Recalculation Studio</h1>
+      <p>Coils Production &middot; Machine-by-Machine Gantt &amp; What-If Rebalancing</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <span class="demo-pill"><i class="fas fa-flask"></i> Demo Preview &middot; Sample data only, not connected to any live system</span>
+  </div>
+</header>
+
+<main>
+
+  <div class="stats" id="stats"><!-- filled by JS --></div>
+
+  <div class="toolbar">
+    <h2><i class="fas fa-chart-gantt"></i> Machine Load vs. Capacity &mdash; Winding &amp; VPI</h2>
+    <div class="toolbar-actions">
+      <button class="btn btn-ghost" id="reset-btn"><i class="fas fa-rotate-left"></i> Reset Demo Data</button>
+      <button class="btn btn-primary" id="ai-btn"><i class="fas fa-wand-magic-sparkles"></i> AI Rebalance</button>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span><span class="dot" style="background:var(--ok-2);"></span> On plan (healthy PMAD buffer)</span>
+    <span><span class="dot" style="background:var(--warn-2);"></span> Tight (buffer &lt; 1 day)</span>
+    <span><span class="dot" style="background:var(--danger);"></span> At risk (buffer &lt; 0.4 day)</span>
+    <span><i class="fas fa-hand-pointer" style="color:var(--info);"></i> Click any bar to open the what-if editor</span>
+  </div>
+
+  <div class="gantt-card">
+    <div class="ai-overlay" id="ai-overlay">
+      <i class="fas fa-circle-notch fa-spin"></i>
+      <div class="ai-text">Analyzing machine load...</div>
+      <div class="ai-sub">Evaluating PMAD buffers and re-sequencing overloaded machines</div>
+    </div>
+    <div class="gantt-scroll">
+      <div class="gantt-inner">
+        <div class="gantt-header">
+          <div class="row-label-spacer"></div>
+          <div class="day-cells" id="day-cells"><!-- filled by JS --></div>
+        </div>
+        <div class="gantt-body" id="gantt-body">
+          <div class="weekend-overlay" id="weekend-overlay"><!-- filled by JS --></div>
+          <!-- rows filled by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="about-wrap">
+    <details class="about">
+      <summary><i class="fas fa-circle-info"></i> About this system <i class="fas fa-chevron-down chevron"></i></summary>
+      <div class="about-body">
+        <p>
+          The real Machine Load Recalculation Studio is Trench Canada's new online successor to the
+          long-standing Machine Load VBA workbook that schedulers used to hand-balance winding and VPI
+          capacity. It re-implements and enhances those VBA calculations as a proper web application, and
+          adds an embedded rebalancing assistant that proposes how to redistribute orders across machines
+          &mdash; while every change stays a local "what-if" plan until a scheduler chooses to act on it.
+        </p>
+        <ul>
+          <li>Machine-by-machine Gantt (WIND1&ndash;WIND5, VPI) showing every scheduled order against its PMAD date and available capacity.</li>
+          <li>Click-to-edit "what-if" drawer &mdash; adjust an order's start date, duration, or PMAD to simulate moving or resizing it, without touching SAP.</li>
+          <li>Enhances the original Machine Load VBA tool's balancing logic with a modern, always-on visual load view instead of a static spreadsheet snapshot.</li>
+          <li>Embedded AI rebalancing concept: suggests order shifts to relieve an overloaded machine, shown here as a client-side simulated suggestion.</li>
+          <li>Overrides are saved locally as a draft plan for review &mdash; nothing is written back to production systems automatically.</li>
+        </ul>
+      </div>
+    </details>
+  </div>
+
+</main>
+
+<footer>
+  &copy; 2026 Trench Canada &middot; Scheduling Team &mdash; Demo preview, sample data only.
+</footer>
+
+<!-- drawer -->
+<div class="drawer-backdrop" id="drawer-backdrop"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-head">
+    <h3 id="drawer-title">Edit Order</h3>
+    <button class="drawer-close" id="drawer-close"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="drawer-sub" id="drawer-sub">What-if editor &mdash; changes here only affect this local session.</div>
+  <span class="risk-badge" id="drawer-risk"></span>
+
+  <div class="field">
+    <label>Order No.</label>
+    <input type="text" id="f-orderno" disabled>
+  </div>
+  <div class="field">
+    <label>Material</label>
+    <input type="text" id="f-material">
+  </div>
+  <div class="field">
+    <label>Machine</label>
+    <select id="f-machine"></select>
+  </div>
+  <div class="field-row">
+    <div class="field">
+      <label>Start Date</label>
+      <input type="date" id="f-start">
+    </div>
+    <div class="field">
+      <label>Duration (hrs)</label>
+      <input type="number" id="f-hours" min="12" max="120" step="4">
+    </div>
+  </div>
+  <div class="field">
+    <label>PMAD (Planned Mfg. Availability Date)</label>
+    <input type="date" id="f-pmad">
+  </div>
+
+  <div class="drawer-actions">
+    <button class="btn btn-ghost" id="drawer-cancel">Cancel</button>
+    <button class="btn btn-primary" id="drawer-save"><i class="fas fa-floppy-disk"></i> Save Override</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"><i class="fas fa-circle-check"></i><span id="toast-text"></span></div>
+
+<script>
+(function(){
+
+  var RANGE_START = new Date(2026, 7, 3); // Aug 3, 2026
+  var RANGE_DAYS = 19;
+  var HOURS_PER_DAY = 24;
+  var BAR_H = 26, BAR_GAP = 8, ROW_PAD = 10;
+
+  var MACHINES = [
+    { id:'WIND1', label:'WIND 1', capacityHours:260 },
+    { id:'WIND2', label:'WIND 2', capacityHours:290 },
+    { id:'WIND3', label:'WIND 3', capacityHours:238 },
+    { id:'WIND4', label:'WIND 4', capacityHours:275 },
+    { id:'WIND5', label:'WIND 5', capacityHours:248 },
+    { id:'VPI',   label:'VPI',    capacityHours:227 }
+  ];
+
+  var INITIAL_ORDERS = [
+    { id:'o1',  orderNo:'MO-30401', machine:'WIND1', material:'3-Ph Core Coil 750kVA — HV Winding', start:0,    duration:2.5, pmad:3.2 },
+    { id:'o2',  orderNo:'MO-30418', machine:'WIND1', material:'1-Ph Padmount 300kVA — LV Winding',  start:3,    duration:2,   pmad:6.5 },
+    { id:'o3',  orderNo:'MO-30432', machine:'WIND1', material:'Substation Core Coil 2MVA — HV Winding', start:6.5, duration:3, pmad:10.1 },
+    { id:'o4',  orderNo:'MO-30455', machine:'WIND1', material:'Distribution Coil 500kVA — Winding', start:11,   duration:2,   pmad:14.8 },
+
+    { id:'o5',  orderNo:'MO-30402', machine:'WIND2', material:'HV Winding Section — Type CTR-500', start:0.5,  duration:2,   pmad:3.3 },
+    { id:'o6',  orderNo:'MO-30419', machine:'WIND2', material:'LV Winding Coil — Std. Duty', start:3,    duration:3,   pmad:6.3 },
+    { id:'o7',  orderNo:'MO-30440', machine:'WIND2', material:'Tap Changer Winding Assembly TC-9', start:7,    duration:2.5, pmad:10.9 },
+    { id:'o8',  orderNo:'MO-30460', machine:'WIND2', material:'Padmount Coil 167kVA — Winding', start:10.5, duration:2,   pmad:13.0 },
+    { id:'o9',  orderNo:'MO-30475', machine:'WIND2', material:'Distribution Winding 750kVA', start:13,   duration:2,   pmad:16.6 },
+
+    { id:'o10', orderNo:'MO-30403', machine:'WIND3', material:'Substation HV Winding 2MVA', start:0,    duration:3,   pmad:3.2 },
+    { id:'o11', orderNo:'MO-30421', machine:'WIND3', material:'Core Coil Winding 500kVA', start:2.5,  duration:2.5, pmad:5.3 },
+    { id:'o12', orderNo:'MO-30441', machine:'WIND3', material:'Tap Changer Winding TC-7', start:5.5,  duration:3,   pmad:9.0 },
+    { id:'o13', orderNo:'MO-30458', machine:'WIND3', material:'Bushing Turret Winding 138kV', start:8.5,  duration:2,   pmad:11.8 },
+    { id:'o14', orderNo:'MO-30470', machine:'WIND3', material:'Distribution Coil Winding 300kVA', start:11,   duration:2.2, pmad:13.45 },
+
+    { id:'o15', orderNo:'MO-30404', machine:'WIND4', material:'HV Winding 1000kVA', start:1,    duration:2.5, pmad:5.0 },
+    { id:'o16', orderNo:'MO-30423', machine:'WIND4', material:'LV Winding Padmount 225kVA', start:4,    duration:2,   pmad:6.7 },
+    { id:'o17', orderNo:'MO-30444', machine:'WIND4', material:'Core Coil Winding 400kVA', start:7.5,  duration:3,   pmad:11.1 },
+    { id:'o18', orderNo:'MO-30462', machine:'WIND4', material:'Distribution Winding 600kVA', start:11.5, duration:2,   pmad:15.1 },
+
+    { id:'o19', orderNo:'MO-30405', machine:'WIND5', material:'Substation Winding 1.5MVA', start:0.5,  duration:2,   pmad:3.9 },
+    { id:'o20', orderNo:'MO-30424', machine:'WIND5', material:'Tap Changer Winding TC-8', start:3.5,  duration:2.5, pmad:6.7 },
+    { id:'o21', orderNo:'MO-30446', machine:'WIND5', material:'HV Bushing Winding 69kV', start:7,    duration:2,   pmad:9.3 },
+    { id:'o22', orderNo:'MO-30465', machine:'WIND5', material:'Distribution Coil Winding 750kVA', start:10,   duration:3,   pmad:14.5 },
+
+    { id:'o23', orderNo:'MO-30406', machine:'VPI', material:'VPI Cycle — Core Coil Batch A', start:1, duration:3, pmad:4.6 },
+    { id:'o24', orderNo:'MO-30427', machine:'VPI', material:'VPI Cycle — Core Coil Batch B', start:5, duration:3, pmad:8.3 },
+    { id:'o25', orderNo:'MO-30448', machine:'VPI', material:'VPI Cycle — Substation Batch', start:9, duration:3, pmad:13.5 }
+  ];
+
+  var orders = deepClone(INITIAL_ORDERS);
+  var rebalanceApplied = false;
+  var currentOrderId = null;
+
+  function deepClone(o){ return JSON.parse(JSON.stringify(o)); }
+
+  function dateFromOffset(days){
+    return new Date(RANGE_START.getTime() + Math.round(days) * 86400000);
+  }
+  function isoDate(d){
+    var y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,'0'), day = String(d.getDate()).padStart(2,'0');
+    return y + '-' + m + '-' + day;
+  }
+  function offsetFromIso(iso){
+    var d = new Date(iso + 'T00:00:00');
+    return Math.round((d.getTime() - RANGE_START.getTime()) / 86400000);
+  }
+  function fmtDate(days){
+    var d = dateFromOffset(days);
+    return d.toLocaleDateString('en-US', { month:'short', day:'2-digit' });
+  }
+
+  function statusOf(order){
+    var buffer = order.pmad - (order.start + order.duration);
+    if (buffer < 0.4) return 'danger';
+    if (buffer < 1.0) return 'warning';
+    return 'success';
+  }
+  function loadStatus(pct){
+    if (pct > 110) return 'danger';
+    if (pct >= 90) return 'warning';
+    return 'success';
+  }
+  function machineHours(machineId){
+    return orders.filter(function(o){ return o.machine === machineId; })
+                 .reduce(function(sum,o){ return sum + o.duration * HOURS_PER_DAY; }, 0);
+  }
+  function machineLoadPct(machine){
+    return (machineHours(machine.id) / machine.capacityHours) * 100;
+  }
+
+  /* ---------- static header / weekend overlay ---------- */
+  function buildHeader(){
+    var cellsEl = document.getElementById('day-cells');
+    var html = '';
+    for (var i=0; i<RANGE_DAYS; i++){
+      var d = dateFromOffset(i);
+      var dow = d.getDay();
+      var weekend = (dow === 0 || dow === 6);
+      html += '<div class="day-cell' + (weekend ? ' weekend' : '') + '">' +
+                d.toLocaleDateString('en-US',{month:'short',day:'2-digit'}) +
+                '<span class="dow">' + d.toLocaleDateString('en-US',{weekday:'short'}) + '</span>' +
+              '</div>';
+    }
+    cellsEl.innerHTML = html;
+  }
+
+  function buildWeekendOverlay(){
+    var overlay = document.getElementById('weekend-overlay');
+    var html = '';
+    var dayWidth = 100 / RANGE_DAYS;
+    for (var i=0; i<RANGE_DAYS; i++){
+      var d = dateFromOffset(i);
+      var dow = d.getDay();
+      if (dow === 0 || dow === 6){
+        html += '<div class="weekend-block" style="left:' + (i*dayWidth) + '%; width:' + dayWidth + '%;"></div>';
+      }
+    }
+    overlay.innerHTML = html;
+  }
+
+  /* ---------- lane assignment for overlap stacking ---------- */
+  function computeLanes(machineOrders){
+    var sorted = machineOrders.slice().sort(function(a,b){ return a.start - b.start; });
+    var laneEnds = [];
+    var laneOf = {};
+    sorted.forEach(function(o){
+      var placed = false;
+      for (var l=0; l<laneEnds.length; l++){
+        if (o.start >= laneEnds[l] - 0.05){
+          laneEnds[l] = o.start + o.duration;
+          laneOf[o.id] = l;
+          placed = true;
+          break;
+        }
+      }
+      if (!placed){
+        laneEnds.push(o.start + o.duration);
+        laneOf[o.id] = laneEnds.length - 1;
+      }
+    });
+    return { laneOf: laneOf, laneCount: laneEnds.length };
+  }
+
+  /* ---------- render ---------- */
+  function renderStats(){
+    var totalOrders = orders.length;
+    var avgLoad = MACHINES.reduce(function(s,m){ return s + machineLoadPct(m); }, 0) / MACHINES.length;
+    var atRisk = MACHINES.filter(function(m){ return machineLoadPct(m) > 110; }).length;
+    var avgStatus = loadStatus(avgLoad);
+    var el = document.getElementById('stats');
+    el.innerHTML =
+      '<div class="stat"><div class="label">Scheduled Orders</div><div class="value">' + totalOrders + '</div></div>' +
+      '<div class="stat"><div class="label">Machines Tracked</div><div class="value">' + MACHINES.length + '</div></div>' +
+      '<div class="stat"><div class="label">Avg. Machine Load</div><div class="value ' + avgStatus + '">' + avgLoad.toFixed(0) + '%</div></div>' +
+      '<div class="stat"><div class="label">Machines At Risk</div><div class="value ' + (atRisk>0?'danger':'ok') + '">' + atRisk + '</div></div>';
+  }
+
+  function renderRows(){
+    var body = document.getElementById('gantt-body');
+    // preserve weekend overlay, wipe rows
+    var overlay = document.getElementById('weekend-overlay');
+    body.innerHTML = '';
+    body.appendChild(overlay);
+
+    var dayWidth = 100 / RANGE_DAYS;
+
+    MACHINES.forEach(function(m){
+      var mOrders = orders.filter(function(o){ return o.machine === m.id; });
+      var lanes = computeLanes(mOrders);
+      var laneCount = Math.max(1, lanes.laneCount);
+      var innerH = laneCount * BAR_H + (laneCount - 1) * BAR_GAP;
+      var trackH = innerH + ROW_PAD * 2;
+
+      var pct = machineLoadPct(m);
+      var lStatus = loadStatus(pct);
+
+      var row = document.createElement('div');
+      row.className = 'gantt-row';
+      row.style.minHeight = trackH + 'px';
+
+      var label = document.createElement('div');
+      label.className = 'row-label';
+      label.innerHTML = '<span class="m-name">' + m.label + '</span>' +
+        '<span class="m-load ' + lStatus + '"><i class="fas fa-gauge-high"></i> ' + pct.toFixed(0) + '% load</span>';
+      row.appendChild(label);
+
+      var track = document.createElement('div');
+      track.className = 'row-track';
+      track.style.minHeight = trackH + 'px';
+
+      mOrders.forEach(function(o){
+        var lane = lanes.laneOf[o.id];
+        var left = o.start * dayWidth;
+        var width = Math.max(o.duration * dayWidth, 3.2);
+        var top = ROW_PAD + lane * (BAR_H + BAR_GAP);
+        var status = statusOf(o);
+
+        var bar = document.createElement('div');
+        bar.className = 'bar ' + status + (o._nudged ? ' nudged' : '');
+        bar.style.left = left + '%';
+        bar.style.width = width + '%';
+        bar.style.top = top + 'px';
+        bar.style.height = BAR_H + 'px';
+        bar.dataset.id = o.id;
+        bar.innerHTML = '<div class="bar-no">' + o.orderNo + '</div><div class="bar-mat">' + o.material + '</div>';
+        bar.addEventListener('click', function(){ openDrawer(o.id); });
+        track.appendChild(bar);
+      });
+
+      row.appendChild(track);
+      body.appendChild(row);
+    });
+
+    // clear one-shot nudge flags after paint
+    setTimeout(function(){ orders.forEach(function(o){ delete o._nudged; }); }, 1200);
+  }
+
+  function render(){
+    renderStats();
+    renderRows();
+  }
+
+  /* ---------- drawer ---------- */
+  function populateMachineSelect(){
+    var sel = document.getElementById('f-machine');
+    sel.innerHTML = MACHINES.map(function(m){ return '<option value="' + m.id + '">' + m.label + '</option>'; }).join('');
+  }
+
+  function openDrawer(orderId){
+    currentOrderId = orderId;
+    var o = orders.find(function(x){ return x.id === orderId; });
+    if (!o) return;
+
+    document.getElementById('drawer-title').textContent = 'Edit Order — ' + o.orderNo;
+    document.getElementById('f-orderno').value = o.orderNo;
+    document.getElementById('f-material').value = o.material;
+    document.getElementById('f-machine').value = o.machine;
+    document.getElementById('f-start').value = isoDate(dateFromOffset(o.start));
+    document.getElementById('f-hours').value = Math.round(o.duration * HOURS_PER_DAY);
+    document.getElementById('f-pmad').value = isoDate(dateFromOffset(o.pmad));
+
+    var status = statusOf(o);
+    var badge = document.getElementById('drawer-risk');
+    badge.className = 'risk-badge m-load ' + status;
+    var labelMap = { success:'On plan', warning:'Tight schedule', danger:'At risk — PMAD buffer low' };
+    badge.innerHTML = '<i class="fas fa-circle"></i> ' + labelMap[status];
+
+    document.getElementById('drawer').classList.add('open');
+    document.getElementById('drawer-backdrop').classList.add('open');
+  }
+
+  function closeDrawer(){
+    document.getElementById('drawer').classList.remove('open');
+    document.getElementById('drawer-backdrop').classList.remove('open');
+    currentOrderId = null;
+  }
+
+  function saveOverride(){
+    if (!currentOrderId) return;
+    var o = orders.find(function(x){ return x.id === currentOrderId; });
+    if (!o) return;
+
+    var newStartOffset = offsetFromIso(document.getElementById('f-start').value);
+    var newHours = parseFloat(document.getElementById('f-hours').value) || (o.duration * HOURS_PER_DAY);
+    var newDuration = Math.max(0.5, newHours / HOURS_PER_DAY);
+    var newPmadOffset = offsetFromIso(document.getElementById('f-pmad').value);
+    var newMachine = document.getElementById('f-machine').value;
+    var newMaterial = document.getElementById('f-material').value.trim() || o.material;
+
+    // clamp to visible range
+    newStartOffset = Math.max(0, Math.min(RANGE_DAYS - 1, newStartOffset));
+    if (newStartOffset + newDuration > RANGE_DAYS) newDuration = RANGE_DAYS - newStartOffset;
+
+    o.machine = newMachine;
+    o.material = newMaterial;
+    o.start = newStartOffset;
+    o.duration = newDuration;
+    o.pmad = newPmadOffset;
+    o._nudged = true;
+
+    render();
+    closeDrawer();
+    showToast('What-if override saved locally for ' + o.orderNo + '.');
+  }
+
+  /* ---------- AI rebalance (fabricated, client-side only) ---------- */
+  function runAiRebalance(){
+    var btn = document.getElementById('ai-btn');
+    var overlay = document.getElementById('ai-overlay');
+    btn.disabled = true;
+    overlay.classList.add('show');
+
+    setTimeout(function(){
+      overlay.classList.remove('show');
+      btn.disabled = false;
+
+      var targets = ['o10', 'o12', 'o14']; // MO-30403, MO-30441, MO-30470 on WIND3
+      var delta = rebalanceApplied ? 0.4 : -0.4; // toggle: apply or revert
+
+      targets.forEach(function(id){
+        var o = orders.find(function(x){ return x.id === id; });
+        if (o){
+          o.duration = Math.max(0.5, o.duration + delta);
+          o._nudged = true;
+        }
+      });
+
+      rebalanceApplied = !rebalanceApplied;
+      render();
+
+      if (rebalanceApplied){
+        showToast('3 orders rebalanced on WIND3 — overload reduced by ~12% (128% → 116%).');
+      } else {
+        showToast('Rebalance reverted — WIND3 restored to its original 128% load.');
+      }
+    }, 1700);
+  }
+
+  function resetDemo(){
+    orders = deepClone(INITIAL_ORDERS);
+    rebalanceApplied = false;
+    render();
+    showToast('Demo data reset to its original schedule.');
+  }
+
+  /* ---------- toast ---------- */
+  var toastTimer = null;
+  function showToast(msg){
+    var t = document.getElementById('toast');
+    document.getElementById('toast-text').textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 3600);
+  }
+
+  /* ---------- init ---------- */
+  populateMachineSelect();
+  buildHeader();
+  buildWeekendOverlay();
+  render();
+
+  document.getElementById('ai-btn').addEventListener('click', runAiRebalance);
+  document.getElementById('reset-btn').addEventListener('click', resetDemo);
+  document.getElementById('drawer-close').addEventListener('click', closeDrawer);
+  document.getElementById('drawer-cancel').addEventListener('click', closeDrawer);
+  document.getElementById('drawer-backdrop').addEventListener('click', closeDrawer);
+  document.getElementById('drawer-save').addEventListener('click', saveOverride);
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') closeDrawer();
+  });
+
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,740 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Backend Status — TV Wallboard (Demo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/font-awesome/css/all.min.css">
+<style>
+  :root{
+    --bg-0:#020617;
+    --bg-1:#0f172a;
+    --panel:rgba(15,23,42,0.92);
+    --border:rgba(148,163,184,0.5);
+    --heading:#e5e7eb;
+    --body:#cbd5f5;
+    --muted:#9ca3af;
+    --ok:#22c55e;
+    --ok-2:#4ade80;
+    --warn:#f59e0b;
+    --warn-2:#fbbf24;
+    --danger:#f87171;
+    --danger-2:#ef4444;
+    --info:#38bdf8;
+    --purple:#a855f7;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    font-family:'IBM Plex Sans', -apple-system, Segoe UI, sans-serif;
+    background:
+      radial-gradient(circle at 12% 8%, rgba(56,189,248,0.16), transparent 42%),
+      radial-gradient(circle at 88% 15%, rgba(37,99,235,0.20), transparent 45%),
+      radial-gradient(circle at 50% 95%, rgba(168,85,247,0.14), transparent 50%),
+      linear-gradient(180deg, var(--bg-0), var(--bg-1) 60%, var(--bg-0));
+    color:var(--body);
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+
+  a{color:inherit;}
+
+  /* ---------- corner escape hatch ---------- */
+  .back-link{
+    position:fixed;
+    top:10px;
+    left:10px;
+    z-index:200;
+    font-size:0.72rem;
+    color:var(--muted);
+    text-decoration:none;
+    background:rgba(2,6,23,0.55);
+    border:1px solid rgba(148,163,184,0.3);
+    padding:5px 10px;
+    border-radius:999px;
+    backdrop-filter:blur(6px);
+    opacity:0.65;
+    transition:opacity .2s ease, color .2s ease;
+  }
+  .back-link:hover{ opacity:1; color:var(--info); }
+
+  /* ---------- header ---------- */
+  header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    padding:14px 28px 10px 28px;
+    flex-wrap:wrap;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+  .brand img{ height:36px; width:auto; object-fit:contain; }
+  .brand-text h1{
+    margin:0;
+    font-size:1.5rem;
+    font-weight:700;
+    color:var(--heading);
+    letter-spacing:0.01em;
+  }
+  .brand-text p{
+    margin:2px 0 0 0;
+    font-size:0.85rem;
+    color:var(--muted);
+  }
+
+  .header-right{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+
+  .demo-pill{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:rgba(56,189,248,0.12);
+    border:1px solid rgba(56,189,248,0.45);
+    color:#7dd3fc;
+    font-size:0.72rem;
+    font-weight:600;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    padding:6px 14px;
+    border-radius:999px;
+  }
+  .demo-pill i{ color:var(--info); }
+
+  .clock-box{
+    text-align:right;
+    font-size:0.8rem;
+    color:var(--muted);
+  }
+  .clock-box .refresh{
+    color:var(--ok-2);
+    font-weight:600;
+  }
+
+  /* ---------- ticker ---------- */
+  .ticker-wrap{
+    position:relative;
+    margin:6px 28px 14px 28px;
+    border:1px solid var(--border);
+    border-radius:0.75rem;
+    background:linear-gradient(90deg, rgba(56,189,248,0.10), rgba(168,85,247,0.08));
+    overflow:hidden;
+    height:44px;
+    display:flex;
+    align-items:center;
+  }
+  .ticker-label{
+    flex:0 0 auto;
+    background:rgba(2,6,23,0.75);
+    color:var(--info);
+    font-weight:700;
+    font-size:0.75rem;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    padding:0 16px;
+    height:100%;
+    display:flex;
+    align-items:center;
+    border-right:1px solid var(--border);
+    z-index:2;
+  }
+  .ticker-track{
+    display:flex;
+    white-space:nowrap;
+    animation:scroll-left 32s linear infinite;
+    will-change:transform;
+  }
+  .ticker-track span{
+    padding:0 30px;
+    font-size:0.92rem;
+    color:var(--body);
+    font-weight:500;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+  }
+  .ticker-track span b{ color:var(--heading); }
+  @keyframes scroll-left{
+    0%{ transform:translateX(0); }
+    100%{ transform:translateX(-50%); }
+  }
+
+  /* ---------- main board ---------- */
+  main{
+    padding:6px 28px 28px 28px;
+  }
+
+  .board{
+    display:grid;
+    grid-template-columns:repeat(4, minmax(0,1fr));
+    gap:16px;
+  }
+  @media (max-width:1200px){
+    .board{ grid-template-columns:repeat(2, minmax(0,1fr)); }
+  }
+  @media (max-width:640px){
+    .board{ grid-template-columns:1fr; }
+  }
+
+  .column{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:0.9rem;
+    box-shadow:0 8px 30px rgba(0,0,0,0.35);
+    backdrop-filter:blur(10px);
+    display:flex;
+    flex-direction:column;
+    min-height:520px;
+  }
+  .col-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:16px 18px;
+    border-bottom:1px solid rgba(148,163,184,0.25);
+  }
+  .col-head h2{
+    margin:0;
+    font-size:1.15rem;
+    font-weight:700;
+    color:var(--heading);
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .col-head h2 i{ font-size:1rem; }
+  .col-count{
+    background:rgba(148,163,184,0.15);
+    color:var(--heading);
+    font-weight:700;
+    font-size:0.95rem;
+    padding:3px 12px;
+    border-radius:999px;
+    min-width:34px;
+    text-align:center;
+  }
+
+  .col-pending .col-head h2 i{ color:var(--info); }
+  .col-inprogress .col-head h2 i{ color:var(--warn-2); }
+  .col-hold .col-head h2 i{ color:var(--danger); }
+  .col-ready .col-head h2 i{ color:var(--ok-2); }
+
+  .col-body{
+    padding:14px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    overflow-y:auto;
+  }
+
+  /* ---------- order card ---------- */
+  .card{
+    background:rgba(30,41,59,0.65);
+    border:1px solid rgba(148,163,184,0.28);
+    border-left:5px solid var(--info);
+    border-radius:0.6rem;
+    padding:14px 16px;
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .card:hover{
+    transform:translateY(-2px);
+    box-shadow:0 6px 18px rgba(56,189,248,0.18);
+    border-color:rgba(56,189,248,0.55);
+  }
+  .card.status-ok{ border-left-color:var(--ok-2); }
+  .card.status-warn{ border-left-color:var(--warn-2); }
+  .card.status-danger{ border-left-color:var(--danger); }
+
+  .card-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    margin-bottom:8px;
+  }
+  .so-number{
+    font-size:1.05rem;
+    font-weight:700;
+    color:var(--heading);
+    letter-spacing:0.01em;
+  }
+  .dot{
+    width:12px;
+    height:12px;
+    border-radius:50%;
+    flex:0 0 auto;
+    box-shadow:0 0 8px currentColor;
+  }
+  .dot.ok{ background:var(--ok-2); color:var(--ok-2); }
+  .dot.warn{ background:var(--warn-2); color:var(--warn-2); }
+  .dot.danger{ background:var(--danger); color:var(--danger); }
+
+  .material{
+    font-size:0.92rem;
+    color:var(--body);
+    margin-bottom:10px;
+    line-height:1.35;
+  }
+
+  .card-tags{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin-bottom:8px;
+  }
+  .wc-badge{
+    font-size:0.7rem;
+    font-weight:700;
+    letter-spacing:0.03em;
+    padding:3px 9px;
+    border-radius:5px;
+    background:rgba(56,189,248,0.14);
+    color:#7dd3fc;
+    border:1px solid rgba(56,189,248,0.35);
+  }
+  .priority{
+    font-size:0.7rem;
+    font-weight:700;
+    letter-spacing:0.03em;
+    padding:3px 9px;
+    border-radius:5px;
+  }
+  .priority.p-high{ background:rgba(248,113,113,0.15); color:#fca5a5; border:1px solid rgba(248,113,113,0.4); }
+  .priority.p-med{ background:rgba(245,158,11,0.15); color:#fcd34d; border:1px solid rgba(245,158,11,0.4); }
+  .priority.p-low{ background:rgba(148,163,184,0.15); color:#cbd5e1; border:1px solid rgba(148,163,184,0.4); }
+
+  .card-foot{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    font-size:0.78rem;
+    color:var(--muted);
+    border-top:1px dashed rgba(148,163,184,0.25);
+    padding-top:8px;
+    margin-top:4px;
+  }
+  .card-foot i{ margin-right:4px; }
+
+  /* ---------- about panel (collapsible) ---------- */
+  .about-wrap{
+    margin-top:22px;
+  }
+  details.about{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:0.9rem;
+    padding:0;
+    backdrop-filter:blur(10px);
+    box-shadow:0 8px 24px rgba(0,0,0,0.3);
+  }
+  details.about summary{
+    list-style:none;
+    cursor:pointer;
+    padding:16px 20px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:600;
+    color:var(--heading);
+    font-size:1rem;
+  }
+  details.about summary::-webkit-details-marker{ display:none; }
+  details.about summary i.chevron{
+    margin-left:auto;
+    transition:transform .2s ease;
+    color:var(--muted);
+  }
+  details.about[open] summary i.chevron{ transform:rotate(180deg); }
+  .about-body{
+    padding:0 22px 20px 22px;
+    color:var(--body);
+    font-size:0.92rem;
+    line-height:1.6;
+  }
+  .about-body ul{
+    margin:10px 0 0 0;
+    padding-left:1.2rem;
+  }
+  .about-body li{ margin-bottom:6px; }
+
+  footer{
+    text-align:center;
+    font-size:0.78rem;
+    color:var(--muted);
+    padding:26px 16px 30px 16px;
+  }
+
+  ::-webkit-scrollbar{ width:8px; height:8px; }
+  ::-webkit-scrollbar-thumb{ background:rgba(148,163,184,0.35); border-radius:4px; }
+</style>
+</head>
+<body>
+
+<a class="back-link" href="../Enhanced entrance for systems/apple-style-portal.html">
+  <i class="fas fa-arrow-left"></i> Back to Systems Portal
+</a>
+
+<header>
+  <div class="brand">
+    <img src="../Enhanced entrance for systems/Logo2.png" alt="Trench Canada">
+    <div class="brand-text">
+      <h1>Backend Status — Shop Floor TV Board</h1>
+      <p>Coils Production · Live Order Status by Workcenter</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <span class="demo-pill"><i class="fas fa-flask"></i> Demo Preview · Sample data only, not connected to any live system</span>
+    <div class="clock-box">
+      <div id="clock-time">--:--:--</div>
+      <div>last updated <span class="refresh" id="refresh-counter">0s</span> ago</div>
+    </div>
+  </div>
+</header>
+
+<div class="ticker-wrap">
+  <div class="ticker-label"><i class="fas fa-satellite-dish"></i>&nbsp; Live Counts</div>
+  <div class="ticker-track" id="ticker-track"><!-- filled by JS --></div>
+</div>
+
+<main>
+  <div class="board">
+
+    <section class="column col-pending">
+      <div class="col-head">
+        <h2><i class="fas fa-inbox"></i> Pending</h2>
+        <span class="col-count">4</span>
+      </div>
+      <div class="col-body">
+
+        <div class="card status-warn">
+          <div class="card-top">
+            <span class="so-number">SO-48812</span>
+            <span class="dot warn"></span>
+          </div>
+          <div class="material">Core Coil Assembly — 3-Ph Distribution, 750 kVA</div>
+          <div class="card-tags">
+            <span class="wc-badge">STRIP</span>
+            <span class="priority p-med">MEDIUM</span>
+          </div>
+          <div class="card-foot"><span><i class="fas fa-clock"></i>Due Aug 06</span><span>Qty 2</span></div>
+        </div>
+
+        <div class="card status-ok">
+          <div class="card-top">
+            <span class="so-number">SO-48831</span>
+            <span class="dot ok"></span>
+          </div>
+          <div class="material">HV Winding Section — Type CTR-500</div>
+          <div class="card-tags">
+            <span class="wc-badge">CRIMP</span>
+            <span class="priority p-low">LOW</span>
+          </div>
+          <div class="card-foot"><span><i class="fas fa-clock"></i>Due Aug 12</span><span>Qty 1</span></div>
+        </div>
+
+        <div class="card status-danger">
+          <div class="card-top">
+            <span class="so-number">SO-48790</span>
+            <span class="dot danger"></span>
+          </div>
+          <div class="material">LV Bushing Bracket Set — Std. Duty</div>
+          <div class="card-tags">
+            <span class="wc-badge">WELD2</span>
+            <span class="priority p-high">HIGH</span>
+          </div>
+          <div class="card-foot"><span><i class="fas fa-clock"></i>Due Aug 04</span><span>Qty 6</span></div>
+        </div>
+
+        <div class="card status-ok">
+          <div class="card-top">
+            <span class="so-number">SO-48855</span>
+            <span class="dot ok"></span>
+          </div>
+          <div class="material">Radiator Fin Pack — 24-panel</div>
+          <div class="card-tags">
+            <span class="wc-badge">BLAST</span>
+            <span class="priority p-low">LOW</span>
+          </div>
+          <div class="card-foot"><span><i class="fas fa-clock"></i>Due Aug 14</span><span>Qty 3</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="column col-inprogress">
+      <div class="col-head">
+        <h2><i class="fas fa-cogs"></i> In Progress</h2>
+        <span class="col-count">5</span>
+      </div>
+      <div class="col-body">
+
+        <div class="card status-ok">
+          <div class="card-top">
+            <span class="so-number">SO-48701</span>
+            <span class="dot ok"></span>
+          </div>
+          <div class="material">Core Coil Assembly — 1-Ph Padmount, 300 kVA</div>
+          <div class="card-tags">
+            <span class="wc-badge">CLEAN</span>
+            <span class="priority p-med">MEDIUM</span>
+          </div>
+          <div class="card-foot"><span><i class="fas fa-clock"></i>Due Aug 05</span><span>Qty 4</span></div>
+        </div>
+
+        <div class="card status-warn">
+          <div class="card-top">
+            <span class="so-number">SO-48733</span>
+            <span class="dot warn"></span>
+          </div>
+          <div class="material">Tap Changer Housing — Model TC-9</div>
+          <div class="card-tags">
+            <span class="wc-badge">PAINT</span>
+            <span class="priority p-high">HIGH</span>
+          </div>
+          <div class="card-foot"><span><i class="fas fa-clock"></i>Due Aug 03</span><span>Qty 2</span></div>
+        </div>
+
+        <div class="card status-ok">
+          <div class="card-top">
+            <span class="so-number">SO-48760</span>
+            <span class="dot ok"></span>
+          </div>
+          <div class="material">HV Bushing Turret — 138kV Class</div>
+          <div class="card-tags">
+            <span class="wc-badge">TESTLAB</span>
+            <span class="priority p-med">MEDIUM</span>
+          </div>
+          <div class="card-foot"><span><i class="fas fa-clock"></i>Due Aug 08</span><span>Qty 1</span></div>
+        </div>
+
+        <div class="card status-danger">
+          <div class="card-top">
+            <span class="so-number">SO-48690</span>
+            <span class="dot danger"></span>
+          </div>
+          <div class="material">Cooling Fan Bank — 4-fan array</div>
+          <div class="card-tags">
+            <span class="wc-badge">DETAIL</span>
+            <span class="priority p-high">HIGH</span>
+          </div>
+          <div class="card-foot"><span><i class="fas fa-clock"></i>Due Aug 03</span><span>Qty 5</span></div>
+        </div>
+
+        <div class="card status-ok">
+          <div class="card-top">
+            <span class="so-number">SO-48802</span>
+            <span class="dot ok"></span>
+          </div>
+          <div class="material">Core Coil Assembly — 3-Ph Substation, 2 MVA</div>
+          <div class="card-tags">
+            <span class="wc-badge">STRIP</span>
+            <span class="priority p-low">LOW</span>
+          </div>
+          <div class="card-foot"><span><i class="fas fa-clock"></i>Due Aug 15</span><span>Qty 1</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="column col-hold">
+      <div class="col-head">
+        <h2><i class="fas fa-triangle-exclamation"></i> Material Hold</h2>
+        <span class="col-count">3</span>
+      </div>
+      <div class="col-body">
+
+        <div class="card status-danger">
+          <div class="card-top">
+            <span class="so-number">SO-48655</span>
+            <span class="dot danger"></span>
+          </div>
+          <div class="material">Copper Foil Winding Stock — Awaiting Receipt</div>
+          <div class="card-tags">
+            <span class="wc-badge">CRIMP</span>
+            <span class="priority p-high">HIGH</span>
+          </div>
+          <div class="card-foot"><span><i class="fas fa-triangle-exclamation"></i>PO delayed 4d</span><span>Qty 3</span></div>
+        </div>
+
+        <div class="card status-warn">
+          <div class="card-top">
+            <span class="so-number">SO-48622</span>
+            <span class="dot warn"></span>
+          </div>
+          <div class="material">Insulation Board Kit — Pending QA Release</div>
+          <div class="card-tags">
+            <span class="wc-badge">WELD2</span>
+            <span class="priority p-med">MEDIUM</span>
+          </div>
+          <div class="card-foot"><span><i class="fas fa-triangle-exclamation"></i>QA hold</span><span>Qty 2</span></div>
+        </div>
+
+        <div class="card status-danger">
+          <div class="card-top">
+            <span class="so-number">SO-48601</span>
+            <span class="dot danger"></span>
+          </div>
+          <div class="material">Gasket &amp; Seal Set — Vendor Backorder</div>
+          <div class="card-tags">
+            <span class="wc-badge">CLEAN</span>
+            <span class="priority p-high">HIGH</span>
+          </div>
+          <div class="card-foot"><span><i class="fas fa-triangle-exclamation"></i>Backorder 7d</span><span>Qty 8</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="column col-ready">
+      <div class="col-head">
+        <h2><i class="fas fa-circle-check"></i> Crated &amp; Ready</h2>
+        <span class="col-count">4</span>
+      </div>
+      <div class="col-body">
+
+        <div class="card status-ok">
+          <div class="card-top">
+            <span class="so-number">SO-48540</span>
+            <span class="dot ok"></span>
+          </div>
+          <div class="material">Core Coil Assembly — 1-Ph Padmount, 167 kVA</div>
+          <div class="card-tags">
+            <span class="wc-badge">CRATE</span>
+            <span class="priority p-low">LOW</span>
+          </div>
+          <div class="card-foot"><span><i class="fas fa-truck"></i>Ships Aug 02</span><span>Qty 4</span></div>
+        </div>
+
+        <div class="card status-ok">
+          <div class="card-top">
+            <span class="so-number">SO-48512</span>
+            <span class="dot ok"></span>
+          </div>
+          <div class="material">HV Bushing Turret — 69kV Class</div>
+          <div class="card-tags">
+            <span class="wc-badge">CRATE</span>
+            <span class="priority p-med">MEDIUM</span>
+          </div>
+          <div class="card-foot"><span><i class="fas fa-truck"></i>Ships Aug 02</span><span>Qty 2</span></div>
+        </div>
+
+        <div class="card status-ok">
+          <div class="card-top">
+            <span class="so-number">SO-48498</span>
+            <span class="dot ok"></span>
+          </div>
+          <div class="material">Radiator Fin Pack — 18-panel</div>
+          <div class="card-tags">
+            <span class="wc-badge">CRATE</span>
+            <span class="priority p-low">LOW</span>
+          </div>
+          <div class="card-foot"><span><i class="fas fa-truck"></i>Ships Aug 03</span><span>Qty 6</span></div>
+        </div>
+
+        <div class="card status-warn">
+          <div class="card-top">
+            <span class="so-number">SO-48470</span>
+            <span class="dot warn"></span>
+          </div>
+          <div class="material">Tap Changer Housing — Model TC-7</div>
+          <div class="card-tags">
+            <span class="wc-badge">CRATE</span>
+            <span class="priority p-med">MEDIUM</span>
+          </div>
+          <div class="card-foot"><span><i class="fas fa-truck"></i>Awaiting carrier</span><span>Qty 1</span></div>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+
+  <div class="about-wrap">
+    <details class="about">
+      <summary><i class="fas fa-circle-info"></i> About this system <i class="fas fa-chevron-down chevron"></i></summary>
+      <div class="about-body">
+        <p>
+          The real Backend Status System is a shop-floor order-tracking tool used by Trench Canada's
+          coils production team. This wallboard variant shares the exact same underlying data model and
+          order pipeline as the standard desktop Backend Status app, but is purpose-built for a big-screen
+          TV mounted on the shop floor — larger type, higher contrast, and far less UI chrome, so status is
+          readable from across the room without a mouse or keyboard.
+        </p>
+        <ul>
+          <li>Same order &amp; workcenter data model as the desktop Backend Status app (STRIP, CRIMP, WELD2, BLAST, CLEAN, PAINT, TESTLAB, DETAIL, CRATE).</li>
+          <li>Kanban-style columns group orders by pipeline stage instead of raw grid rows, for quick at-a-glance scanning.</li>
+          <li>Color-coded status dots and card borders flag at-risk and overdue orders instantly from a distance.</li>
+          <li>Designed to auto-refresh unattended on a mounted display, with no operator interaction required.</li>
+        </ul>
+      </div>
+    </details>
+  </div>
+</main>
+
+<footer>
+  © 2026 Trench Canada · Scheduling Team — Demo preview, sample data only.
+</footer>
+
+<script>
+  // ---- fabricated workcenter counts for the ticker (no network calls) ----
+  var workcenterCounts = [
+    { name: 'STRIP',   active: 6,  atRisk: 1 },
+    { name: 'CRIMP',   active: 9,  atRisk: 2 },
+    { name: 'WELD2',   active: 5,  atRisk: 1 },
+    { name: 'BLAST',   active: 4,  atRisk: 0 },
+    { name: 'CLEAN',   active: 7,  atRisk: 1 },
+    { name: 'PAINT',   active: 3,  atRisk: 1 },
+    { name: 'TESTLAB', active: 2,  atRisk: 0 },
+    { name: 'DETAIL',  active: 6,  atRisk: 2 },
+    { name: 'CRATE',   active: 4,  atRisk: 0 }
+  ];
+
+  function buildTickerHTML(){
+    var items = workcenterCounts.map(function(wc){
+      var riskColor = wc.atRisk > 1 ? '#f87171' : (wc.atRisk === 1 ? '#fbbf24' : '#4ade80');
+      return '<span><i class="fas fa-industry" style="color:#38bdf8;"></i>' +
+             '<b>' + wc.name + '</b> &middot; ' + wc.active + ' active' +
+             ' &middot; <span style="color:' + riskColor + ';">' + wc.atRisk + ' at risk</span></span>';
+    }).join('');
+    // duplicate content once for seamless looping
+    return items + items;
+  }
+
+  document.getElementById('ticker-track').innerHTML = buildTickerHTML();
+
+  // ---- cosmetic clock ----
+  function tickClock(){
+    var now = new Date();
+    var hh = String(now.getHours()).padStart(2, '0');
+    var mm = String(now.getMinutes()).padStart(2, '0');
+    var ss = String(now.getSeconds()).padStart(2, '0');
+    document.getElementById('clock-time').textContent = hh + ':' + mm + ':' + ss;
+  }
+  tickClock();
+  setInterval(tickClock, 1000);
+
+  // ---- cosmetic "last updated Xs ago" counter, purely fake, no fetch ----
+  var secondsSinceRefresh = 0;
+  var refreshEl = document.getElementById('refresh-counter');
+  setInterval(function(){
+    secondsSinceRefresh++;
+    if (secondsSinceRefresh >= 30) {
+      secondsSinceRefresh = 0; // simulate a silent "refresh" of the fake data
+    }
+    refreshEl.textContent = secondsSinceRefresh + 's';
+  }, 1000);
+</script>
+
+</body>
+</html>

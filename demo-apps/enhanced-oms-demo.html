@@ -1,0 +1,846 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Enhanced OM System · Demo Preview</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+<!-- Icons (vendored locally) -->
+<link rel="stylesheet" href="../assets/font-awesome/css/all.min.css" />
+
+<style>
+  :root{
+    --bg-0:#020617;
+    --bg-1:#0f172a;
+    --panel:rgba(15,23,42,0.9);
+    --border:rgba(148,163,184,0.5);
+    --text-head:#e5e7eb;
+    --text-body:#cbd5f5;
+    --text-muted:#9ca3af;
+    --ok:#22c55e;
+    --ok-2:#4ade80;
+    --warn:#f59e0b;
+    --warn-2:#fbbf24;
+    --bad:#f87171;
+    --bad-2:#ef4444;
+    --info:#38bdf8;
+    --blue:#2563eb;
+    --purple:#a855f7;
+  }
+
+  *{ box-sizing:border-box; }
+
+  html,body{
+    margin:0;
+    padding:0;
+    min-height:100%;
+    font-family:'IBM Plex Sans', system-ui, sans-serif;
+    color:var(--text-body);
+    background:
+      radial-gradient(circle at 10% 0%, rgba(56,189,248,0.14), transparent 45%),
+      radial-gradient(circle at 90% 10%, rgba(37,99,235,0.16), transparent 50%),
+      radial-gradient(circle at 50% 100%, rgba(168,85,247,0.10), transparent 55%),
+      var(--bg-0);
+    background-attachment:fixed;
+  }
+
+  a{ color:var(--info); text-decoration:none; }
+  a:hover{ text-decoration:underline; }
+
+  .wrap{
+    max-width:1280px;
+    margin:0 auto;
+    padding:1.75rem 1.5rem 3.5rem;
+  }
+
+  /* Header */
+  header.top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:1rem;
+    flex-wrap:wrap;
+    padding-bottom:1.25rem;
+    margin-bottom:1.5rem;
+    border-bottom:1px solid rgba(148,163,184,0.25);
+  }
+
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:0.85rem;
+  }
+
+  .brand img{
+    height:45px;
+    width:auto;
+    object-fit:contain;
+  }
+
+  .brand-title{
+    font-size:1.3rem;
+    font-weight:600;
+    color:var(--text-head);
+    letter-spacing:0.01em;
+  }
+
+  .brand-sub{
+    font-size:0.78rem;
+    color:var(--text-muted);
+    text-transform:uppercase;
+    letter-spacing:0.14em;
+  }
+
+  .back-link{
+    display:inline-flex;
+    align-items:center;
+    gap:0.4rem;
+    font-size:0.88rem;
+    color:var(--text-body);
+    border:1px solid var(--border);
+    padding:0.5rem 0.9rem;
+    border-radius:9999px;
+    background:rgba(15,23,42,0.6);
+    transition:border-color .15s ease, color .15s ease;
+  }
+  .back-link:hover{
+    color:var(--info);
+    border-color:var(--info);
+    text-decoration:none;
+  }
+
+  /* Demo pill */
+  .demo-pill{
+    display:inline-flex;
+    align-items:center;
+    gap:0.5rem;
+    font-size:0.78rem;
+    font-weight:600;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--warn-2);
+    background:rgba(245,158,11,0.12);
+    border:1px solid rgba(245,158,11,0.45);
+    padding:0.45rem 0.9rem;
+    border-radius:9999px;
+    margin-bottom:1.5rem;
+  }
+  .demo-pill i{ font-size:0.85rem; }
+  .demo-pill span.sep{ opacity:0.55; }
+
+  h1.page-title{
+    font-size:clamp(1.5rem,2.4vw,2rem);
+    color:var(--text-head);
+    margin:0 0 0.4rem;
+  }
+  p.page-desc{
+    max-width:60rem;
+    color:var(--text-body);
+    margin:0 0 1.75rem;
+    font-size:0.95rem;
+  }
+
+  /* Panel */
+  .panel{
+    position:relative;
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:1rem;
+    box-shadow:0 20px 45px rgba(2,6,23,0.6);
+    backdrop-filter:blur(14px);
+    padding:1.5rem;
+    margin-bottom:1.75rem;
+  }
+
+  .panel-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:1rem;
+    flex-wrap:wrap;
+    margin-bottom:1.1rem;
+  }
+
+  .panel-head h2{
+    font-size:1rem;
+    text-transform:uppercase;
+    letter-spacing:0.14em;
+    color:var(--text-head);
+    margin:0;
+    display:flex;
+    align-items:center;
+    gap:0.55rem;
+  }
+  .panel-head h2 i{ color:var(--info); }
+
+  /* Toolbar */
+  .toolbar{
+    display:flex;
+    gap:0.75rem;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+
+  .search-box{
+    position:relative;
+    flex:1 1 260px;
+    min-width:220px;
+  }
+  .search-box i{
+    position:absolute;
+    left:0.85rem;
+    top:50%;
+    transform:translateY(-50%);
+    color:var(--text-muted);
+    font-size:0.85rem;
+  }
+  .search-box input{
+    width:100%;
+    padding:0.6rem 0.85rem 0.6rem 2.2rem;
+    background:rgba(2,6,23,0.55);
+    border:1px solid var(--border);
+    border-radius:0.6rem;
+    color:var(--text-head);
+    font-family:inherit;
+    font-size:0.9rem;
+  }
+  .search-box input:focus{
+    outline:none;
+    border-color:var(--info);
+    box-shadow:0 0 0 3px rgba(56,189,248,0.15);
+  }
+  .search-box input::placeholder{ color:var(--text-muted); }
+
+  .result-count{
+    font-size:0.82rem;
+    color:var(--text-muted);
+    white-space:nowrap;
+  }
+
+  /* Table */
+  .table-scroll{
+    overflow-x:auto;
+    border-radius:0.75rem;
+    border:1px solid rgba(148,163,184,0.25);
+  }
+
+  table.grid{
+    width:100%;
+    border-collapse:collapse;
+    min-width:920px;
+    font-size:0.86rem;
+  }
+
+  table.grid thead th{
+    text-align:left;
+    padding:0.75rem 0.9rem;
+    background:rgba(2,6,23,0.65);
+    color:var(--text-muted);
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    font-size:0.72rem;
+    border-bottom:1px solid rgba(148,163,184,0.25);
+    white-space:nowrap;
+  }
+
+  table.grid tbody td{
+    padding:0.75rem 0.9rem;
+    border-bottom:1px solid rgba(148,163,184,0.12);
+    color:var(--text-body);
+    vertical-align:top;
+  }
+
+  table.grid tbody tr{
+    transition:background .12s ease;
+    cursor:pointer;
+  }
+  table.grid tbody tr:hover{
+    background:rgba(56,189,248,0.06);
+  }
+  table.grid tbody tr:last-child td{
+    border-bottom:none;
+  }
+
+  .cell-strong{ color:var(--text-head); font-weight:600; }
+  .cell-mono{ font-family:'IBM Plex Sans', monospace; }
+  .comment-preview{
+    max-width:220px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    color:var(--text-muted);
+    font-size:0.82rem;
+  }
+
+  /* Chips */
+  .chip{
+    display:inline-flex;
+    align-items:center;
+    gap:0.35rem;
+    padding:0.28rem 0.65rem;
+    border-radius:9999px;
+    font-size:0.74rem;
+    font-weight:600;
+    letter-spacing:0.02em;
+    white-space:nowrap;
+    border:1px solid transparent;
+  }
+  .chip i{ font-size:0.65rem; }
+  .chip.on-track{ color:var(--ok-2); background:rgba(34,197,94,0.12); border-color:rgba(34,197,94,0.4); }
+  .chip.at-risk{ color:var(--warn-2); background:rgba(245,158,11,0.12); border-color:rgba(245,158,11,0.4); }
+  .chip.escalated{ color:var(--bad-2); background:rgba(239,68,68,0.12); border-color:rgba(239,68,68,0.4); }
+  .chip.hold{ color:var(--info); background:rgba(56,189,248,0.12); border-color:rgba(56,189,248,0.4); }
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:0.4rem;
+    padding:0.4rem 0.75rem;
+    border-radius:0.5rem;
+    border:1px solid var(--border);
+    background:rgba(2,6,23,0.5);
+    color:var(--text-head);
+    font-size:0.8rem;
+    font-family:inherit;
+    cursor:pointer;
+    transition:border-color .15s ease, color .15s ease, background .15s ease;
+  }
+  .btn:hover{
+    border-color:var(--info);
+    color:var(--info);
+  }
+  .btn-primary{
+    background:linear-gradient(135deg, rgba(56,189,248,0.9), rgba(37,99,235,0.9));
+    border-color:transparent;
+    color:#f8fafc;
+    font-weight:600;
+  }
+  .btn-primary:hover{
+    color:#f8fafc;
+    filter:brightness(1.08);
+  }
+  .btn-ghost{
+    background:transparent;
+  }
+
+  /* About panel */
+  .about-grid{
+    display:grid;
+    grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);
+    gap:1.75rem;
+  }
+  .about-grid ul{
+    margin:0.6rem 0 0;
+    padding-left:1.15rem;
+    font-size:0.9rem;
+  }
+  .about-grid ul li + li{ margin-top:0.5rem; }
+  .about-grid ul li strong{ color:var(--text-head); }
+
+  @media (max-width:860px){
+    .about-grid{ grid-template-columns:minmax(0,1fr); }
+  }
+
+  /* Modal */
+  .modal-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(2,6,23,0.72);
+    backdrop-filter:blur(3px);
+    display:none;
+    align-items:flex-start;
+    justify-content:center;
+    padding:4vh 1rem;
+    z-index:100;
+    overflow-y:auto;
+  }
+  .modal-overlay.open{ display:flex; }
+
+  .modal{
+    width:100%;
+    max-width:640px;
+    background:rgba(15,23,42,0.97);
+    border:1px solid var(--border);
+    border-radius:1rem;
+    box-shadow:0 30px 70px rgba(2,6,23,0.85);
+    backdrop-filter:blur(20px);
+    padding:1.6rem 1.6rem 1.4rem;
+  }
+
+  .modal-head{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:1rem;
+    margin-bottom:0.3rem;
+  }
+  .modal-head h3{
+    margin:0;
+    color:var(--text-head);
+    font-size:1.1rem;
+  }
+  .modal-head .modal-sub{
+    font-size:0.8rem;
+    color:var(--text-muted);
+    margin-top:0.2rem;
+  }
+  .modal-close{
+    background:none;
+    border:none;
+    color:var(--text-muted);
+    font-size:1.1rem;
+    cursor:pointer;
+    line-height:1;
+    padding:0.25rem;
+  }
+  .modal-close:hover{ color:var(--bad-2); }
+
+  .modal-body{
+    margin-top:1.1rem;
+    display:flex;
+    flex-direction:column;
+    gap:1rem;
+  }
+
+  .field label{
+    display:block;
+    font-size:0.78rem;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--text-muted);
+    margin-bottom:0.4rem;
+  }
+
+  .field select,
+  .field textarea{
+    width:100%;
+    background:rgba(2,6,23,0.55);
+    border:1px solid var(--border);
+    border-radius:0.55rem;
+    color:var(--text-head);
+    font-family:inherit;
+    font-size:0.88rem;
+    padding:0.6rem 0.7rem;
+    resize:vertical;
+  }
+  .field textarea{ min-height:64px; }
+  .field select:focus,
+  .field textarea:focus{
+    outline:none;
+    border-color:var(--info);
+    box-shadow:0 0 0 3px rgba(56,189,248,0.15);
+  }
+
+  .modal-foot{
+    display:flex;
+    justify-content:flex-end;
+    gap:0.6rem;
+    margin-top:1.4rem;
+    padding-top:1rem;
+    border-top:1px solid rgba(148,163,184,0.2);
+  }
+
+  /* Toast */
+  #toast{
+    position:fixed;
+    bottom:1.75rem;
+    left:50%;
+    transform:translateX(-50%) translateY(20px);
+    background:rgba(15,23,42,0.96);
+    border:1px solid rgba(34,197,94,0.5);
+    color:var(--ok-2);
+    padding:0.75rem 1.25rem;
+    border-radius:0.65rem;
+    font-size:0.88rem;
+    display:flex;
+    align-items:center;
+    gap:0.55rem;
+    box-shadow:0 15px 40px rgba(2,6,23,0.7);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .25s ease, transform .25s ease;
+    z-index:200;
+  }
+  #toast.show{
+    opacity:1;
+    transform:translateX(-50%) translateY(0);
+  }
+
+  footer.bottom{
+    text-align:center;
+    color:var(--text-muted);
+    font-size:0.8rem;
+    margin-top:2.5rem;
+    padding-top:1.5rem;
+    border-top:1px solid rgba(148,163,184,0.2);
+  }
+
+  .empty-state{
+    padding:2.5rem 1rem;
+    text-align:center;
+    color:var(--text-muted);
+    font-size:0.9rem;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <img src="../Enhanced entrance for systems/Logo2.png" alt="Trench Canada Coils logo" />
+      <div>
+        <div class="brand-title">Enhanced OM System</div>
+        <div class="brand-sub">Sales Order Comment &amp; OM Period Manager</div>
+      </div>
+    </div>
+    <a class="back-link" href="../Enhanced entrance for systems/apple-style-portal.html">
+      <i class="fas fa-arrow-left"></i>
+      Back to Systems Portal
+    </a>
+  </header>
+
+  <div class="demo-pill">
+    <i class="fas fa-flask"></i>
+    Demo Preview
+    <span class="sep">·</span>
+    Sample data only, not connected to any live system
+  </div>
+
+  <h1 class="page-title">Sales Order Comment Grid</h1>
+  <p class="page-desc">
+    This preview reproduces the core review screen of the Enhanced OM System: production-order
+    rows matched against the backlog, with an inline editor for OM tracking category and
+    comments. All records below are fabricated for demonstration and reset on page reload.
+  </p>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2><i class="fas fa-table"></i> Order Review Grid</h2>
+      <div class="toolbar">
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input id="searchInput" type="text" placeholder="Filter by Sales Doc, Material, or Customer..." />
+        </div>
+        <span class="result-count" id="resultCount"></span>
+      </div>
+    </div>
+
+    <div class="table-scroll">
+      <table class="grid">
+        <thead>
+          <tr>
+            <th>Sales Doc</th>
+            <th>Item</th>
+            <th>Material</th>
+            <th>Customer</th>
+            <th>OM Period</th>
+            <th>Category</th>
+            <th>Comment Preview</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="gridBody"></tbody>
+      </table>
+    </div>
+    <div id="emptyState" class="empty-state" style="display:none;">
+      No orders match your search.
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2><i class="fas fa-circle-info"></i> About this system</h2>
+    </div>
+    <div class="about-grid">
+      <div>
+        <p style="margin:0; font-size:0.92rem;">
+          The Enhanced OM System (internally the "Sales Comment Manager") is a full-stack tool that
+          reconciles rows from the production-order-tracking table against the scheduling team's
+          backlog workbook by <strong>Sales Doc.</strong> and <strong>Item</strong>. It gives
+          planners one place to review matched orders and capture the OM commentary that used to
+          live only in a scattered spreadsheet, so the whole team can see the current status and
+          history for every open sales order at a glance.
+        </p>
+      </div>
+      <div>
+        <ul>
+          <li><strong>Backlog matching:</strong> joins live order rows to the backlog seed sheet by Sales Document and Item number.</li>
+          <li><strong>Per-order editor:</strong> a modal captures Category, OM Comments, Procurement Feedback, and Traffic Comments for each row.</li>
+          <li><strong>OM Period preview &amp; batch update:</strong> lets planners validate a batch of orders before writing a new OM Period value.</li>
+          <li><strong>Category tracking:</strong> On Track / At Risk / Escalated / Hold chips give a fast visual read of order health.</li>
+          <li><strong>Search &amp; filter:</strong> quickly narrow the grid by document number, material, or customer while triaging a backlog.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer class="bottom">
+    © 2026 Trench Canada · Scheduling Team — Demo preview, sample data only.
+  </footer>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h3 id="modalTitle">Edit Order</h3>
+        <div class="modal-sub" id="modalSub">Sales Doc — Item</div>
+      </div>
+      <button class="modal-close" id="modalCloseBtn" aria-label="Close">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label for="fieldCategory">Category</label>
+        <select id="fieldCategory">
+          <option value="on-track">On Track</option>
+          <option value="at-risk">At Risk</option>
+          <option value="escalated">Escalated</option>
+          <option value="hold">Hold</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="fieldOmComments">OM Comments</label>
+        <textarea id="fieldOmComments"></textarea>
+      </div>
+      <div class="field">
+        <label for="fieldProcurement">Procurement Feedback</label>
+        <textarea id="fieldProcurement"></textarea>
+      </div>
+      <div class="field">
+        <label for="fieldTraffic">Traffic Comments</label>
+        <textarea id="fieldTraffic"></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" id="cancelBtn">Cancel</button>
+      <button class="btn btn-primary" id="saveBtn"><i class="fas fa-check"></i> Save</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"><i class="fas fa-check-circle"></i> <span id="toastText">Saved (demo — not persisted)</span></div>
+
+<script>
+(function(){
+  "use strict";
+
+  var CATEGORY_LABELS = {
+    "on-track": "On Track",
+    "at-risk": "At Risk",
+    "escalated": "Escalated",
+    "hold": "Hold"
+  };
+  var CATEGORY_ICONS = {
+    "on-track": "fa-check-circle",
+    "at-risk": "fa-triangle-exclamation",
+    "escalated": "fa-fire",
+    "hold": "fa-pause-circle"
+  };
+
+  var orders = [
+    {
+      salesDoc:"4501823", item:"10", material:"CT-2200 Core Coil", customer:"Hydro Northline Corp",
+      omPeriod:"P5-2026", category:"on-track",
+      omComments:"On schedule for core stacking, no issues flagged this period.",
+      procurement:"All copper strip on hand; insulation paper confirmed for next batch.",
+      traffic:"Standard LTL routing planned, no dock conflicts expected."
+    },
+    {
+      salesDoc:"4501877", item:"20", material:"XR-500 Dry Type Transformer", customer:"Meridian Power Systems",
+      omPeriod:"P5-2026", category:"at-risk",
+      omComments:"Winding delayed 3 days due to shared tooling with 4501823.",
+      procurement:"Waiting on revised ETA for laminated core steel from secondary vendor.",
+      traffic:"Oversize load permit application submitted, awaiting approval."
+    },
+    {
+      salesDoc:"4501902", item:"10", material:"CT-1800 Current Transformer", customer:"Bluewater Utilities",
+      omPeriod:"P4-2026", category:"escalated",
+      omComments:"Customer requested expedite; production capacity conflict with two other jobs.",
+      procurement:"Bushings backordered, alternate supplier being sourced by procurement lead.",
+      traffic:"Escalated to expedited freight, cost variance pending approval."
+    },
+    {
+      salesDoc:"4501915", item:"30", material:"PT-750 Potential Transformer", customer:"Northshore Energy Ltd.",
+      omPeriod:"P5-2026", category:"hold",
+      omComments:"Customer placed order on hold pending revised site readiness date.",
+      procurement:"Materials staged, no procurement action required while on hold.",
+      traffic:"Shipment scheduling paused until hold is lifted."
+    },
+    {
+      salesDoc:"4501948", item:"10", material:"CT-2200 Core Coil", customer:"Granite Ridge Utilities",
+      omPeriod:"P6-2026", category:"on-track",
+      omComments:"Tank fabrication complete, moving into final assembly this week.",
+      procurement:"No open procurement items, all BOM lines received.",
+      traffic:"Domestic ground shipment booked for early next period."
+    },
+    {
+      salesDoc:"4501960", item:"40", material:"XR-350 Dry Type Transformer", customer:"Coastal Grid Partners",
+      omPeriod:"P4-2026", category:"at-risk",
+      omComments:"Testing lab backlog may push final sign-off by 2-4 days.",
+      procurement:"No procurement risk, all components received and inspected.",
+      traffic:"Carrier tentatively booked, pickup window flexible pending test completion."
+    },
+    {
+      salesDoc:"4502011", item:"10", material:"CT-1500 Current Transformer", customer:"Silverline Industrial",
+      omPeriod:"P5-2026", category:"on-track",
+      omComments:"Standard build, tracking to original commit date.",
+      procurement:"Full kit available in stores as of this week.",
+      traffic:"No special handling required, standard skid packaging."
+    },
+    {
+      salesDoc:"4502034", item:"20", material:"PT-500 Potential Transformer", customer:"Fraser Valley Power",
+      omPeriod:"P6-2026", category:"escalated",
+      omComments:"Design revision requested by customer mid-build; engineering reviewing impact.",
+      procurement:"Hold placed on remaining material draw until revision is confirmed.",
+      traffic:"Freight booking deferred until revised ship date is set."
+    },
+    {
+      salesDoc:"4502057", item:"10", material:"XR-750 Dry Type Transformer", customer:"Meridian Power Systems",
+      omPeriod:"P5-2026", category:"on-track",
+      omComments:"Second unit on this PO, following same build sequence as first unit.",
+      procurement:"Second material kit pulled and staged at line 3.",
+      traffic:"Consolidating with 4501877 for a joint shipment if timing aligns."
+    },
+    {
+      salesDoc:"4502081", item:"10", material:"CT-2200 Core Coil", customer:"Hydro Northline Corp",
+      omPeriod:"P4-2026", category:"hold",
+      omComments:"Awaiting customer PO amendment for revised quantity.",
+      procurement:"Procurement paused, no purchase commitments made against this line.",
+      traffic:"No shipment planning until amendment is received."
+    }
+  ];
+
+  var gridBody = document.getElementById("gridBody");
+  var emptyState = document.getElementById("emptyState");
+  var resultCount = document.getElementById("resultCount");
+  var searchInput = document.getElementById("searchInput");
+  var modalOverlay = document.getElementById("modalOverlay");
+  var modalTitle = document.getElementById("modalTitle");
+  var modalSub = document.getElementById("modalSub");
+  var fieldCategory = document.getElementById("fieldCategory");
+  var fieldOmComments = document.getElementById("fieldOmComments");
+  var fieldProcurement = document.getElementById("fieldProcurement");
+  var fieldTraffic = document.getElementById("fieldTraffic");
+  var saveBtn = document.getElementById("saveBtn");
+  var cancelBtn = document.getElementById("cancelBtn");
+  var modalCloseBtn = document.getElementById("modalCloseBtn");
+  var toast = document.getElementById("toast");
+  var toastText = document.getElementById("toastText");
+
+  var activeIndex = null;
+  var toastTimer = null;
+
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, function(ch){
+      return ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[ch];
+    });
+  }
+
+  function renderGrid(){
+    var query = searchInput.value.trim().toLowerCase();
+    gridBody.innerHTML = "";
+    var visibleCount = 0;
+
+    orders.forEach(function(order, idx){
+      var haystack = (order.salesDoc + " " + order.material + " " + order.customer).toLowerCase();
+      if (query && haystack.indexOf(query) === -1) return;
+      visibleCount++;
+
+      var tr = document.createElement("tr");
+      tr.setAttribute("data-idx", idx);
+
+      var chipClass = order.category;
+      var chipLabel = CATEGORY_LABELS[order.category];
+      var chipIcon = CATEGORY_ICONS[order.category];
+
+      tr.innerHTML =
+        '<td class="cell-strong cell-mono">' + escapeHtml(order.salesDoc) + '</td>' +
+        '<td class="cell-mono">' + escapeHtml(order.item) + '</td>' +
+        '<td>' + escapeHtml(order.material) + '</td>' +
+        '<td>' + escapeHtml(order.customer) + '</td>' +
+        '<td class="cell-mono">' + escapeHtml(order.omPeriod) + '</td>' +
+        '<td><span class="chip ' + chipClass + '"><i class="fas ' + chipIcon + '"></i>' + chipLabel + '</span></td>' +
+        '<td><div class="comment-preview" title="' + escapeHtml(order.omComments) + '">' + escapeHtml(order.omComments) + '</div></td>' +
+        '<td><button class="btn edit-btn" data-idx="' + idx + '"><i class="fas fa-pen"></i> Edit</button></td>';
+
+      gridBody.appendChild(tr);
+    });
+
+    emptyState.style.display = visibleCount === 0 ? "block" : "none";
+    resultCount.textContent = visibleCount + " of " + orders.length + " orders shown";
+  }
+
+  function openModal(idx){
+    activeIndex = idx;
+    var order = orders[idx];
+    modalTitle.textContent = "Edit Order " + order.salesDoc + " / " + order.item;
+    modalSub.textContent = order.material + " — " + order.customer;
+    fieldCategory.value = order.category;
+    fieldOmComments.value = order.omComments;
+    fieldProcurement.value = order.procurement;
+    fieldTraffic.value = order.traffic;
+    modalOverlay.classList.add("open");
+  }
+
+  function closeModal(){
+    modalOverlay.classList.remove("open");
+    activeIndex = null;
+  }
+
+  function showToast(message){
+    toastText.textContent = message;
+    toast.classList.add("show");
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){
+      toast.classList.remove("show");
+    }, 2600);
+  }
+
+  gridBody.addEventListener("click", function(e){
+    var editBtn = e.target.closest(".edit-btn");
+    var row = e.target.closest("tr[data-idx]");
+    if (editBtn){
+      openModal(parseInt(editBtn.getAttribute("data-idx"), 10));
+    } else if (row){
+      openModal(parseInt(row.getAttribute("data-idx"), 10));
+    }
+  });
+
+  saveBtn.addEventListener("click", function(){
+    if (activeIndex === null) return;
+    var order = orders[activeIndex];
+    order.category = fieldCategory.value;
+    order.omComments = fieldOmComments.value.trim();
+    order.procurement = fieldProcurement.value.trim();
+    order.traffic = fieldTraffic.value.trim();
+    closeModal();
+    renderGrid();
+    showToast("Saved (demo — not persisted)");
+  });
+
+  cancelBtn.addEventListener("click", closeModal);
+  modalCloseBtn.addEventListener("click", closeModal);
+  modalOverlay.addEventListener("click", function(e){
+    if (e.target === modalOverlay) closeModal();
+  });
+  document.addEventListener("keydown", function(e){
+    if (e.key === "Escape" && modalOverlay.classList.contains("open")) closeModal();
+  });
+
+  searchInput.addEventListener("input", renderGrid);
+
+  renderGrid();
+})();
+</script>
+</body>
+</html>

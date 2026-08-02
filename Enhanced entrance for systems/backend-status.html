@@ -1,0 +1,1078 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>TCC Scheduling Major Board</title>
+
+    <link rel="icon" type="image/png" sizes="32x32" href="./Logo.png" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Orbitron:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Existing bundles -->
+    <script src="./javascript/reload.js"></script>
+    <script src="./1986481368401444864/resource_5784810000.js"></script>
+    <link href="./1986481368401444864/all.min.css" rel="stylesheet" />
+    <link href="./1986481368401444864/tailwind.min.css" rel="stylesheet" />
+
+    <!-- Global styles -->
+    <link rel="stylesheet" href="assets/css/base.css" />
+
+    <!-- Page-local UI: copy from Schedule Visualization page -->
+    <style>
+      /* ===== 整页背景：和 Schedule Visualization 一样 ===== */
+      .tcc-main {
+        position: relative;
+        /* 最底层是图片，上面叠三层深色渐变做统一色调 */
+        background:
+          radial-gradient(circle at top left, rgba(56, 189, 248, 0.13), transparent 58%),
+          radial-gradient(circle at bottom right, rgba(37, 99, 235, 0.12), transparent 60%),
+          linear-gradient(to bottom, rgba(2, 6, 23, 0.06), rgba(2, 6, 23, 0.08)),
+          url('https://getwallpapers.com/wallpaper/full/b/a/4/368718.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed; /* 轻微视差，不喜欢可以删掉这一行 */
+      }
+
+      /* ===== HERO：抬一点层次感 ===== */
+      .tcc-page-hero {
+        padding-block: 3.25rem 2.4rem;
+        border-bottom: 1px solid rgba(15, 23, 42, 0.85);
+        position: relative;
+      }
+
+      .tcc-page-hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(circle at top right, rgba(125, 211, 252, 0.18), transparent 55%),
+          radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.18), transparent 55%);
+        opacity: 0.8;
+        pointer-events: none;
+      }
+
+      .tcc-page-hero-inner {
+        position: relative;
+        z-index: 1;
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+        gap: 2.4rem;
+        align-items: stretch;
+      }
+
+      .tcc-page-breadcrumb {
+        font-size: 0.8rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: #9ca3af;
+        margin-bottom: 0.8rem;
+      }
+
+      .tcc-page-title {
+        font-size: clamp(2rem, 2.6vw, 2.4rem);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        margin-bottom: 0.75rem;
+      }
+
+      .tcc-page-subtitle {
+        max-width: 40rem;
+        color: #d1d5db;
+      }
+
+      .tcc-page-hero-badges {
+        margin-top: 1.1rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .tcc-page-hero-visual {
+        display: flex;
+        align-items: stretch;
+        justify-content: flex-end;
+      }
+
+      .tcc-page-hero-card {
+        position: relative;
+        width: 100%;
+        border-radius: 1rem;
+        padding: 1.4rem 1.5rem 1.2rem;
+        background:
+          radial-gradient(circle at top left, rgba(59, 130, 246, 0.35), transparent 60%),
+          radial-gradient(circle at bottom right, rgba(8, 47, 73, 0.55), transparent 60%),
+          rgba(15, 23, 42, 0.54);
+        border: 1px solid rgba(148, 163, 184, 0.45);
+        box-shadow:
+          0 22px 45px rgba(15, 23, 42, 0.95),
+          0 0 0 1px rgba(15, 23, 42, 0.9) inset;
+        backdrop-filter: blur(14px);
+      }
+
+      .tcc-page-hero-card h3 {
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: #e5e7eb;
+        margin-bottom: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+
+      .tcc-page-hero-card h3::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(
+          to right,
+          rgba(59, 130, 246, 0.2),
+          rgba(56, 189, 248, 0.7)
+        );
+      }
+
+      .tcc-page-hero-card ul {
+        margin-left: 0;
+        padding-left: 1rem;
+        font-size: 0.9rem;
+        color: #cbd5f5;
+      }
+
+      .tcc-page-hero-card li + li {
+        margin-top: 0.4rem;
+      }
+
+      .tcc-page-hero-card .tcc-tag-row {
+        margin-top: 1rem;
+      }
+
+      /* ===== 主体双列区域：两张“玻璃卡片”并排 ===== */
+      .tcc-page-main {
+        padding: 2.4rem 1.75rem 3.25rem;
+        border-top: 1px solid rgba(15, 23, 42, 0.9);
+      }
+
+      .tcc-page-main-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+        gap: 2rem;
+        align-items: stretch;
+      }
+
+      .tcc-page-main-inner .tcc-panel {
+        position: relative;
+        min-height: 0;
+        max-height: 65vh; /* 高度限制到一屏内，内部滚动 */
+        padding: 1.6rem 1.7rem 1.5rem;
+        border-radius: 1rem;
+        border: 1px solid rgba(148, 163, 184, 0.42);
+        background:
+          radial-gradient(circle at top left, rgba(56, 189, 248, 0.25), transparent 62%),
+          radial-gradient(circle at bottom right, rgba(37, 99, 235, 0.28), transparent 60%),
+          rgba(15, 23, 42, 0.36);
+        box-shadow:
+          0 22px 48px rgba(15, 23, 42, 0.98),
+          0 0 0 1px rgba(15, 23, 42, 0.9) inset;
+        backdrop-filter: blur(18px);
+        overflow-y: auto;
+      }
+
+      .tcc-page-main-inner .tcc-panel::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: linear-gradient(
+          135deg,
+          rgba(96, 165, 250, 0.22),
+          transparent 55%
+        );
+        mix-blend-mode: soft-light;
+        opacity: 0.9;
+        pointer-events: none;
+      }
+
+      .tcc-page-main-inner .tcc-panel > * {
+        position: relative;
+        z-index: 1;
+      }
+
+      /* Panel 标题样式 */
+      .tcc-page-main-inner .tcc-panel h3 {
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: #e5e7eb;
+        margin-bottom: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+
+      .tcc-page-main-inner .tcc-panel h3::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: radial-gradient(circle, #38bdf8, #2563eb);
+        box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.25);
+      }
+
+      .tcc-page-main-inner .tcc-panel h3::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(
+          to right,
+          rgba(15, 23, 42, 0),
+          rgba(148, 163, 184, 0.8)
+        );
+      }
+
+      .tcc-page-main-inner .tcc-panel h4 {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: #e5e7eb;
+        margin: 1.1rem 0 0.35rem;
+      }
+
+      .tcc-page-main-inner .tcc-panel p {
+        font-size: 0.9rem;
+        color: #d1d5db;
+      }
+
+      .tcc-page-main-inner .tcc-panel ul {
+        margin-top: 0.5rem;
+        padding-left: 1.1rem;
+        font-size: 0.9rem;
+        color: #cbd5f5;
+      }
+
+      .tcc-page-main-inner .tcc-panel ul li + li {
+        margin-top: 0.25rem;
+      }
+
+      .tcc-page-main-inner .tcc-panel dl {
+        font-size: 0.88rem;
+        color: #d1d5db;
+      }
+
+      .tcc-page-main-inner .tcc-panel dl dt {
+        color: #e5e7eb;
+      }
+
+      .tcc-page-main-inner .tcc-panel dl dd {
+        color: #cbd5f5;
+      }
+
+      .tcc-page-main-inner .tcc-panel .tcc-tag-row {
+        margin-top: 0.6rem;
+      }
+
+      .tcc-page-main-inner .tcc-panel .tcc-tag {
+        border-radius: 9999px;
+        border: 1px solid rgba(148, 163, 184, 0.5);
+        background: rgba(15, 23, 42, 0.9);
+      }
+
+      /* 小提示文字浅一点 */
+      .tcc-page-main-inner .tcc-panel p[style*="font-size: 0.8rem"] {
+        color: #9ca3af !important;
+      }
+
+      /* 低存在感滚动条，仅限两个 panel */
+      .tcc-page-main-inner .tcc-panel {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(148, 163, 184, 0.45) transparent;
+      }
+
+      .tcc-page-main-inner .tcc-panel::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .tcc-page-main-inner .tcc-panel::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      .tcc-page-main-inner .tcc-panel::-webkit-scrollbar-thumb {
+        background: rgba(148, 163, 184, 0.45);
+        border-radius: 9999px;
+      }
+
+      .tcc-page-main-inner .tcc-panel::-webkit-scrollbar-thumb:hover {
+        background: rgba(148, 163, 184, 0.7);
+      }
+
+      /* Guide manual 里的有序列表美化（沿用 Schedule Visualization） */
+      .tcc-page-main-inner .tcc-panel ol.list-decimal {
+        margin-top: 0.75rem;
+        padding-left: 1.1rem;
+      }
+
+      .tcc-page-main-inner .tcc-panel ol.list-decimal > li {
+        padding-top: 0.55rem;
+        margin-top: 0.2rem;
+        border-top: 1px dashed rgba(148, 163, 184, 0.25);
+      }
+
+      .tcc-page-main-inner .tcc-panel ol.list-decimal > li:first-child {
+        border-top: 0;
+      }
+
+      .tcc-page-main-inner .tcc-panel ol.list-decimal > li > div:first-child {
+        display: inline-block;
+        margin-left: 0.3rem;
+        font-weight: 600;
+        color: #e5e7eb;
+      }
+
+      .tcc-page-main-inner .tcc-panel ul.list-disc {
+        margin-top: 0.3rem;
+        padding-left: 1.1rem;
+        font-size: 0.9rem;
+        color: #cbd5f5;
+      }
+
+      .tcc-page-main-inner .tcc-panel ul.list-disc li + li {
+        margin-top: 0.25rem;
+      }
+
+      /* ===== 自适应：小屏改为纵向排布，去掉高度限制 ===== */
+      @media (max-width: 900px) {
+        .tcc-page-hero {
+          padding-block: 2.4rem 1.9rem;
+        }
+
+        .tcc-page-hero-inner {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 1.9rem;
+        }
+
+        .tcc-page-main {
+          padding: 1.8rem 1.25rem 2.3rem;
+        }
+
+        .tcc-page-main-inner {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 1.6rem;
+        }
+
+        .tcc-page-main-inner .tcc-panel {
+          max-height: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="tcc-site">
+      <!-- ========== HEADER ========== -->
+      <header class="tcc-header">
+        <div class="tcc-nav-inner">
+          <a href="../TCCScheduleDashboard - Redesigned/public/index.html" class="tcc-brand">
+            <img src="./Logo2.png" alt="TCC logo" style="height: 100px; width: 120px; object-fit: contain;" />
+            <div>
+              <div class="tcc-brand-text-main">Trench Canada Coils</div>
+              <div class="tcc-brand-text-sub">
+                A LEGACY OF INNOVATION
+              </div>
+            </div>
+          </a>
+
+          <nav class="tcc-nav-links">
+            <!-- HOME -->
+            <a href="../TCCScheduleDashboard - Redesigned/public/index.html" class="tcc-nav-link">Home</a>
+
+            <!-- SYSTEMS 下拉菜单 -->
+            <div
+              class="tcc-nav-dropdown"
+              style="position: relative;"
+              onmouseleave="document.getElementById('tcc-systems-menu').style.display='none';"
+            >
+              <div
+                type="button"
+                class="tcc-nav-link"
+                aria-haspopup="true"
+                aria-expanded="false"
+                onmouseover="document.getElementById('tcc-systems-menu').style.display='flex';"
+                onfocus="document.getElementById('tcc-systems-menu').style.display='flex';"
+                onclick="const m=document.getElementById('tcc-systems-menu'); m.style.display = (m.style.display==='flex'?'none':'flex');"
+              >
+                Systems
+                <i
+                  class="fas fa-chevron-down"
+                  style="margin-left: 0.25rem; font-size: 0.7em;"
+                ></i>
+              </div>
+
+              <!-- 下拉列表：五个 systems -->
+              <div
+                id="tcc-systems-menu"
+                style="
+                  display: none;
+                  position: absolute;
+                  top: 100%;
+                  right: 0;
+                  padding: 0.4rem 0;
+                  background: rgba(15, 23, 42, 0.98);
+                  border-radius: 0.5rem;
+                  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.8);
+                  min-width: 220px;
+                  z-index: 50;
+                  flex-direction: column;
+                "
+              >
+                <a
+                  href="systems-portal.html"
+                  target="_blank"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Systems Portal
+                </a>
+                <a
+                  href="prodorder-status.html"
+                  target="_blank"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Production Order Status
+                </a>
+                <a
+                  href="schedule-visualization.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Schedule Visualization
+                </a>
+                <a
+                  href="backend-status.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Backend Status System
+                </a>
+                <a
+                  href="frontend-status.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Frontend Status System
+                </a>
+                <a
+                  href="machine-load-recalculation-studio.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Machine Load Recalculation Studio
+                </a>
+                <a
+                  href="load-vs-capacity.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Load vs Capacity
+                </a>
+                <a
+                  href="andon-board.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Production Andon Board
+                </a>
+                <a
+                  href="enhanced-oms.html"
+                  class="tcc-nav-link"
+                  style="display:block; padding:0.4rem 1rem; white-space:nowrap;"
+                >
+                  Enhanced OMS
+                </a>
+              </div>
+            </div>
+
+            <!-- NOTES & UPDATES -->
+            <a href="notes-updates.html" class="tcc-nav-link">
+              Notes &amp; Updates
+            </a>
+
+            <!-- AI ASSISTANT -->
+            <a
+              href="../demo-apps/ai-assistant-demo.html"
+              class="tcc-nav-link"
+              data-ai-assistant-link="1"
+            >
+              AI ASSISTANT
+            </a>
+          </nav>
+
+          <button class="tcc-nav-toggle" aria-label="Toggle navigation">
+            <span></span>
+          </button>
+        </div>
+      </header>
+
+      <main class="tcc-main">
+        <!-- HERO -->
+        <section class="tcc-page-hero tcc-fade-in-on-load">
+          <div class="tcc-page-hero-inner">
+            <div class="reveal-on-scroll">
+              <div class="tcc-page-breadcrumb">
+                Scheduling Systems · Backend Status
+              </div>
+              <h1 class="tcc-page-title">Backend Status System</h1>
+              <p class="tcc-page-subtitle">
+                Backlog-focused view summarizing which orders are on-time,
+                at-risk or overdue based on OM Period, PMAD dates, remaining
+                hours and live workcenter confirmations.
+              </p>
+              <div class="tcc-page-hero-badges">
+                <span class="tcc-badge">
+                  <i class="fas fa-database"></i>
+                  Backlog / OM Period logic
+                </span>
+                <span class="tcc-badge">
+                  <i class="fas fa-user-cog"></i>
+                  Roles &amp; comments
+                </span>
+              </div>
+            </div>
+
+            <div class="tcc-page-hero-visual reveal-on-scroll">
+              <div class="tcc-page-hero-card">
+                <h3>How to use this System</h3>
+                <ul>
+                  <li>
+                    Use your assigned credentials to log into the system
+                  </li>
+                  <li>
+                    Select pages and functionalities you want to access
+                  </li>
+                  <li>
+                    Details can be found in Guide Manual
+                  </li>
+                  <li>
+                    Data auto updates from SAP every 30 mins
+                  </li>
+                  <li>
+                    This system is not suitable for mobiles or small tablets
+                  </li>
+                </ul>
+                <div class="tcc-tag-row">
+                  <span class="tcc-tag">BacklogDatabase.json</span>
+                  <span class="tcc-tag">Live confirmations</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- MAIN CONTENT -->
+        <section class="tcc-page-main">
+          <div class="tcc-page-main-inner">
+            <!-- Left: Guide Manual -->
+            <article class="tcc-panel reveal-on-scroll">
+              <h3>Guide Manual</h3>
+              <p>
+                This guide explains how to use the main pages inside the
+                <strong>Backend Status System</strong>. It is built around a
+                fixed backlog file and derived JSON data, and exposes center
+                views, dashboards and admin-only monitoring.
+              </p>
+
+              <ol class="list-decimal list-inside space-y-3">
+                <!-- 1. DASHBOARD -->
+                <li>
+                  <div><strong>Dashboard</strong></div>
+                  <p>
+                    The Dashboard is the landing page of the
+                    <strong>Backend Status System</strong>. It aggregates backlog
+                    rows from the fixed backlog file and shows PMAD vs OM Period,
+                    status counts, and center-level distributions.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      Use the <strong>OM Period</strong> and simple search filters
+                      to focus on a particular month, customer, or sales order
+                      range.
+                    </li>
+                    <li>
+                      Read the top canvas charts to understand backlog volume by
+                      OM Period and <strong>CRATED</strong> quantity before
+                      drilling into tables.
+                    </li>
+                    <li>
+                      Use this page when you need a quick answer to
+                      “How many orders are currently at risk or overdue, and in
+                      which centers?”.
+                    </li>
+                  </ul>
+                </li>
+
+                <!-- 2. CENTER VIEWS -->
+                <li>
+                  <div>
+                    <strong>
+                      Center views (STRIP, CRIMP, WELD2, BLAST, CLEAN,
+                      PAINT, TESTLAB, DETAIL, CRATE)
+                    </strong>
+                  </div>
+                  <p>
+                    Each center tab shows a filtered view of the backlog for that
+                    workcenter, split into <strong>Pending</strong> and
+                    <strong>history / live work</strong>.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      Use the <strong>Pending</strong> table to see all open
+                      orders the center is responsible for. You can sort, filter
+                      and export these rows.
+                    </li>
+                    <li>
+                      Fields such as <strong>Priority</strong>,
+                      <strong>NotFinished</strong> and <strong>Why</strong> are
+                      editable; changes are written back to the shared backlog
+                      file and to the <em>order edits</em> store.
+                    </li>
+                    <li>
+                      Double-click the <strong>Why</strong> column to open the
+                      notes editor, or press <strong>Enter</strong> on a selected
+                      row to open the sales-status modal.
+                    </li>
+                  </ul>
+                </li>
+
+                <!-- 3. LIVE WORK & MATERIAL CHECK -->
+                <li>
+                  <div>
+                    <strong>Live work &amp; Material Check (per center)</strong>
+                  </div>
+                  <p>
+                    Under each center tab, the
+                    <strong>Orders Currently Being Worked On</strong> card
+                    combines live shop-floor confirmations with a structured
+                    material-check list.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      The left side shows
+                      <strong>Live Workcenter Confirmations</strong>, refreshed
+                      automatically every 30 seconds from SAP confirmations.
+                    </li>
+                    <li>
+                      The right side shows a <strong>Material Check</strong> table
+                      for that center, tied to the same pending orders. Use this
+                      before starting work to confirm that key materials and
+                      dependencies are available.
+                    </li>
+                    <li>
+                      Export both <strong>Pending</strong> and
+                      <strong>History / Currently Working</strong> tables to CSV
+                      when preparing for daily stand-ups or shift handovers.
+                    </li>
+                  </ul>
+                </li>
+
+                <!-- 4. CRATED ORDERS -->
+                <li>
+                  <div><strong>CRATED Orders</strong></div>
+                  <p>
+                    The <strong>CRATED</strong> tab isolates orders that are fully
+                    crated or ready to ship, based on the CRATED flag in the
+                    backlog file.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      Use this tab to review what is already boxed or staged for
+                      shipping, and to confirm alignment with shipping schedules.
+                    </li>
+                    <li>
+                      Export the CRATED table when coordinating with logistics or
+                      updating external stakeholders.
+                    </li>
+                  </ul>
+                </li>
+
+                <!-- 5. HISTORY -->
+                <li>
+                  <div><strong>History</strong></div>
+                  <p>
+                    The <strong>History</strong> tab collects finished-history
+                    rows and the material-check history across centers. It is
+                    primarily for traceability and audit trail when reviewing past
+                    decisions.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      Use this page when you need to answer “When did we last
+                      work on this order and what was the material status at that
+                      time?”.
+                    </li>
+                    <li>
+                      Filter and export history when preparing reports for
+                      supervisors or when investigating recurring issues.
+                    </li>
+                  </ul>
+                </li>
+
+                <!-- 6. OVERDUE ORDERS -->
+                <li>
+                  <div><strong>Overdue Orders (Only for Admin)</strong></div>
+                  <p>
+                    This tab is visible only when logged in as
+                    <strong>Admin</strong>. It reads from the raw backlog dataset
+                    and applies the overdue logic using OM Period and PMAD dates.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      Use filters to focus on a specific plant, customer, or OM
+                      Period, then export the view for escalation.
+                    </li>
+                    <li>
+                      Use this page to cross-check that the visual backlog status
+                      matches the raw ODC / OMS data and to validate overdue
+                      definitions.
+                    </li>
+                  </ul>
+                </li>
+
+                <!-- 7. NOTES & COMMENTS -->
+                <li>
+                  <div>
+                    <strong>Notes (“Why”) and comments (Only for Admin)</strong>
+                  </div>
+                  <p>
+                    The <strong>Why</strong> field and associated comments store
+                    lightweight explanations for why an order is or is not
+                    finished.
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      Double-click the <strong>Why</strong> column or press
+                      <strong>Enter</strong> to open a modal where you can record
+                      reasons, risks or next steps.
+                    </li>
+                    <li>
+                      These notes are stored separately in the
+                      <em>order edits</em> and <em>comments</em> structures so
+                      they survive refreshes.
+                    </li>
+                    <li>
+                      Use this consistently so supervisors and planners can
+                      understand context without re-reading emails.
+                    </li>
+                  </ul>
+                </li>
+
+                <!-- 8. ROLES & LOGIN -->
+                <li>
+                  <div><strong>Roles, login and “View As”</strong></div>
+                  <p>
+                    Access to pages and editing capabilities depends on the user
+                    role (<strong>Admin</strong>, <strong>Supervisor</strong>,
+                    <strong>Other User</strong>).
+                  </p>
+                  <ul class="list-disc list-inside">
+                    <li>
+                      Log in with your assigned username and password. Use the
+                      change-password modal to update your credentials when
+                      required.
+                    </li>
+                    <li>
+                      Admins can use the <strong>View As</strong> control to see
+                      exactly what Supervisors or Users see, without changing data
+                      ownership.
+                    </li>
+                    <li>
+                      Use this when testing changes to permissions or confirming
+                      whether a given user will be able to see a specific overdue
+                      group.
+                    </li>
+                  </ul>
+                </li>
+              </ol>
+
+              <p style="margin-top: 0.75rem; font-size: 0.8rem; color: #9ca3af">
+                General Suggestion: use the <strong>Dashboard</strong> to spot
+                problems, center tabs to see who owns them, the
+                <strong>Overdue Orders</strong> page to validate logic against
+                raw data, and the <strong>History</strong> and
+                <strong>Material Check</strong> views when you need to understand
+                past decisions.
+              </p>
+            </article>
+
+            <!-- Right: System link + API guide -->
+            <article class="tcc-panel reveal-on-scroll">
+              <h3>System Link &amp; API guide for Data Source</h3>
+
+              <p>
+                Open the link from internal network.
+                Use your assigned credential to log in the system.
+                Please be advised that the system initial load will take about
+                1–2 minutes.
+              </p>
+
+              <p style="margin-top: 0.75rem">
+                <a
+                  href="../demo-apps/backend-status-demo.html"
+                  target="_blank"
+                  class="tcc-link-inline"
+                  style="font-size: 0.95rem"
+                >
+                  <i class="fas fa-external-link-alt"></i>
+                  Open Backend Status System - Normal Ver
+                </a>
+              </p>
+
+              <p style="margin-top: 0.75rem">
+                <a
+                  href="../demo-apps/backend-status-tv-demo.html"
+                  target="_blank"
+                  class="tcc-link-inline"
+                  style="font-size: 0.95rem"
+                >
+                  <i class="fas fa-external-link-alt"></i>
+                  Open Backend Status System - TV Version
+                </a>
+              </p>
+
+              <div class="tcc-tag-row">
+                <span class="tcc-tag">Demo preview - 2 view modes</span>
+                <span class="tcc-tag">Status: Normal</span>
+              </div>
+
+              <hr style="margin: 1.2rem 0; border-color: rgba(148,163,184,0.45)" />
+
+              <!-- 1. Core backlog & OMS data -->
+              <h4>1. Core backlog &amp; OMS data</h4>
+              <dl style="margin: 0 0 0.6rem 0;">
+                <dt>GET /api/files</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  List available data files in the backend
+                  <code>data</code> folder (for example the fixed backlog file and
+                  raw backlog JSON).
+                </dd>
+
+                <dt>GET /api/data?file=BacklogDatabase.json</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Load the main backlog dataset (status, OM Period, PMAD,
+                  CRATED, remaining hours). Feeds Dashboard, center Pending
+                  tables and CRATED view.
+                </dd>
+
+                <dt>GET /api/data?file=BacklogRaw.json</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Load the raw backlog rows used by the
+                  <strong>Overdue Orders</strong> admin page and supporting
+                  maps.
+                </dd>
+
+                <dt>POST /api/update</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Persist a single cell change back to the underlying backlog
+                  store. Payload includes
+                  <code>{ file, order, center, field, value }</code>.
+                </dd>
+              </dl>
+
+              <!-- 2. Order edits & comments -->
+              <h4>2. Order edits &amp; comments</h4>
+              <dl style="margin: 0 0 0.6rem 0;">
+                <dt>GET /api/order_edits</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Fetch stored overrides for orders (for example Priority and
+                  Why notes) so they can be re-applied after file reload.
+                </dd>
+
+                <dt>POST /api/order_edits</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Upsert a single override such as
+                  <code>{ order, field, value }</code> when a user changes
+                  Priority or Why in the grid.
+                </dd>
+
+                <dt>GET /api/comments</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Load per-order free-text comments used by the Why and notes
+                  dialogs.
+                </dd>
+
+                <dt>POST /api/comments</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Save or update a comment for a given Sales Doc./Item
+                  combination.
+                </dd>
+              </dl>
+
+              <!-- 3. Live workcenter confirmations -->
+              <h4>3. Live workcenter confirmations</h4>
+              <dl style="margin: 0 0 0.6rem 0;">
+                <dt>GET /api/workcenter/confirmations?name=PAINT</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Return live SAP confirmations for a single workcenter (used by
+                  the <strong>LiveWorkcenterConfirmations</strong> panel).
+                </dd>
+
+                <dt>GET /api/confirmations/workcenters</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Aggregate live confirmations by workcenter, so the Dashboard
+                  can show which centers currently have running work.
+                </dd>
+              </dl>
+
+              <!-- 4. Material checks -->
+              <h4>4. Material checks</h4>
+              <dl style="margin: 0 0 0.6rem 0;">
+                <dt>GET /api/material_checks</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Fetch all material-check entries across centers for use in
+                  history and audit views.
+                </dd>
+
+                <dt>GET /api/material_checks/by_workcenter?name=PAINT</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Filter material checks for a specific center. Used in the
+                  Material Check table under each Pending view.
+                </dd>
+
+                <dt>POST /api/material_checks/save</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Save or update a single material-check record when a user edits
+                  the checklist for one order.
+                </dd>
+
+                <dt>POST /api/material_checks/bulk_save</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Bulk-save multiple material-check rows at once (for example
+                  after editing several orders then committing the batch).
+                </dd>
+              </dl>
+
+              <!-- 5. Refresh & status endpoints -->
+              <h4>5. Refresh &amp; status endpoints</h4>
+              <dl style="margin: 0 0 0.6rem 0;">
+                <dt>POST /api/tableau/refresh</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Trigger a Tableau-based export to rebuild the latest backlog
+                  file from source dashboards.
+                </dd>
+
+                <dt>GET /api/tableau/status</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Poll Tableau refresh status for display in the UI (success,
+                  running, or error message).
+                </dd>
+
+                <dt>POST /api/om/refresh</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Kick off a job to refresh OM Period mapping data from the
+                  upstream OMS / database source.
+                </dd>
+
+                <dt>GET /api/om/status</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Check the status of the OM Period refresh job.
+                </dd>
+
+                <dt>POST /api/refresh_backlog</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Rebuild the main backlog JSON (for example
+                  <code>BacklogDatabase.json</code> and
+                  <code>BacklogRaw.json</code>) from current source files.
+                </dd>
+
+                <dt>GET /api/backlog/status</dt>
+                <dd style="margin: 0 0 0.25rem 0.9rem;">
+                  Report whether the last backlog refresh succeeded, and when it
+                  last completed.
+                </dd>
+              </dl>
+
+              <!-- 6. Responses & errors -->
+              <h4>6. Responses &amp; errors</h4>
+              <p style="margin: 0 0 0.25rem 0.9rem; font-size: 0.9rem;">
+                <strong>All endpoints return JSON.</strong> On failure the server
+                uses HTTP <strong>4xx/5xx</strong> codes and includes
+                <strong>ok:false</strong> and an <strong>error</strong> message
+                so you can quickly see what went wrong in the browser Network
+                tab.
+              </p>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <footer class="tcc-footer">
+        <div class="tcc-footer-inner">
+          <span>© 2025 Trench Canada · Scheduling Team</span>
+          <span>
+            Backend Status System · Version 3.1 · Designed &amp; Maintained by
+            Yanbo Wang (FY2025)
+          </span>
+        </div>
+      </footer>
+    </div>
+
+    <!-- full-screen marquee border overlay -->
+    <div id="tcc-marquee-border" aria-hidden="true"></div>
+
+    <!-- main UI script -->
+    <script src="assets/js/main.js"></script>
+
+    <!-- AI ASSISTANT hover -> glow + click -> jump -->
+    <script>
+      (function () {
+        const AI_URL = "../demo-apps/ai-assistant-demo.html";
+
+        function glowOn() {
+          document.body.classList.add("tcc-marquee-on");
+        }
+
+        function glowOff() {
+          document.body.classList.remove("tcc-marquee-on");
+        }
+
+        function goAiAssistant(e) {
+          if (e) e.preventDefault();
+          glowOn(); // 点击时也顺便亮一下（不影响：马上跳转页面）
+          setTimeout(() => {
+            window.location.href = AI_URL;
+          }, 380);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+          const nodes = document.querySelectorAll("[data-ai-assistant-link='1']");
+          nodes.forEach((el) => {
+            // ✅ 鼠标移上去就生效
+            el.addEventListener("mouseenter", glowOn);
+            el.addEventListener("mouseleave", glowOff);
+
+            // ✅ 键盘 tab 聚焦也生效（更完整）
+            el.addEventListener("focus", glowOn);
+            el.addEventListener("blur", glowOff);
+
+            // ✅ 点击仍然跳转
+            el.addEventListener("click", goAiAssistant);
+          });
+        });
+      })();
+    </script>
+
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>
