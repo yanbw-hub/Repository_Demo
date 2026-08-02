@@ -173,230 +173,6 @@
         100% { background-position: 0% 50%; }
       }
 
-      /* ===== AUTH (LOGIN MODAL) ===== */
-      #tcc-auth-who {
-        display: none;
-        margin-left: 0.6rem;
-        padding: 0.22rem 0.55rem;
-        border-radius: 999px;
-        border: 1px solid rgba(226, 232, 240, 0.16);
-        background: rgba(255, 255, 255, 0.05);
-        color: rgba(231, 238, 248, 0.92);
-        font-size: 0.78rem;
-        line-height: 1.2;
-        white-space: nowrap;
-      }
-
-      #tcc-auth-modal {
-        position: fixed;
-        inset: 0;
-        z-index: 100000;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        padding: 24px;
-        background: rgba(3, 7, 18, 0.72);
-        backdrop-filter: blur(8px);
-      }
-
-      #tcc-auth-modal[aria-hidden="false"] {
-        display: flex;
-      }
-
-      #tcc-auth-card {
-        width: min(440px, 96vw);
-        background: rgba(15, 23, 42, 0.86);
-        border: 1px solid rgba(226, 232, 240, 0.18);
-        border-radius: 16px;
-        padding: 18px 18px 16px;
-        box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
-        color: #e5e7eb;
-      }
-
-      .tcc-auth-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-        margin-bottom: 8px;
-      }
-
-      #tcc-auth-title {
-        font-weight: 900;
-        font-size: 18px;
-        margin: 0;
-        letter-spacing: 0.2px;
-      }
-
-      #tcc-auth-close {
-        background: transparent;
-        border: 0;
-        color: rgba(231, 238, 248, 0.86);
-        cursor: pointer;
-        padding: 6px 8px;
-        border-radius: 10px;
-        line-height: 1;
-        font-size: 18px;
-      }
-
-      #tcc-auth-close:hover {
-        background: rgba(255, 255, 255, 0.06);
-      }
-
-      .tcc-auth-label {
-        display: block;
-        font-size: 12px;
-        opacity: 0.86;
-        margin-top: 12px;
-      }
-
-      .tcc-auth-input {
-        width: 100%;
-        padding: 10px 12px;
-        border-radius: 12px;
-        border: 1px solid rgba(226, 232, 240, 0.16);
-        background: rgba(2, 6, 23, 0.55);
-        color: #e5e7eb;
-        outline: none;
-      }
-
-      .tcc-auth-input:focus {
-        border-color: rgba(96, 165, 250, 0.65);
-        box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.18);
-      }
-
-      #tcc-auth-submit {
-        margin-top: 14px;
-        width: 100%;
-        padding: 10px 12px;
-        border-radius: 12px;
-        border: 0;
-        background: #60a5fa;
-        color: #0b1020;
-        font-weight: 900;
-        cursor: pointer;
-      }
-
-      #tcc-auth-submit:disabled {
-        opacity: 0.55;
-        cursor: not-allowed;
-      }
-
-      #tcc-auth-msg {
-        margin-top: 10px;
-        font-size: 13px;
-        color: #fb7185;
-        min-height: 18px;
-      }
-
-      /* ===== ADMIN ONLY (hidden until role confirmed) ===== */
-      /* This page hides admin-only nav/items by default; they will be enabled only when role === Admin. */
-
-      /* ===== USER MENU POPOVER (Hello + role) ===== */
-      #tcc-user-popover {
-        position: fixed;
-        z-index: 100001;
-        display: none;
-        min-width: 220px;
-        max-width: 320px;
-        padding: 12px;
-        border-radius: 14px;
-        background: rgba(15, 23, 42, 0.96);
-        border: 1px solid rgba(226, 232, 240, 0.18);
-        box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
-        backdrop-filter: blur(10px);
-        color: rgba(231, 238, 248, 0.96);
-      }
-
-      #tcc-user-popover .tcc-user-pop-meta {
-        font-size: 12px;
-        opacity: 0.86;
-        margin-bottom: 10px;
-      }
-
-      #tcc-user-popover .tcc-user-pop-btn {
-        width: 100%;
-        text-align: center;
-        border: 1px solid rgba(226, 232, 240, 0.16);
-        background: rgba(2, 6, 23, 0.45);
-        color: rgba(231, 238, 248, 0.94);
-        border-radius: 12px;
-        padding: 9px 10px;
-        cursor: pointer;
-        margin-top: 8px;
-        font-weight: 700;
-      }
-
-      #tcc-user-popover .tcc-user-pop-btn:hover {
-        border-color: rgba(96, 165, 250, 0.55);
-        box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.15);
-      }
-
-      /* ===== CHANGE PASSWORD MODAL ===== */
-      #tcc-pwd-modal {
-        position: fixed;
-        inset: 0;
-        z-index: 100000;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        padding: 24px;
-        background: rgba(3, 7, 18, 0.72);
-        backdrop-filter: blur(8px);
-      }
-
-      #tcc-pwd-modal[aria-hidden="false"] {
-        display: flex;
-      }
-
-      #tcc-pwd-card {
-        width: min(460px, 96vw);
-        background: rgba(15, 23, 42, 0.86);
-        border: 1px solid rgba(226, 232, 240, 0.18);
-        border-radius: 16px;
-        padding: 18px 18px 16px;
-        box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
-        color: #e5e7eb;
-      }
-
-      #tcc-pwd-close {
-        background: transparent;
-        border: 0;
-        color: rgba(231, 238, 248, 0.86);
-        cursor: pointer;
-        padding: 6px 8px;
-        border-radius: 10px;
-        line-height: 1;
-        font-size: 18px;
-      }
-
-      #tcc-pwd-close:hover {
-        background: rgba(255, 255, 255, 0.06);
-      }
-
-      #tcc-pwd-submit {
-        margin-top: 14px;
-        width: 100%;
-        padding: 10px 12px;
-        border-radius: 12px;
-        border: 0;
-        background: #60a5fa;
-        color: #0b1020;
-        font-weight: 900;
-        cursor: pointer;
-      }
-
-      #tcc-pwd-submit:disabled {
-        opacity: 0.55;
-        cursor: not-allowed;
-      }
-
-      #tcc-pwd-msg {
-        margin-top: 10px;
-        font-size: 13px;
-        color: #fb7185;
-        min-height: 18px;
-      }
     </style>
   </head>
   <body>
@@ -420,8 +196,8 @@
 
             <!-- SYSTEMS 下拉菜单 -->
             <div
-              class="tcc-nav-dropdown" id="tcc-nav-systems" data-admin-only="1"
-              style="position: relative; display:none;"
+              class="tcc-nav-dropdown" id="tcc-nav-systems"
+              style="position: relative;"
               onmouseleave="document.getElementById('tcc-systems-menu').style.display='none';"
             >
               <div
@@ -526,7 +302,7 @@
             </div>
 
             <!-- NOTES & UPDATES -->
-            <a href="notes-updates.html" class="tcc-nav-link" id="tcc-nav-notes" data-admin-only="1" style="display:none;">
+            <a href="notes-updates.html" class="tcc-nav-link" id="tcc-nav-notes">
               Notes &amp; Updates
             </a>
 
@@ -539,10 +315,6 @@
               AI ASSISTANT
             </a>
 
-            <!-- LOGIN -->
-            <a href="#" class="tcc-nav-link" id="tcc-login-link"  style="color: yellow; font-weight:700">Login</a>
-            <a href="#" class="tcc-nav-link" id="tcc-logout-link" style="display:none; color: yellow; font-weight:700">Hello</a>
-            <span id="tcc-auth-who"></span>
           </nav>
 
           <button class="tcc-nav-toggle" aria-label="Toggle navigation">
@@ -580,7 +352,7 @@
 
               <!-- 底部按钮区域（靠近底端但不贴边，横向与标题对齐） -->
               <div class="tcc-actions tcc-hero-actions-bottom">
-                <a href="systems-portal.html" class="tcc-btn tcc-btn-primary" data-admin-only="1">
+                <a href="systems-portal.html" class="tcc-btn tcc-btn-primary">
                   Open Systems Portal
                   <i class="fas fa-arrow-right"></i>
                 </a>
@@ -651,9 +423,7 @@
                 <div class="tcc-card-footer">
                   <a
                       href="prodorder-status.html"
-                      class="tcc-link-inline"
-                      onclick="window.location.href='schedule-visualization.html';"
-                     data-admin-only="1" style="display:none;">
+                      class="tcc-link-inline">
                       Learn more
                       <i class="fas fa-arrow-right"></i>
                   </a>
@@ -662,7 +432,6 @@
                       target="_blank"
                       class="tcc-link-inline"
                       style="font-size: 0.8rem"
-                      onclick="window.open('../../demo-apps/prodorder-status-demo.html', '_blank');"
                     >
                       Open system
                       <i class="fas fa-external-link-alt"></i>
@@ -685,9 +454,7 @@
                 <div class="tcc-card-footer">
                     <a
                       href="schedule-visualization.html"
-                      class="tcc-link-inline"
-                      onclick="window.location.href='schedule-visualization.html';"
-                     data-admin-only="1" style="display:none;">
+                      class="tcc-link-inline">
                       Learn more
                       <i class="fas fa-arrow-right"></i>
                     </a>
@@ -696,14 +463,6 @@
                       target="_blank"
                       class="tcc-link-inline"
                       style="font-size: 0.8rem"
-                      onclick="(function(e){
-                        e.preventDefault();
-                        let token='';
-                        try { token = String(localStorage.getItem('trench_auth_token')||'').trim(); } catch {}
-                        const base='../../demo-apps/schedule-visualization-demo.html';
-                        const url = token ? ('../../demo-apps/schedule-visualization-demo.html#sso=' + encodeURIComponent(token)) : base;
-                        window.open(url,'_blank');
-                      })(event);"
                     >
                       Open system
                       <i class="fas fa-external-link-alt"></i>
@@ -726,9 +485,7 @@
                 <div class="tcc-card-footer">
                     <a
                       href="backend-status.html"
-                      class="tcc-link-inline"
-                      onclick="window.location.href='backend-status.html';"
-                     data-admin-only="1" style="display:none;">
+                      class="tcc-link-inline">
                       Learn more
                       <i class="fas fa-arrow-right"></i>
                     </a>
@@ -737,14 +494,6 @@
                       target="_blank"
                       class="tcc-link-inline"
                       style="font-size: 0.8rem"
-                      onclick="(function(e){
-                        e.preventDefault();
-                        let token='';
-                        try { token = String(localStorage.getItem('trench_auth_token')||'').trim(); } catch {}
-                        const base='../../demo-apps/backend-status-demo.html';
-                        const url = token ? ('../../demo-apps/backend-status-demo.html#sso=' + encodeURIComponent(token)) : base;
-                        window.open(url,'_blank');
-                      })(event);"
                     >
                       Open system
                       <i class="fas fa-external-link-alt"></i>
@@ -767,9 +516,7 @@
                 <div class="tcc-card-footer">
                     <a
                       href="load-vs-capacity.html"
-                      class="tcc-link-inline"
-                      onclick="window.location.href='load-vs-capacity.html';"
-                     data-admin-only="1" style="display:none;">
+                      class="tcc-link-inline">
                       Learn more
                       <i class="fas fa-arrow-right"></i>
                     </a>
@@ -778,7 +525,6 @@
                       target="_blank"
                       class="tcc-link-inline"
                       style="font-size: 0.8rem"
-                      onclick="window.open('../../demo-apps/load-vs-capacity-demo.html', '_blank');"
                     >
                       Open system
                       <i class="fas fa-external-link-alt"></i>
@@ -801,9 +547,7 @@
                 <div class="tcc-card-footer">
                     <a
                       href="andon-board.html"
-                      class="tcc-link-inline"
-                      onclick="window.location.href='load-vs-capacity.html';"
-                     data-admin-only="1" style="display:none;">
+                      class="tcc-link-inline">
                       Learn more
                       <i class="fas fa-arrow-right"></i>
                     </a>
@@ -812,7 +556,6 @@
                       target="_blank"
                       class="tcc-link-inline"
                       style="font-size: 0.8rem"
-                      onclick="window.open('../../demo-apps/andon-board-demo.html', '_blank');"
                     >
                       Open system
                       <i class="fas fa-external-link-alt"></i>
@@ -836,9 +579,7 @@
                 <div class="tcc-card-footer">
                     <a
                       href="backend-status.html"
-                      class="tcc-link-inline"
-                      onclick="window.location.href='backend-status.html';"
-                     data-admin-only="1" style="display:none;">
+                      class="tcc-link-inline">
                       Learn more
                       <i class="fas fa-arrow-right"></i>
                     </a>
@@ -847,7 +588,6 @@
                       target="_blank"
                       class="tcc-link-inline"
                       style="font-size: 0.8rem"
-                      onclick="window.open('../../demo-apps/backend-status-tv-demo.html', '_blank');"
                     >
                       Open system
                       <i class="fas fa-external-link-alt"></i>
@@ -923,75 +663,6 @@
       </footer>
     </div>
 
-    <!-- AUTH MODAL (LOGIN) -->
-    <div id="tcc-auth-modal" aria-hidden="true" role="dialog" aria-modal="true">
-      <div id="tcc-auth-card">
-        <div class="tcc-auth-row">
-          <div id="tcc-auth-title">Trench Sign In</div>
-          <button id="tcc-auth-close" type="button" aria-label="Close">✕</button>
-        </div>
-
-        <form id="tcc-auth-form" autocomplete="on">
-          <label class="tcc-auth-label" for="tcc-auth-username">Username</label>
-          <input
-            class="tcc-auth-input"
-            id="tcc-auth-username"
-            name="username"
-            autocomplete="username"
-          />
-
-          <label class="tcc-auth-label" for="tcc-auth-password">Password</label>
-          <input
-            class="tcc-auth-input"
-            id="tcc-auth-password"
-            name="password"
-            type="password"
-            autocomplete="current-password"
-          />
-
-          <button id="tcc-auth-submit" type="submit">Sign in</button>
-          <div id="tcc-auth-msg"></div>
-        </form>
-      </div>
-    </div>
-
-
-    <!-- USER MENU POPOVER (Hello + role) -->
-    <div id="tcc-user-popover" aria-hidden="true">
-      <div style="font-weight: 900; font-size: 16px; margin-bottom: 8px;">Manage Your Account</div>
-      <div class="tcc-user-pop-meta">
-        You are currently logged in as: <span id="tcc-user-pop-role"></span>
-      </div>
-      <button id="tcc-user-pop-change" class="tcc-user-pop-btn" type="button">Change password</button>
-      <button id="tcc-user-pop-logout" class="tcc-user-pop-btn" type="button">Log out</button>
-    </div>
-
-    <!-- CHANGE PASSWORD MODAL -->
-    <div id="tcc-pwd-modal" aria-hidden="true" role="dialog" aria-modal="true">
-      <div id="tcc-pwd-card">
-        <div class="tcc-auth-row">
-          <div id="tcc-pwd-title" style="font-weight: 900; font-size: 18px; margin: 0;">Change Password</div>
-          <button id="tcc-pwd-close" type="button" aria-label="Close">✕</button>
-        </div>
-
-        <form id="tcc-pwd-form" autocomplete="on">
-          <label class="tcc-auth-label" for="tcc-pwd-username">Username</label>
-          <input class="tcc-auth-input" id="tcc-pwd-username" name="username" readonly />
-
-          <label class="tcc-auth-label" for="tcc-pwd-old">Current password</label>
-          <input class="tcc-auth-input" id="tcc-pwd-old" name="oldPwd" type="password" autocomplete="current-password" />
-
-          <label class="tcc-auth-label" for="tcc-pwd-new">New password</label>
-          <input class="tcc-auth-input" id="tcc-pwd-new" name="newPwd" type="password" autocomplete="new-password" />
-
-          <label class="tcc-auth-label" for="tcc-pwd-confirm">Confirm new password</label>
-          <input class="tcc-auth-input" id="tcc-pwd-confirm" name="confirmNewPwd" type="password" autocomplete="new-password" />
-
-          <button id="tcc-pwd-submit" type="submit">Update password</button>
-          <div id="tcc-pwd-msg"></div>
-        </form>
-      </div>
-    </div>
 
     <!-- full-screen marquee border overlay -->
     <div id="tcc-marquee-border" aria-hidden="true"></div>
@@ -1001,29 +672,17 @@
 
     <!-- AI ASSISTANT hover -> glow + click -> jump -->
     <script>
-      // index.html 里：<!-- AI ASSISTANT hover -> glow + click -> jump -->
       (function () {
-        // ① 改成你的 React App（server.js 那个端口是 5001）:contentReference[oaicite:4]{index=4}
         const AI_URL = "../../demo-apps/ai-assistant-demo.html";
 
         function glowOn() { document.body.classList.add("tcc-marquee-on"); }
         function glowOff() { document.body.classList.remove("tcc-marquee-on"); }
 
-        // ② 关键：把 token 放进 hash：#sso=...
         function goAiAssistant(e) {
           if (e) e.preventDefault();
           glowOn();
-
-          let token = "";
-          try {
-            token = String(localStorage.getItem("trench_auth_token") || "").trim();
-          } catch {}
-
-          // 用 hash（#...）的好处：不会进服务器 access log，不走 querystring
-          const url = token ? (AI_URL + "#sso=" + encodeURIComponent(token)) : AI_URL;
-
           setTimeout(() => {
-            window.location.href = url;
+            window.location.href = AI_URL;
           }, 380);
         }
 
@@ -1041,435 +700,6 @@
 
     </script>
 
-    <!-- AUTH (connects to trench-auth-broker) -->
-    <script>
-      (function () {
-        // trench-auth-broker base URL (as deployed in your environment)
-        const AUTH_BASE = (function () {
-          try {
-            const u = new URL(window.location.href);
-            // If this page is served via http/https, prefer same host (avoid hard-coding IP)
-            if (u.protocol === "http:" || u.protocol === "https:") {
-              return u.protocol + "//" + u.hostname + ":7001";
-            }
-          } catch {}
-          // Fallback (your internal server IP)
-          return "http://localhost:7001";
-        })();
-
-        const TOKEN_KEY = "trench_auth_token";
-
-        const loginLink = document.getElementById("tcc-login-link");
-        const logoutLink = document.getElementById("tcc-logout-link");
-        const whoPill = document.getElementById("tcc-auth-who"); // kept for compatibility, but hidden by design
-
-        // Admin-only nodes (Systems / Notes & Updates / Learn more)
-        const adminOnlyNodes = Array.from(document.querySelectorAll("[data-admin-only='1']"));
-
-        // User popover (Hello + role)
-        const pop = document.getElementById("tcc-user-popover");
-        const popRole = document.getElementById("tcc-user-pop-role");
-        const popChange = document.getElementById("tcc-user-pop-change");
-        const popLogout = document.getElementById("tcc-user-pop-logout");
-
-        // Login modal
-        const modal = document.getElementById("tcc-auth-modal");
-        const card = document.getElementById("tcc-auth-card");
-        const closeBtn = document.getElementById("tcc-auth-close");
-        const form = document.getElementById("tcc-auth-form");
-        const userInput = document.getElementById("tcc-auth-username");
-        const pwdInput = document.getElementById("tcc-auth-password");
-        const submitBtn = document.getElementById("tcc-auth-submit");
-        const msgBox = document.getElementById("tcc-auth-msg");
-
-        // Change password modal
-        const pwdModal = document.getElementById("tcc-pwd-modal");
-        const pwdCard = document.getElementById("tcc-pwd-card");
-        const pwdClose = document.getElementById("tcc-pwd-close");
-        const pwdForm = document.getElementById("tcc-pwd-form");
-        const pwdUser = document.getElementById("tcc-pwd-username");
-        const pwdOld = document.getElementById("tcc-pwd-old");
-        const pwdNew = document.getElementById("tcc-pwd-new");
-        const pwdConfirm = document.getElementById("tcc-pwd-confirm");
-        const pwdSubmit = document.getElementById("tcc-pwd-submit");
-        const pwdMsg = document.getElementById("tcc-pwd-msg");
-
-        let currentMe = null;
-        let hidePopoverTimer = null;
-
-        function isAdminRole(role) {
-          return String(role || "").trim().toLowerCase() === "admin";
-        }
-
-        function applyRoleGating(role) {
-          const allow = isAdminRole(role);
-          adminOnlyNodes.forEach((el) => {
-            el.style.display = allow ? "" : "none";
-          });
-        }
-
-        function getToken() {
-          try {
-            return String(localStorage.getItem(TOKEN_KEY) || "").trim() || null;
-          } catch {
-            return null;
-          }
-        }
-
-        function setToken(token) {
-          try {
-            if (!token) localStorage.removeItem(TOKEN_KEY);
-            else localStorage.setItem(TOKEN_KEY, String(token));
-          } catch {}
-        }
-
-        async function fetchJson(path, opts) {
-          const token = getToken();
-          const headers = Object.assign(
-            { "Content-Type": "application/json" },
-            (opts && opts.headers) || {}
-          );
-          if (token && !headers.Authorization) {
-            headers.Authorization = "Bearer " + token;
-          }
-
-          const res = await fetch(AUTH_BASE + path, Object.assign({}, opts, {
-            headers,
-            credentials: "include",
-          }));
-
-          const text = await res.text();
-          let data = null;
-          try { data = text ? JSON.parse(text) : null; } catch { data = { error: text || "Invalid response" }; }
-
-          if (!res.ok) {
-            const errMsg = (data && (data.error || data.message)) ? String(data.error || data.message) : ("HTTP " + res.status);
-            const err = new Error(errMsg);
-            err.status = res.status;
-            err.data = data;
-            throw err;
-          }
-          return data;
-        }
-
-        // ----- Login modal -----
-        function openModal() {
-          msgBox.textContent = "";
-          modal.setAttribute("aria-hidden", "false");
-          setTimeout(() => {
-            try { userInput.focus(); } catch {}
-          }, 0);
-        }
-
-        function closeModal() {
-          modal.setAttribute("aria-hidden", "true");
-          msgBox.textContent = "";
-          try { form.reset(); } catch {}
-        }
-
-        // ----- User popover (hover) -----
-        function hidePopover() {
-          pop.style.display = "none";
-          pop.setAttribute("aria-hidden", "true");
-        }
-
-        function positionPopover() {
-          const rect = logoutLink.getBoundingClientRect();
-          const pad = 10;
-
-          pop.style.visibility = "hidden";
-          pop.style.left = "0px";
-          pop.style.top = "0px";
-
-          const w = pop.offsetWidth || 240;
-          const h = pop.offsetHeight || 120;
-
-          let left = rect.right - w;
-          if (left < pad) left = pad;
-          if (left + w > window.innerWidth - pad) left = Math.max(pad, window.innerWidth - pad - w);
-
-          let top = rect.bottom + 8;
-          if (top + h > window.innerHeight - pad) {
-            top = Math.max(pad, rect.top - 8 - h);
-          }
-
-          pop.style.left = Math.round(left) + "px";
-          pop.style.top = Math.round(top) + "px";
-          pop.style.visibility = "visible";
-        }
-
-        function showPopover() {
-          if (!currentMe) return;
-          popRole.textContent = currentMe && currentMe.role ? String(currentMe.role) : "";
-          pop.style.display = "block";
-          pop.setAttribute("aria-hidden", "false");
-          positionPopover();
-        }
-
-        function scheduleHidePopover() {
-          if (hidePopoverTimer) clearTimeout(hidePopoverTimer);
-          hidePopoverTimer = setTimeout(() => hidePopover(), 180);
-        }
-
-        function togglePopover() {
-          if (pop.style.display === "block") hidePopover();
-          else showPopover();
-        }
-
-        // ----- Change password modal -----
-        function openPwdModal() {
-          if (!currentMe || !currentMe.username) return;
-
-          pwdMsg.textContent = "";
-          pwdUser.value = String(currentMe.username);
-          pwdOld.value = "";
-          pwdNew.value = "";
-          pwdConfirm.value = "";
-
-          pwdModal.setAttribute("aria-hidden", "false");
-          hidePopover();
-
-          setTimeout(() => {
-            try { pwdOld.focus(); } catch {}
-          }, 0);
-        }
-
-        function closePwdModal() {
-          pwdModal.setAttribute("aria-hidden", "true");
-          pwdMsg.textContent = "";
-          try { pwdForm.reset(); } catch {}
-        }
-
-        // ----- UI state -----
-        function setSignedOutUi() {
-          currentMe = null;
-
-          loginLink.style.display = "";
-          logoutLink.style.display = "none";
-
-          // hide the old pill (no longer used in the new UX)
-          whoPill.style.display = "none";
-          whoPill.textContent = "";
-
-          hidePopover();
-          closePwdModal();
-
-          // Not admin by default
-          applyRoleGating(null);
-        }
-
-        function setSignedInUi(username, role) {
-          currentMe = { username, role: role || "Other User" };
-
-          loginLink.style.display = "none";
-          logoutLink.style.display = "";
-
-          // Replace "Logout" with "Hello + user type"
-          logoutLink.textContent = "Hello! " + String(currentMe.username || "User");
-
-          // hide the old pill (no longer used in the new UX)
-          whoPill.style.display = "none";
-          whoPill.textContent = "";
-
-          applyRoleGating(currentMe.role);
-        }
-
-        async function refreshMe() {
-          try {
-            const me = await fetchJson("/api/me", { method: "GET" });
-            setSignedInUi(me.username, me.role);
-            return me;
-          } catch {
-            setSignedOutUi();
-            return null;
-          }
-        }
-
-        async function doLogin(username, password) {
-          const data = await fetchJson("/api/login", {
-            method: "POST",
-            body: JSON.stringify({ username, password }),
-          });
-
-          if (data && data.token) setToken(data.token);
-          await refreshMe();
-          return data;
-        }
-
-        async function doLogout() {
-          try {
-            await fetchJson("/api/logout", { method: "POST", body: JSON.stringify({}) });
-          } catch {}
-          setToken(null);
-          setSignedOutUi();
-        }
-
-        // ----- Events -----
-        loginLink.addEventListener("click", (e) => {
-          e.preventDefault();
-          openModal();
-        });
-
-        // Hover popup: "Hello + role" -> popover (role + change password + logout)
-        logoutLink.addEventListener("mouseenter", () => {
-          if (hidePopoverTimer) clearTimeout(hidePopoverTimer);
-          showPopover();
-        });
-        logoutLink.addEventListener("mouseleave", () => scheduleHidePopover());
-
-        logoutLink.addEventListener("click", (e) => {
-          e.preventDefault();
-          togglePopover();
-        });
-
-        pop.addEventListener("mouseenter", () => {
-          if (hidePopoverTimer) clearTimeout(hidePopoverTimer);
-        });
-        pop.addEventListener("mouseleave", () => scheduleHidePopover());
-
-        popChange.addEventListener("click", () => openPwdModal());
-
-        popLogout.addEventListener("click", async () => {
-          popLogout.disabled = true;
-          try { await doLogout(); } finally { popLogout.disabled = false; }
-        });
-
-        closeBtn.addEventListener("click", () => closeModal());
-
-        modal.addEventListener("click", (e) => {
-          // click outside card closes
-          if (e.target === modal) closeModal();
-        });
-
-        document.addEventListener("keydown", (e) => {
-          if (e.key === "Escape") {
-            if (pwdModal.getAttribute("aria-hidden") === "false") closePwdModal();
-            if (modal.getAttribute("aria-hidden") === "false") closeModal();
-            hidePopover();
-          }
-        });
-
-        form.addEventListener("submit", async (e) => {
-          e.preventDefault();
-          const username = String(userInput.value || "").trim();
-          const password = String(pwdInput.value || "");
-
-          msgBox.textContent = "";
-          if (!username || !password) {
-            msgBox.textContent = "Missing username/password";
-            return;
-          }
-
-          submitBtn.disabled = true;
-          submitBtn.textContent = "Signing in...";
-          try {
-            await doLogin(username, password);
-            closeModal();
-          } catch (err) {
-            (function () {
-              const raw = String(err && err.message ? err.message : "Sign in failed");
-              if (raw.toLowerCase().includes("failed to fetch")) {
-                const proto = String(window.location.protocol || "");
-                const hint =
-                  (proto === "https:" && String(AUTH_BASE).startsWith("http:"))
-                    ? "Browser blocked mixed-content (https page calling http auth). Expose auth via https or serve this page via http."
-                    : "Cannot reach auth service. Check AUTH broker is running and port 7001 is reachable.";
-                msgBox.textContent = raw + " — " + hint + " (AUTH_BASE: " + AUTH_BASE + ")";
-              } else {
-                msgBox.textContent = raw;
-              }
-            })();
-          } finally {
-            submitBtn.disabled = false;
-            submitBtn.textContent = "Sign in";
-          }
-        });
-
-        // Prevent clicks inside card from bubbling to overlay
-        card.addEventListener("click", (e) => e.stopPropagation());
-
-        // Change password events
-        pwdClose.addEventListener("click", () => closePwdModal());
-
-        pwdModal.addEventListener("click", (e) => {
-          if (e.target === pwdModal) closePwdModal();
-        });
-
-        pwdCard.addEventListener("click", (e) => e.stopPropagation());
-
-        pwdForm.addEventListener("submit", async (e) => {
-          e.preventDefault();
-
-          if (!currentMe || !currentMe.username) {
-            pwdMsg.textContent = "Not signed in";
-            return;
-          }
-
-          const username = String(currentMe.username);
-          const oldPwd = String(pwdOld.value || "");
-          const newPwd = String(pwdNew.value || "");
-          const confirm = String(pwdConfirm.value || "");
-
-          pwdMsg.textContent = "";
-          if (!oldPwd || !newPwd || !confirm) {
-            pwdMsg.textContent = "Missing fields";
-            return;
-          }
-          if (newPwd !== confirm) {
-            pwdMsg.textContent = "New passwords do not match";
-            return;
-          }
-
-          pwdSubmit.disabled = true;
-          pwdSubmit.textContent = "Updating...";
-          try {
-            await fetchJson("/api/change_password", {
-              method: "POST",
-              body: JSON.stringify({ username, oldPwd, newPwd }),
-            });
-            closePwdModal();
-            hidePopover();
-            alert("Password updated successfully.");
-          } catch (err) {
-            (function () {
-              const raw = String(err && err.message ? err.message : "Update failed");
-              if (raw.toLowerCase().includes("failed to fetch")) {
-                const proto = String(window.location.protocol || "");
-                const hint =
-                  (proto === "https:" && String(AUTH_BASE).startsWith("http:"))
-                    ? "Browser blocked mixed-content (https page calling http auth). Expose auth via https or serve this page via http."
-                    : "Cannot reach auth service. Check AUTH broker is running and port 7001 is reachable.";
-                pwdMsg.textContent = raw + " — " + hint + " (AUTH_BASE: " + AUTH_BASE + ")";
-              } else {
-                pwdMsg.textContent = raw;
-              }
-            })();
-          } finally {
-            pwdSubmit.disabled = false;
-            pwdSubmit.textContent = "Update password";
-          }
-        });
-
-        // Hide popover when clicking elsewhere
-        document.addEventListener("click", (e) => {
-          const t = e.target;
-          if (!t) return;
-          if (t === logoutLink || logoutLink.contains(t)) return;
-          if (t === pop || pop.contains(t)) return;
-          hidePopover();
-        });
-
-        window.addEventListener("resize", () => hidePopover());
-        window.addEventListener("scroll", () => hidePopover(), { passive: true });
-
-        // On load: try existing cookie/token
-        document.addEventListener("DOMContentLoaded", () => {
-          // Hide admin-only items until we confirm role (no flash for non-admin users)
-          applyRoleGating(null);
-          refreshMe();
-        });
-      })();
-    </script>
 
   </body>
 </html>
